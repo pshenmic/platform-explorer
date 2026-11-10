@@ -26,7 +26,6 @@ const {
   IdentityCreditWithdrawalTransitionWASM,
   MasternodeVoteTransitionWASM,
   PlatformVersionWASM,
-  DataContractWASM,
   IdentityCreateFromAddressesTransitionWASM,
   IdentityTopUpFromAddressesTransitionWASM,
   AddressFundsTransferTransitionWASM,
@@ -49,7 +48,6 @@ const {
   IdentifierWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
-const dpnsContract = require('../data_contracts/dpns.json')
 const { ContestedStateResultType } = require('dash-platform-sdk/types')
 const PreProgrammedDistribution = require('./models/PreProgrammedDistribution')
 const Token = require('./models/Token')
@@ -2570,6 +2568,23 @@ const getAliasFromDocument = (aliasDocument) => {
   }
 }
 
+const getDpnsContract = async (sdk) => {
+  const cached = cache.get(DPNS_CONTRACT_CACHE_KEY)
+
+  if (cached) {
+    return cached
+  }
+
+  // the pending request is cached for the whole run, so concurrent callers share it
+  const dataContract = sdk.dataContracts.getDataContractByIdentifier(DPNS_CONTRACT)
+
+  cache.set(DPNS_CONTRACT_CACHE_KEY, dataContract)
+
+  dataContract.catch(() => cache.delete(DPNS_CONTRACT_CACHE_KEY))
+
+  return await dataContract
+}
+
 const getAliasInfo = async (aliasText, sdk) => {
   const [label, domain] = aliasText.split('.')
 
@@ -2582,7 +2597,7 @@ const getAliasInfo = async (aliasText, sdk) => {
 
     try {
       const contestedState = await sdk.contestedResources.getContestedResourceVoteState(
-        DataContractWASM.fromValue(dpnsContract, true),
+        await getDpnsContract(sdk),
         'domain',
         'parentNameAndLabel',
         [

@@ -20,6 +20,7 @@ module.exports = {
   CORE_NETWORK_CACHE_LIFE_INTERVAL: 60000,
   RATE_CACHE_KEY: 'rate',
   RATE_CACHE_LIFE_INTERVAL: 60000,
+  DPNS_CONTRACT_CACHE_KEY: 'dpns_contract',
   // Core targets a block every 2.5 minutes
   CORE_BLOCKS_PER_DAY: 576,
   DUFFS_PER_DASH: 100000000,

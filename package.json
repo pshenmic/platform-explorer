@@ -1,6 +1,6 @@
 {
   "name": "platform-explorer",
-  "version": "2.5.4",
+  "version": "2.6.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -17,6 +17,7 @@
   "repository": "git@github.com:pshenmic/platform-explorer.git",
   "overrides": {
     "react": "19.2.8",
-    "react-dom": "19.2.8"
+    "react-dom": "19.2.8",
+    "@yarnpkg/core": "4.9.1"
   }
 }

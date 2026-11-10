@@ -3,53 +3,20 @@
 import { useState, useMemo, useEffect, useRef } from 'react'
 import Link from 'next/link'
 import Image from 'next/image'
-import { useQueries, useQueryClient } from '@tanstack/react-query'
+import { useQuorumRoster } from './hooks/useQuorumRoster'
+import { quorumKey, memberKey, memberKeysInCoreOrder, sortProTxKeys } from './quorumModel'
 
 import { Tooltip } from '../ui/Tooltips'
 import { BlockIcon } from '../ui/icons'
-import * as Api from '../../util/Api'
-import { ResponseErrorNotFound } from '../../util/Errors'
-import { TimeDelta } from '../data'
 import { useCountUp } from './hooks'
 import { Skeleton } from './Skeleton'
 import './QuorumCard.css'
-
-const QUORUM_DETAIL_STALE = 60_000
-
-async function fetchQuorumDetail(hash: string) {
-  try {
-    return await Api.getQuorumByHash(hash)
-  } catch (e) {
-    if (e instanceof ResponseErrorNotFound) return null
-    throw e
-  }
-}
-
-const CORE_BLOCK_SEC = 150
 
 function gridSide(n: number) {
   const size = n > 0 ? n : 100
   const root = Math.round(Math.sqrt(size))
   if (root * root === size) return root
   return Math.max(1, Math.ceil(Math.sqrt(size)))
-}
-
-function quorumHeight(q: any) {
-  const n = q?.blockHeight ?? q?.creationHeight
-  return typeof n === 'number' && n > 0 ? n : null
-}
-
-function quorumStep(list: any[]) {
-  const hs = list.map(quorumHeight).filter((n): n is number => n != null)
-  hs.sort((a, b) => a - b)
-  const diffs: number[] = []
-  for (let i = 1; i < hs.length; i++) {
-    const d = hs[i] - hs[i - 1]
-    if (d > 0 && d < 200) diffs.push(d)
-  }
-  if (!diffs.length) return 24
-  diffs.sort((a, b) => a - b)
-  return diffs[Math.floor(diffs.length / 2)]
 }
 
 const regionNames = (() => {
@@ -123,27 +90,6 @@ function parseLlmqType(type: any) {
   return { raw: type, size: Number(m[1]), threshold: Number(m[2]) }
 }
 
-function memberKey(proTx: any) {
-  return (proTx || '').toLowerCase()
-}
-
-function memberKeysInCoreOrder(members: any) {
-  const keys: string[] = []
-  const seen = new Set<string>()
-  if (!Array.isArray(members)) return keys
-  for (const member of members) {
-    const key = memberKey(member?.proTxHash)
-    if (!key || seen.has(key)) continue
-    seen.add(key)
-    keys.push(key)
-  }
-  return keys
-}
-
-function sortProTxKeys(keys: string[]) {
-  return [...keys].sort((a, b) => a.localeCompare(b))
-}
-
 function formatProposeWait(blocks: number, avgSec: number | null) {
   if (typeof avgSec === 'number' && avgSec > 0) {
     const sec = Math.round(blocks * avgSec)
@@ -178,10 +124,6 @@ function proposeHintFor(
   if (i === (p + 1) % ordered.length) return 'now'
   if (i > p) return formatProposeWait(i - p, avgSec)
   return 'finished'
-}
-
-function quorumKey(hash: unknown) {
-  return typeof hash === 'string' && hash.length ? hash.toUpperCase() : ''
 }
 
 const STATS = [
@@ -375,15 +317,9 @@ export default function QuorumCard({
   poolLoading,
   bannedValidatorsList,
   bannedListLoading: _bannedListLoading,
-  currentQuorum,
-  currentQuorumLoading,
-  currentQuorumError,
-  quorums,
-  l1LockedHeight,
   lastProposerProTx,
   avgBlockTimeSec
 }: any) {
-  const queryClient = useQueryClient()
   const [pin, setPin] = useState<string | null>(null)
   const [focusKey, setFocusKey] = useState<string | null>(null)
   const [hostQuery, setHostQuery] = useState('')
@@ -397,29 +333,34 @@ export default function QuorumCard({
 
   const hasTotal = typeof total === 'number' && total > 0
 
-  const currentMembers = Array.isArray(currentQuorum?.members) ? currentQuorum.members : null
-  const hasRoster = Boolean(currentMembers && currentMembers.length > 0)
+  const requestedHash = pin?.startsWith('q:') ? pin.slice(2) : null
+  const {
+    listQuery,
+    sortedQuorums,
+    quorumDetails,
+    currentQuorum,
+    liveKey,
+    pinnedKey,
+    selectedKey,
+    prevKey,
+    selectedOffset,
+    selectedQuery,
+    retryRoster
+  } = useQuorumRoster(requestedHash, loadAllDetails)
+  const currentMembers = currentQuorum?.members ?? null
+  const liveHash = currentQuorum?.quorumHash ?? null
+  const hasRoster = Boolean(currentMembers?.length)
   const lastProposerKey = memberKey(lastProposerProTx)
+  const viewingLiveQuorum = !pinnedKey || pinnedKey === liveKey
+  const showLastProposer = Boolean(
+    viewingLiveQuorum && currentMembers?.some(m => memberKey(m.proTxHash) === lastProposerKey)
+  )
+  const selectedMeta = sortedQuorums.find(q => quorumKey(q.quorumHash) === selectedKey)
 
-  const sortedQuorums = useMemo(() => {
-    const list = [...(Array.isArray(quorums) ? quorums : [])]
-      .filter(q => q?.quorumHash)
-      .sort((a, b) => (quorumHeight(b) ?? 0) - (quorumHeight(a) ?? 0))
-    if (!list.length) return []
-    const liveKey = quorumKey(currentQuorum?.quorumHash)
-    const liveI = list.findIndex(
-      q => Boolean(q.isCurrent) || (liveKey && quorumKey(q.quorumHash) === liveKey)
-    )
-    const start = liveI >= 0 ? liveI : 0
-    return list.map((_, i) => {
-      const q = list[(start + i) % list.length]
-      return {
-        ...q,
-        offset: i,
-        isLive: i === 0 && liveI >= 0
-      }
-    })
-  }, [quorums, currentQuorum?.quorumHash])
+  // Only a successful list refresh can retire a user's selection, never a network error.
+  useEffect(() => {
+    if (requestedHash && listQuery.isSuccess && !pinnedKey) setPin(null)
+  }, [requestedHash, listQuery.isSuccess, pinnedKey])
 
   useEffect(() => {
     const el = pickRef.current
@@ -444,28 +385,6 @@ export default function QuorumCard({
     }
   }, [sortedQuorums.length])
 
-  const liveHash = typeof currentQuorum?.quorumHash === 'string' ? currentQuorum.quorumHash : null
-  const liveKey = quorumKey(liveHash)
-  const nextHash = sortedQuorums.find(q => q.offset === 1)?.quorumHash ?? null
-  const nextKey = quorumKey(nextHash)
-  const pinnedQuorumHashEarly =
-    typeof pin === 'string' && pin.startsWith('q:') ? pin.slice(2) : null
-  const pinnedKey = quorumKey(pinnedQuorumHashEarly)
-  const selectedKey = pinnedKey || liveKey
-  const viewingLiveQuorum = !pinnedKey || pinnedKey === liveKey
-  const showLastProposer = Boolean(lastProposerKey && viewingLiveQuorum)
-  const selectedMeta = sortedQuorums.find(q => quorumKey(q.quorumHash) === selectedKey) || null
-  const selectedOffset = selectedMeta?.offset ?? 0
-  const rotN = sortedQuorums.length
-  const neighborAt = (delta: number) => {
-    if (rotN < 2) return ''
-    const at = (((selectedOffset + delta) % rotN) + rotN) % rotN
-    const key = quorumKey(sortedQuorums.find(q => q.offset === at)?.quorumHash)
-    return key && key !== selectedKey ? key : ''
-  }
-  const prevKey = neighborAt(-1)
-  const followKey = neighborAt(1)
-
   useEffect(() => {
     const el = pickRef.current
     if (!el || !pinnedKey) return
@@ -474,48 +393,6 @@ export default function QuorumCard({
     on.scrollIntoView({ inline: 'nearest', block: 'nearest', behavior: 'smooth' })
   }, [pinnedKey])
 
-  const detailQueries = useQueries({
-    queries: sortedQuorums.map(q => {
-      const hash = q.quorumHash as string
-      const key = quorumKey(hash)
-      const isLive = Boolean(key && key === liveKey)
-      const needed =
-        key === nextKey ||
-        key === pinnedKey ||
-        key === prevKey ||
-        key === followKey ||
-        loadAllDetails
-      return {
-        queryKey: ['home', 'quorums', 'detail', key],
-        queryFn: () => fetchQuorumDetail(hash),
-        enabled: Boolean(hash && !isLive && needed),
-        staleTime: QUORUM_DETAIL_STALE,
-        retry: 1
-      }
-    })
-  })
-
-  useEffect(() => {
-    const selected = sortedQuorums.find(q => quorumKey(q.quorumHash) === pinnedKey)
-    const prefetchOffset = pinnedQuorumHashEarly ? (selected?.offset ?? 0) + 1 : 1
-    const target = sortedQuorums.find(q => q.offset === prefetchOffset)
-    const hash = target?.quorumHash
-    const key = quorumKey(hash)
-    if (!hash || !key || key === liveKey) return
-    void queryClient.prefetchQuery({
-      queryKey: ['home', 'quorums', 'detail', key],
-      queryFn: () => fetchQuorumDetail(hash),
-      staleTime: QUORUM_DETAIL_STALE
-    })
-  }, [liveKey, pinnedKey, pinnedQuorumHashEarly, prevKey, followKey, queryClient, sortedQuorums])
-
-  const detailStamp = detailQueries
-    .map(
-      q =>
-        `${q.dataUpdatedAt}:${q.data?.quorumHash || ''}:${Array.isArray(q.data?.members) ? q.data.members.length : 0}`
-    )
-    .join('|')
-
   const membersByHash = useMemo(() => {
     const map = new Map<string, any[]>()
     const put = (hash: unknown, members: unknown) => {
@@ -523,10 +400,9 @@ export default function QuorumCard({
       if (!key || !Array.isArray(members)) return
       map.set(key, members)
     }
-    put(liveHash, currentQuorum?.members)
-    for (const q of detailQueries) put(q.data?.quorumHash, q.data?.members)
+    for (const q of quorumDetails) put(q?.quorumHash, q?.members)
     return map
-  }, [currentQuorum?.members, detailStamp, liveHash])
+  }, [quorumDetails])
 
   const sortedQuorumsWithMembers = useMemo(
     () =>
@@ -602,16 +478,13 @@ export default function QuorumCard({
     if (!k) return new Set<string>()
     return rosterIndex.membersOf.get(k) || new Set<string>()
   }, [rosterIndex, selectedKey])
-  const selectedIdx = sortedQuorums.findIndex(q => quorumKey(q.quorumHash) === selectedKey)
-  const selectedQuery = selectedIdx >= 0 ? detailQueries[selectedIdx] : null
-  const selectedQueryPending = Boolean(
-    selectedKey && selectedKey !== liveKey && selectedQuery && !selectedQuery.isFetched
-  )
+  const selectedMembers = membersByHash.get(selectedKey)
   const filling = Boolean(
-    currentQuorumLoading ||
-      selectedQueryPending ||
-      (Boolean(selectedKey) && selectedMemberSet.size === 0 && !currentQuorumError)
+    (listQuery.isPending && listQuery.fetchStatus !== 'paused') ||
+      (selectedKey && selectedQuery?.isPending && selectedQuery.fetchStatus !== 'paused')
   )
+  const rosterUnavailable = !filling && (!selectedKey || !selectedMembers?.length)
+  const rosterError = listQuery.isError || selectedQuery?.isError
 
   const windowKeys = useMemo(() => {
     if (filling) return []
@@ -725,27 +598,6 @@ export default function QuorumCard({
   const headLabel = selectedOffset <= 0 ? 'Now' : selectedOffset === 1 ? 'Next' : 'Turn'
   const headCore = selectedMeta?.blockHeight ?? selectedMeta?.creationHeight
   const headTurn = typeof headCore === 'number' ? `Core ${headCore.toLocaleString('en-US')}` : '—'
-  const quorumEta = useMemo(() => {
-    const step = quorumStep(sortedQuorums)
-    const heights = sortedQuorums.map(quorumHeight).filter((n): n is number => n != null)
-    if (!heights.length || step <= 0) return null
-    const maxH = Math.max(...heights)
-    const liveH = quorumHeight(sortedQuorums.find(q => q.isLive))
-    const tip =
-      typeof l1LockedHeight === 'number' && l1LockedHeight > 0 ? l1LockedHeight : (liveH ?? maxH)
-    let toNext = step
-    if (tip <= maxH) toNext = maxH + step - tip
-    else {
-      const r = (tip - maxH) % step
-      toNext = r === 0 ? step : step - r
-    }
-    const offset = Math.max(0, selectedOffset)
-    const blocks = offset <= 0 ? toNext : toNext + (offset - 1) * step
-    return {
-      kind: offset <= 0 ? 'left' : 'in',
-      end: new Date(Date.now() + Math.max(1, blocks) * CORE_BLOCK_SEC * 1000)
-    }
-  }, [sortedQuorums, selectedOffset, l1LockedHeight])
   const headHash =
     typeof selectedMeta?.quorumHash === 'string' && selectedMeta.quorumHash.length > 0
       ? selectedMeta.quorumHash.toLowerCase()
@@ -1080,34 +932,27 @@ export default function QuorumCard({
                     {headTurn}
                   </span>
                 )}
-                {quorumEta && (
-                  <span
-                    className={'QuorumCard__QEta'}
-                    title={`About ${quorumStep(sortedQuorums)} Core blocks per turn (~2.5 min each)`}
-                  >
-                    ~{quorumEta.kind === 'in' ? 'in ' : ''}
-                    <TimeDelta
-                      endDate={quorumEta.end}
-                      format={'compact'}
-                      showTimestampTooltip={false}
-                    />
-                    {quorumEta.kind === 'left' ? ' left' : ''}
-                  </span>
-                )}
               </>
-            ) : (
+            ) : filling ? (
               <>
                 <Skeleton w={'11ch'} h={'0.8em'} radius={4} />
                 <Skeleton w={'6ch'} h={'0.8em'} radius={4} />
               </>
+            ) : (
+              <span>Quorum unavailable</span>
             )}
           </p>
         </div>
       </header>
 
-      {currentQuorumError && !hasRoster && !currentQuorumLoading && (
-        <p className={'QuorumCard__FallbackNote'}>
-          Detailed signing roster unavailable. Pool uses explorer active/queued flags only.
+      {(rosterError || rosterUnavailable) && (
+        <p className={'QuorumCard__FallbackNote'} role="status">
+          {rosterUnavailable
+            ? 'Signing roster unavailable.'
+            : 'Could not update quorums. Showing the last available data.'}{' '}
+          <button type="button" onClick={retryRoster}>
+            Retry
+          </button>
         </p>
       )}
 
