@@ -412,16 +412,4 @@ const schemaTypes = [
   }
 ]
 
-const paginationOptions = schemaTypes.find(schema => schema.$id === 'paginationOptions')
-
-schemaTypes.push({
-  ...paginationOptions,
-  $id: 'validatorsPaginationOptions',
-  properties: {
-    ...paginationOptions.properties,
-    orderBy: { type: ['string', 'null'] },
-    order_by: { $ref: 'validatorsPaginationOptions#/properties/orderBy' }
-  }
-})
-
 module.exports = schemaTypes

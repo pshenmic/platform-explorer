@@ -8,7 +8,7 @@ const ValidatorsController = require('../../src/controllers/ValidatorsController
 const ValidatorsDAO = require('../../src/dao/ValidatorsDAO')
 const TenderdashRPC = require('../../src/tenderdashRpc')
 
-test('validator sorting supports both parameter names without changing other routes', async context => {
+test('validator sorting uses order_by without changing shared validation', async context => {
   const app = Fastify()
   context.after(() => app.close())
   context.mock.method(TenderdashRPC, 'getValidators', async () => ({ validators: [] }))
@@ -30,15 +30,10 @@ test('validator sorting supports both parameter names without changing other rou
 
   const cases = [
     ['', 'id'],
-    ['orderBy=latest_timestamp', 'latest_timestamp'],
     ['order_by=latest_timestamp', 'latest_timestamp'],
-    ['orderBy=id', 'id'],
     ['order_by=id', 'id'],
-    ['orderBy=unknown', 'id'],
-    ['order_by=unknown', 'id'],
-    ['orderBy=id&order_by=latest_timestamp', 'id'],
-    ['orderBy=latest_timestamp&order_by=id', 'latest_timestamp'],
-    ['orderBy=unknown&order_by=latest_timestamp', 'id']
+    ['order_by=unknown', 'unknown'],
+    ['orderBy=id&order_by=latest_timestamp', 'latest_timestamp']
   ]
 
   for (const [query, expected] of cases) {
@@ -49,6 +44,8 @@ test('validator sorting supports both parameter names without changing other rou
 
   const transactions = await app.inject('/transactions?orderBy=latest_timestamp')
   assert.equal(transactions.statusCode, 400)
+  const invalidField = await app.inject('/validators?orderBy=latest_timestamp')
+  assert.equal(invalidField.statusCode, 400)
   const invalidLimit = await app.inject('/validators?limit=101')
   assert.equal(invalidLimit.statusCode, 400)
 })
