@@ -14,7 +14,7 @@ import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
-import { ChartGhost, PRESETS } from './MetricChart'
+import { ChartGhost, PRESETS, buildTimeTicks, tipTimeFormat } from './MetricChart'
 import PoolDateRange, { poolRangeLabel } from './PoolDateRange'
 import type { DateRangeFilterValue } from '../filters/types'
 import { Tooltip } from '../ui/Tooltips'
@@ -476,15 +476,8 @@ export default function ShieldedPoolCard({
       .curve(d3.curveMonotoneX)
 
     const spanMs = Number(pts[pts.length - 1].x) - Number(pts[0].x)
-    const tickFmt = d3.timeFormat(
-      spanMs > 365 * DAY_MS ? '%b %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%H:%M'
-    )
-    const tipFmt = d3.timeFormat(
-      spanMs > 365 * DAY_MS ? '%b %d, %Y' : spanMs > 3 * DAY_MS ? '%b %d' : '%b %d, %H:%M'
-    )
-
-    const xTickN = Math.max(2, Math.min(6, Math.floor((width - M.left - M.right) / 72)))
-    const xTicks = x.ticks(xTickN)
+    const tipFmt = tipTimeFormat({ ms: spanMs })
+    const xTicks = buildTimeTicks(x, width - M.left - M.right)
     const yTvlTicks = yTvl.ticks(4)
 
     const step =
@@ -531,7 +524,6 @@ export default function ShieldedPoolCard({
       yTvl,
       line: line(pts),
       area: area(pts),
-      tickFmt,
       tipFmt,
       xTicks,
       yTvlTicks,
@@ -880,6 +872,20 @@ export default function ShieldedPoolCard({
                     </>
                   )}
 
+                  {chart.xTicks
+                    .filter((tick: any) => tick.separator)
+                    .map((tick: any) => (
+                      <line
+                        key={`day-${tick.v}`}
+                        className={'ShieldedPool__Grid'}
+                        x1={tick.v}
+                        x2={tick.v}
+                        y1={M.top}
+                        y2={plotH - M.bottom}
+                        strokeDasharray={'2 4'}
+                        pointerEvents={'none'}
+                      />
+                    ))}
                   {chart.xTicks.map((t: any, i: any) => (
                     <text
                       key={`x-${i}`}
@@ -888,10 +894,10 @@ export default function ShieldedPoolCard({
                         textAnchor:
                           i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle'
                       }}
-                      x={chart.x(t)}
+                      x={t.v}
                       y={plotH - 4}
                     >
-                      {chart.tickFmt(t)}
+                      {t.label}
                     </text>
                   ))}
                 </svg>
