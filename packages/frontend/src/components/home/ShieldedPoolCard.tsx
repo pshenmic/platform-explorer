@@ -14,8 +14,9 @@ import { useQuery } from '@tanstack/react-query'
 import useResizeObserver from '@react-hook/resize-observer'
 
 import * as Api from '../../util/Api'
-import { ChartGhost, PRESETS, buildTimeTicks, tipTimeFormat } from './MetricChart'
-import PoolDateRange, { poolRangeLabel } from './PoolDateRange'
+import { ChartGhost, buildTimeTicks, tipTimeFormat } from './MetricChart'
+import ChartDateRange from '../charts/ChartDateRange'
+import { chartRangeLabel, resolveChartRange } from '../charts/dateRanges'
 import type { DateRangeFilterValue } from '../filters/types'
 import { Tooltip } from '../ui/Tooltips'
 import DashIcon from '../ui/icons/DashIcon'
@@ -256,26 +257,7 @@ export default function ShieldedPoolCard({
   const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(null)
   const range = useMemo(() => {
     if (!pool.asOf) return null
-    const preset = PRESETS[PRESETS.length - 1]
-    const current = {
-      start: preset.start ?? new Date(Date.parse(pool.asOf) - preset.ms!).toISOString(),
-      end: pool.asOf
-    }
-    if (!dateRange?.start || !dateRange.end) return current
-    const start = new Date(dateRange.start)
-    const end = new Date(dateRange.end)
-    if (dateRange.mode === 'rolling') {
-      const duration = end.getTime() - start.getTime()
-      end.setTime(Date.parse(current.end))
-      start.setTime(end.getTime() - duration)
-    } else {
-      start.setHours(0, 0, 0, 0)
-      end.setHours(23, 59, 59, 999)
-    }
-    return {
-      start: start.toISOString(),
-      end: new Date(Math.min(end.getTime(), Date.parse(current.end))).toISOString()
-    }
+    return resolveChartRange(dateRange, { now: Date.parse(pool.asOf), roundToHour: false })
   }, [dateRange, pool.asOf])
   const period = useMemo(
     () => ({
@@ -395,7 +377,7 @@ export default function ShieldedPoolCard({
 
   const balanceDash = creditsToDash(Number(pool.balance) || 0)
   const points = series.points
-  const windowLabel = poolRangeLabel(dateRange)
+  const windowLabel = chartRangeLabel(dateRange)
   const rangeInDash = creditsToDash(period.in)
   const rangeOutDash = creditsToDash(period.out)
   const usdPx = typeof rateState?.data?.usd === 'number' ? rateState.data.usd : null
@@ -609,7 +591,7 @@ export default function ShieldedPoolCard({
           </Tooltip>
         </div>
         <div className={'ShieldedPool__Controls'}>
-          <PoolDateRange value={dateRange} onChange={setDateRange} />
+          <ChartDateRange value={dateRange} onChange={setDateRange} />
           <div className={'ShieldedPool__Stat'}>
             <div className={'ShieldedPool__StatMain'} aria-busy={pool.loading}>
               <span className={'ShieldedPool__StatUnit'}>Pool balance</span>

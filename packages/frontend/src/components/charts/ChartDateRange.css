@@ -1,18 +1,19 @@
-.PoolDateRange {
+.ChartDateRange {
   display: flex;
   align-items: center;
   gap: var(--pe-space-1);
   max-width: 100%;
+  min-width: 0;
 }
-.PoolDateRange .Presets {
+.ChartDateRange .Presets {
   width: auto;
   flex-shrink: 1;
   flex-wrap: wrap;
 }
-.PoolDateRange .Presets__Chip {
+.ChartDateRange .Presets__Chip {
   min-height: 32px;
 }
-.PoolDateRange__Trigger {
+.ChartDateRange__Trigger {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -20,18 +21,18 @@
   width: 32px;
   min-height: 32px;
 }
-.PoolDateRange__Trigger:hover,
-.PoolDateRange__Trigger[aria-expanded="true"] {
+.ChartDateRange__Trigger:hover,
+.ChartDateRange__Trigger[aria-expanded="true"] {
   color: var(--pe-color-brand-light);
 }
-.PoolDateRange .Presets__Chip:focus-visible {
+.ChartDateRange .Presets__Chip:focus-visible {
   outline: 2px solid var(--pe-color-brand-light);
   outline-offset: 2px;
 }
-.PoolDateRange__Trigger svg {
+.ChartDateRange__Trigger svg {
   flex-shrink: 0;
 }
-.PoolDateRange__Panel {
+.ChartDateRange__Panel {
   position: fixed;
   margin: 0;
   box-sizing: border-box;
