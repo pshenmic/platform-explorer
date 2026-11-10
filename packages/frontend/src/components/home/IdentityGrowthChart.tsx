@@ -46,7 +46,6 @@ export default function IdentityGrowthChart({
   const [pinI, setPinI] = useState<number | null>(null)
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const gid = useId().replace(/:/g, '')
-  const fetchGen = useRef(0)
 
   useResizeObserver(wrapRef as RefObject<HTMLElement>, entry => {
     const { width: w, height: hh } = entry.contentRect
@@ -67,13 +66,13 @@ export default function IdentityGrowthChart({
     }
     const range = resolveChartRange(dateRange)
     const { start, end, intervals } = range
-    const gen = ++fetchGen.current
+    let cancelled = false
     setState(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
     setPinI(null)
     fetcher(start, end, intervals)
       .then((res: any) => {
-        if (gen !== fetchGen.current) return
+        if (cancelled) return
         const pts = (res || [])
           .map((item: any) => ({ x: new Date(item.timestamp), y: item?.data?.[field] }))
           .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
@@ -87,7 +86,7 @@ export default function IdentityGrowthChart({
         })
       })
       .catch(() => {
-        if (gen !== fetchGen.current) return
+        if (cancelled) return
         setState(s => ({
           ...s,
           loading: false,
@@ -96,6 +95,9 @@ export default function IdentityGrowthChart({
           range
         }))
       })
+    return () => {
+      cancelled = true
+    }
   }, [dateRange, fetcher, field, enabled])
 
   const { loading, error, points, range } = state
@@ -104,7 +106,7 @@ export default function IdentityGrowthChart({
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(seriesTimeDomain(points, resolveChartRange(dateRange)), [M.left, width - M.right])
+    const x = d3.scaleTime(seriesTimeDomain(points, range), [M.left, width - M.right])
     const tipFmt = tipTimeFormat({ ms: range!.ms })
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const minY = d3.min(points, (p: any) => p.y) || 0
@@ -136,7 +138,7 @@ export default function IdentityGrowthChart({
     const delta = latest.y - first.y
     const growthPct = first.y > 0 ? (delta / first.y) * 100 : null
     return { lineD, areaD, nodes, xTicks, yTicks, tipFmt, first, latest, delta, growthPct }
-  }, [ready, points, width, h, range, dateRange])
+  }, [ready, points, width, h, range])
 
   const activeI = pinI != null ? pinI : hoverI
   const active = chart && activeI != null ? chart.nodes[activeI] : null

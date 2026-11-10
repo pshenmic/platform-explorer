@@ -94,7 +94,7 @@ export default function TxActivityChart({
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(seriesTimeDomain(points, resolveChartRange(dateRange)), [M.left, width - M.right])
+    const x = d3.scaleTime(seriesTimeDomain(points, range), [M.left, width - M.right])
     const tipFmt = tipTimeFormat({ ms: range!.ms })
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const y = d3.scaleLinear([0, maxY], [h - M.bottom, M.top]).nice()
@@ -116,7 +116,7 @@ export default function TxActivityChart({
     const peak = d3.max(points, (p: any) => p.y) || 0
     const latest = points[points.length - 1]
     return { bars, xTicks, yTicks, tipFmt, total, peak, latest, maxY }
-  }, [ready, points, width, h, range, dateRange])
+  }, [ready, points, width, h, range])
 
   const activeI = pinI != null ? pinI : hoverI
   const activeBar = chart && activeI != null ? chart.bars[activeI] : null

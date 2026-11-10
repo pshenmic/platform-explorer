@@ -74,13 +74,18 @@ export default function TxTypesBar({ enabled = true }) {
     setHover(null)
     const range = resolveChartRange(dateRange)
     const { start, end } = range
+    let cancelled = false
     Api.getTransactionsStatistic(start, end)
       .then(res => {
-        setState({ loading: false, error: false, items: Array.isArray(res) ? res : [], range })
+        if (!cancelled)
+          setState({ loading: false, error: false, items: Array.isArray(res) ? res : [], range })
       })
       .catch(() => {
-        setState({ loading: false, error: true, items: [], range })
+        if (!cancelled) setState({ loading: false, error: true, items: [], range })
       })
+    return () => {
+      cancelled = true
+    }
   }, [enabled, dateRange])
 
   const rangeLabel = state.range?.isAll ? 'all time' : (state.range?.label ?? '')

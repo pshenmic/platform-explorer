@@ -250,7 +250,7 @@ export function MetricChart({
   const ready = width > 0 && h > 0 && points.length > 1
   let x: any, y: any, areaD: any, lineD: any, bars: any, xTicks: any, yTicks: any, tipFmt: any
   if (ready) {
-    x = d3.scaleTime(seriesTimeDomain(points, resolveChartRange(dateRange)), [M.left, width - M.right])
+    x = d3.scaleTime(seriesTimeDomain(points, range), [M.left, width - M.right])
     tipFmt = tipTimeFormat({ ms: range!.ms })
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const minY = d3.min(points, (p: any) => p.y) || 0
