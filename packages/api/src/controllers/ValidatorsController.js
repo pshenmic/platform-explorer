@@ -4,7 +4,7 @@ const Validator = require('../models/Validator')
 const DashCoreRPC = require('../dashcoreRpc')
 const ProTxInfo = require('../models/ProTxInfo')
 const GeoIP = require('../geoip')
-const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums, getProTxList, blocksUntilCorePayment, getCoreBlockHash, getCoreBlockTime, getCoreNetworkInfo, getCoreYieldPerYear } = require('../utils')
+const { checkTcpConnect, calculateInterval, iso8601duration, getFinalPoSeBanHeight, getPlatformQuorums, getProTxList, blocksUntilCorePayment, getCoreBlockHash, getCoreBlockTime, getCoreNetworkInfo, getCoreYieldPerYear, getPendingEpochReward } = require('../utils')
 const Epoch = require('../models/Epoch')
 const { base58 } = require('@scure/base')
 const Intervals = require('../enums/IntervalsEnum')
@@ -96,10 +96,11 @@ class ValidatorsController {
 
     const { state } = proTxInfo ?? {}
 
-    const [votingIdentityBalance, masternodes, coreNetworkInfo, registeredCoreBlockHash, lastPaidCoreBlockHash, poseRevivedCoreBlockHash, poseBanCoreBlockHash] = await Promise.all([
+    const [votingIdentityBalance, pendingEpochReward, masternodes, coreNetworkInfo, registeredCoreBlockHash, lastPaidCoreBlockHash, poseRevivedCoreBlockHash, poseBanCoreBlockHash] = await Promise.all([
       validatorInfo.votingIdentity
         ? this.sdk.identities.getIdentityBalance(validatorInfo.votingIdentity).then(String, () => null)
         : null,
+      getPendingEpochReward(this.sdk, validator.proTxHash, epochInfo).catch(() => null),
       getProTxList(),
       getCoreNetworkInfo(),
       getCoreBlockHash(state?.registeredHeight),
@@ -156,6 +157,7 @@ class ValidatorsController {
           epochInfo,
           endpoints,
           votingIdentityBalance,
+          pendingEpochReward,
           // Core caps the PoSe penalty at the size of the masternode list, at least 100
           poseScoreMax: Math.max(100, masternodes.length),
           blocksUntilCorePayment: blocksUntilCorePayment(validator.proTxHash, masternodes),
