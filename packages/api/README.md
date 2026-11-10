@@ -33,11 +33,14 @@ docker run -d -p 3005:3005 --restart always --env-file .env ghcr.io/pshenmic/pla
 
 ## HTTP API
 
-Platform Explorer HTTP API allow you to query and see platform blockchain data programmatically with a REST interface via HTTP calls. You can use it to build, test, or improve your applications.
+Query Dash Platform blocks, transactions, identities, contracts and documents over HTTP.
 
-API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
+API base URLs:
 
-Production (testnet) live URL is [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
+* Mainnet: [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
+* Testnet: [https://testnet.platform-explorer.pshenmic.dev](https://testnet.platform-explorer.pshenmic.dev)
+
+Schema validation errors currently return `500 Internal Server Error` through the API error handler. `400 Bad Request` is used for the explicit checks described under each endpoint.
 
 Reference:
 
@@ -211,6 +214,8 @@ data instead. For already-completed epochs they are `null`.
 `avgBlockTime` is the average time between consecutive blocks in the epoch in milliseconds, or `null` when the epoch contains less than two blocks.
 
 
+* Returns `400 Bad Request` for: Requested epoch not found.
+
 ```
 HTTP /epoch/2492
 
@@ -319,6 +324,9 @@ GET /block/12E5592208322B5A3598C98C1811FCDD403DF40F522511D7A965DDE1D96C97C7
 Return all blocks proposed by the specific validators
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
+
+* Query parameter `order` - Sort direction: `asc` or `desc`. Default: `asc`.
+
 ```
 GET /validator/B8F90A4F07D9E59C061D41CC8E775093141492A5FD59AB3BBC4241238BB28A18/blocks
 
@@ -356,6 +364,10 @@ Return all blocks with pagination info
   indexer stores per block, so it is exact and works for quorums long past the signing-active
   window. It combines with `validator` to give one member's blocks inside that quorum, and is
   accepted in either case. An unknown quorum gives an empty page rather than an error
+
+* Query parameter `order` - Sort direction: `asc` or `desc`. Default: `asc`.
+Current limitation: supplying both timestamps with `timestamp_start` earlier than `timestamp_end` returns `400` in this API version. Use a single timestamp boundary until the API validation is corrected.
+
 ```
 GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max=4000&gas_min=1&gas_max=99999999999&timestamp_start=2024-08-29T23:24:11.516z&timestamp_end=2025-08-29T23:24:11.516z&tx_count_min=2&tx_count_max=11&validator=C11C1168DCF9479475CB1355855E30EA75C0CDDA8A8F9EA80591568DD1C33BA8&quorum=000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
 
@@ -483,17 +495,22 @@ Return all validators with pagination info.
 * Valid `order` values are `asc` or `desc`
 * `lastProposedBlockHeader` field is nullable
 * `?isActive=true` boolean can be supplied in the query params to filter by isActive field
-* `?isBanned=true` boolean can be supplied in the query params to filter by PoSe ban status (a banned validator is never active)
+* `?isBanned=true` boolean can be supplied in the query params to filter by PoSe ban status (a banned validator is never active; validators absent from the current masternode list are also treated as banned)
 * `limit` cannot be more then 100 (0 = all validators)
 * `page` cannot be less then 1
 * `blocks_proposed_min` and `blocks_proposed_max` minimum and maximum amount of proposed blocks
-* `last_proposed_block_height_min` and `last_proposed_block_height_min` minimum and maximum last proposed blocks height
+* `last_proposed_block_height_min` and `last_proposed_block_height_max` minimum and maximum last proposed blocks height
 * `last_proposed_block_timestamp_start` and `last_proposed_block_timestamp_end` timestamp start and end for last proposed blocks
 * `last_proposed_block_hash` hash of last proposed block
 * `geoIpInfo` contains the node location resolved from its service IP with the [DB-IP City Lite](https://db-ip.com) database; it is `null` when the service address has no IPv4 host, and its fields are `null` when the IP is not present in the database
 * the DB-IP City Lite database is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/): any page displaying `geoIpInfo` data must include an attribution link back to DB-IP.com, e.g. `<a href='https://db-ip.com'>IP Geolocation by DB-IP</a>`
+
+* All filters are optional; omitted filters include all matching statuses or values. Range boundaries are inclusive.
+* `owner` is a Base58 validator identity identifier, 43–44 characters. Defaults: `page=1`, `limit=10`, `order=asc`.
+* Reversed proposed block count, height, or timestamp ranges return `400 Bad Request`.
+
 ```
-GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_block_height_min=190458&last_proposed_block_height_max=197458&last_proposed_block_timestamp_start=2025-10-11T02:46:09.433Z&last_proposed_block_timestamp_end=2025-10-12T02:46:09.433Z&last_proposed_block_hash=9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1&is_active=true&limit=10&page=1&order=asc&owner=PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB
+GET /validators?blocks_proposed_min=1&blocks_proposed_max=9999999&last_proposed_block_height_min=190458&last_proposed_block_height_max=197458&last_proposed_block_timestamp_start=2025-10-11T02:46:09.433Z&last_proposed_block_timestamp_end=2025-10-12T02:46:09.433Z&last_proposed_block_hash=9151C25609D85610C416450B4648CCB4671E373452EA8FA21AC0DF77D03039E1&isActive=true&limit=10&page=1&order=asc&owner=PJUBWbXWmzEYCs99rAAbnCiHRzrnhKLQrXbmSsuPBYB
 
 {
     "pagination": {
@@ -706,6 +723,9 @@ Get validator by Masternode Identity.
 * `totalReward` is what Platform paid the validator for its proposed blocks, in credits, `epochReward` is what it was paid in the current epoch, which pays the previous one
 * `pendingEpochReward` is an estimate of what the validator has earned in the current, not yet paid epoch `epoch` up to block `blockHeight`, not a guaranteed payout: the epoch pool so far (`processingFees`, `distributedStorageFees` and `coreBlockRewards`, all in credits) shared by `proposedBlocks` of the `totalBlocks` of the epoch, before masternode reward shares, as Drive pays it at the end of the epoch. The pool is read from Platform state, so it is exact up to `blockHeight`, the payout also includes the blocks until the end of the epoch. `null` when the pool can't be read
 * `pendingEpochReward.estimatedReward` is the approximate income of the validator for the whole epoch: `reward` scaled from the time passed since the epoch start (to the latest block) to the epoch length, assuming it keeps earning at the same rate. `null` when the times are unknown
+
+* Path parameter `identifier` - Validator identity identifier.
+
 ```
 GET /validator/identity/8tsWRSwsTM5AXv4ViCF9gu39kzjbtfFDM6rCyL2RcFzd
 
@@ -825,6 +845,8 @@ Return a series data for the reward from proposed blocks by validator chart with
 * `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
+* Path parameter `hash` - Validator ProTxHash.
+
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/rewards/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
 [
@@ -844,6 +866,10 @@ Return a series data for the validator income chart. Income per interval is esti
 * `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
+* Path parameter `hash` - Validator ProTxHash.
+
+* Returns `400 Bad Request` for: Missing timestamp boundaries or reversed timestamp range.
+
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/income/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
 [
@@ -862,6 +888,10 @@ Return a series data for the amount of proposed blocks by validator chart with
 * `timestamp_start` lower interval threshold in ISO string
 * `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
+
+* Path parameter `hash` - Validator ProTxHash.
+
+* Returns `400 Bad Request` for: Missing timestamp boundaries or reversed timestamp range.
 
 ```
 GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/stats?timestamp_start=2024-01-01T00:00:00&timestamp_end=2025-01-01T00:00:00
@@ -885,6 +915,10 @@ Return the Platform epochs overlapping the interval with the blocks the validato
 * `fees` are the fees of the transactions in the blocks proposed by the validator, in credits
 * `reward` is what Platform paid the validator for the epoch: its part of the epoch pool (processing fees, distributed storage fees and Core block rewards) by the proposed blocks, in credits, before the masternode reward shares. `0` when the validator proposed no blocks in the epoch, `null` until the first block of the next epoch pays it, and for the epochs paid before Platform protocol version 9. A point of grouped epochs sums the paid ones
 * `totalBlocks` is the amount of blocks in the epoch, still growing for the current epoch
+
+* Path parameter `hash` - Validator ProTxHash.
+
+* Returns `400 Bad Request` for: Missing timestamp boundaries or reversed timestamp range.
 
 ```
 GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/epochs/stats?timestamp_start=2025-07-13T13:41:11.493Z&timestamp_end=2025-07-13T13:41:11.493Z
@@ -912,7 +946,11 @@ Return what the validator earned during the interval
 * `core` contains the Core payments of the Core blocks chain locked by Platform during the interval, `amount` is in duffs and contains the owner and operator outputs
 * `platform` contains the Platform rewards paid during the interval, every epoch is paid by the first block of the next one. `epochs` is the amount of paid epochs the validator proposed blocks in, `reward` is in credits, before the masternode reward shares
 * `estimate` is the gross monthly income in DASH expected from the last 30 days, regardless of the interval, before the operator and reward shares and expenses: `corePerMonth` from `coreYieldPerYear` and `platformPerMonth` from the Platform rewards paid during the last 30 days. `eligible` is `false` for a banned or removed masternode, then the estimates are `null`. `platformPerMonth` is also `null` for a masternode registered less than 30 days ago and when no Platform rewards were indexed for the period, `totalPerMonth` is `null` when any estimate is
-* `platformHistory` describes the period of `platformPerMonth`: the first and the last paid epoch, the period bounds and the `reward` paid in it, in credits. `null` when `platformPerMonth` is
+* `estimate.platformHistory` describes the period of `platformPerMonth`: the first and the last paid epoch, the period bounds and the `reward` paid in it, in credits. `null` when `platformPerMonth` is
+
+* Path parameter `hash` - Validator ProTxHash.
+
+* Returns `400 Bad Request` for: Missing timestamp boundaries or reversed timestamp range.
 
 ```
 GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/earnings?timestamp_start=2025-07-13T00:00:00.000Z&timestamp_end=2025-07-14T00:00:00.000Z
@@ -1082,6 +1120,8 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 | `SHIELDED_WITHDRAWAL`                 | 19         |
 | `IDENTITY_CREATE_FROM_SHIELDED_POOL`  | 20         |
 
+
+* Returns `400 Bad Request` for: Unsupported filter combination or invalid filter range.
 
 ```
 GET /transactions?=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMBLFZhtBUX3wZL3TcNynqE18Zgs&transaction_type=0&transaction_type=1&status=ALL&gas_min=0&gas_max=9999999
@@ -1274,6 +1314,8 @@ Response codes:
 ### RAW Data Contract by Identifier
 Return raw base64 data contract from dpp
 
+* Path parameter `identifier` - Data contract identifier.
+
 ```
 GET /dataContract/6hVQW16jyvZyGSQk2YVty4ND6bgFXozizYWnPt753uW5/raw
 
@@ -1300,6 +1342,8 @@ Return dataContracts set paged and order by block height or documents count.
 * `with_tokens` bool field data contracts with tokens
 * `timestamp_start` and `timestamp_end` timestamp start and end of data contracts creation date
 * `documents_count_min` and `documents_count_max` minimum and maximum count of documents for data contract
+
+* Returns `400 Bad Request` for: Invalid filter values or reversed timestamp or document count range.
 
 ```
 GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_start=2025-01-22T11:09:23.892Z&timestamp_end=2025-03-22T11:09:23.892Z&owner=G3yCKwx9ePsBriBoag5FEhDkad5Qq77cyqLG1FRyhhSi&is_system=false&with_tokens=false&documents_count_min=1&documents_count_max=5&description=Sansnote&keywords=dash&keywords=evo
@@ -1442,6 +1486,8 @@ then will be returned list of data contracts in order of creation date
 * `page` cannot be less then 1
 * `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
 
+* Returns `400 Bad Request` for: Missing timestamp boundaries or reversed timestamp range.
+
 ```
 GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end=2025-09-18T21:13:57.191Z&limit=5&page=2&order=desc
 
@@ -1523,6 +1569,11 @@ Response codes:
 Return last revision of the document by given identifier.
 
 Allows to get withdrawals documents by contract id and document type
+
+When the document is not indexed, `contract_id` and `document_type_name` are required for a DAPI lookup. Indexed documents can be loaded by identifier alone.
+
+* Returns `400 Bad Request` for: Document is not indexed and its contract ID or type is missing, or the contract is not found.
+
 ```
 GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
@@ -1570,6 +1621,9 @@ Return raw document from dapi in base64
 
 * `document_type_name` required
 * `contract_id` required
+
+* Path parameter `identifier` - Document identifier.
+
 ```
 GET /document/9eCqy4HPK1bqMZSVJvX6DvF78YNknczLrjNoccyiZfdF/raw?document_type_name=preorder&contract_id=GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec
 
@@ -1637,6 +1691,14 @@ Return all documents by the given data contract identifier
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 * `document_type_name` optional
+
+* Query parameter `revision_min` - Minimum document revision.
+* Query parameter `revision_max` - Maximum document revision.
+* Query parameter `timestamp_start` - Start timestamp (ISO 8601).
+* Query parameter `timestamp_end` - End timestamp (ISO 8601).
+
+* Returns `400 Bad Request` for: Reversed revision or timestamp range.
+
 ```
 GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?document_type_name=domain&page=1&limit=10&order=desc
 
@@ -1861,6 +1923,11 @@ Return all identities paged and order by block height, tx count or balance.
   Valid values are `regular`, `masternode`, `masternode_voting` and `masternode_operator`, e.g.
   `identity_type=regular` for the identities users registered themselves or `identity_type=masternode_voting`
   for the ones masternodes vote on contested resources with
+
+Range filters accept either boundary or both, for example `balance_min=0&balance_max=1`.
+
+* Returns `400 Bad Request` for: Reversed transaction count, document count, data contract count, or balance range.
+
 ```
 GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&balance_min=100000&balance_max=100000100000100000100000&documents_count_min=1&documents_count_max=5&data_contracts_min=3&data_contracts_max=4&tx_count_min=2&tx_count_max=10
 
@@ -1961,6 +2028,8 @@ Return a series data for the amount of registered identities
 * `timestamp_end` upper interval threshold in ISO string
 * `intervalsCount` intervals count in response ( _optional_ )
 
+* Returns `400 Bad Request` for: Missing timestamp boundaries or reversed timestamp range.
+
 ```
 GET /identities/history?timestamp_start=2025-09-09T00:00:00.000Z&timestamp_end=2025-09-10T00:00:00.000Z&intervalsCount=3
 
@@ -2005,6 +2074,9 @@ _Note: this request does not contain any pagination data in the response_
   asset unlock transaction, so an l1 view can be paired with this record by it. It is `null` until
   the withdrawal is pooled into a transaction, and `transactionSignHeight` alongside it is the core
   height the transaction was signed at
+
+* Path parameter `identifier` - Identity identifier.
+
 ```
 GET /identity/A1rgGVjRGuznRThdAA316VEEpKuVQ7mV8mBK1BFJvXnb/withdrawals?order=asc&start_at=95eiiqMotMvH23f6cv3BPC4ykcHFWTy2g3baCTWZANAs&timestamp_start=2024-10-10T02:37:39.187Z
 
@@ -2127,6 +2199,8 @@ Status can be either `SUCCESS` or `FAIL`. In case of error tx, message will appe
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 
+* Path parameter `identifier` - Identity identifier.
+
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transactions?page=1&limit=10&order=asc
 
@@ -2168,6 +2242,9 @@ Return all transfers made by the given identity
 * `page` cannot be less then 1
 * `type` cannot be less, then 0 and more then 8
 * `amount` is credits as a string, since credits overflow a JSON number past ~90,000 DASH
+
+* Path parameter `identifier` - Identity identifier.
+
 ```
 GET /identity/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/transfers?hash=445E6F081DEE877867816AD3EF492E2C0BD1DDCCDC9C793B23DDDAF8AEA23118&page=1&limit=10&order=asc&type=6
 
@@ -2204,6 +2281,11 @@ Return list of votes by params
 * `limit` cannot be more than 100
 * `type` cannot be less than 0 and more than 8
 * `choice` cannot be less than 0 and more than 3
+
+* Query parameter `order` - Sort direction: `asc` or `desc`. Default: `asc`.
+
+* Returns `400 Bad Request` for: Reversed timestamp range.
+
 ```
 GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=2024-09-19T01:10:57.833Z&voter_identity=2Ey6wdP5YYSqhq96KmU349CeSCsV4avrsNCaXqogGEr9&choice=0&towards_identity=LgdvpQHb7mvrab6Vv49iTz912aHBVjpTJ6rXGRDQL2s
 
@@ -2543,6 +2625,9 @@ Fields:
 
 Note: `SHIELDED_TRANSFER` stays inside the pool and is counted in `types`/`transitionsCount` but excluded from `totalShieldedIn`/`totalShieldedOut`.
 
+
+When an interval is given, all response fields are scoped to that interval.
+
 ```
 GET /transactions/shielded/statistic?timestamp_start=2024-10-01T00:00:00.000Z&timestamp_end=2024-11-01T00:00:00.000Z
 {
@@ -2624,7 +2709,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&pro_tx_hash=36011F180
 Response codes:
 ```
 200: OK
-400: Invalid input, check start/end values
+400: Missing or empty resourceValue.
 500: Internal Server Error
 ```
 ___
@@ -2713,7 +2798,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
 Response codes:
 ```
 200: OK
-400: Invalid input, check start/end values
+400: Missing or empty resourceValue.
 500: Internal Server Error
 ```
 ___
@@ -3542,6 +3627,9 @@ Response codes:
 ___
 ### Identity Nonce
 Return Identity Nonce
+
+* Path parameter `identifier` - Identity identifier.
+
 ```
 GET /identity/HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS/nonce
 {
@@ -3557,6 +3645,10 @@ Response codes:
 ___
 ### Identity Contract Nonce
 Return Identity Contract Nonce
+
+* Path parameter `identifier` - Identity identifier.
+* Path parameter `data_contract_id` - Data contract identifier.
+
 ```
 GET /identity/HTfJKDuW8omFfFrSQuNTkgW39WpncdwFUrL91VJyJXUS/contract/6hVQW16jyvZyGSQk2YVty4ND6bgFXozizYWnPt753uW5/nonce
 {
@@ -3928,6 +4020,8 @@ then will be returned list of tokens in order of creation date
 * `limit` cannot be more then 100
 * `page` cannot be less then 1
 * `timestamp_start` and `timestamp_end` can be null and `timestamp_end` must be greater then `timestamp_start` if they are used. Default value is equal to the interval in the past 30 days
+* Returns `400 Bad Request` for: Missing timestamp boundaries or reversed timestamp range.
+
 ```
 GET tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:28.585Z&timestamp_end=2025-07-28T20:37:28.585Z
 {
@@ -4197,7 +4291,9 @@ Send Transaction for Broadcast
 
 * `base64` optional field. State transition buffer in base64
 * `hex` optional field. State transition buffer in hex
-* You must pass `hex` or `base64`
+* You must pass exactly one of `hex` or `base64`
+
+* Returns `400 Bad Request` for: Missing, conflicting, or invalid transaction encoding.
 
 ```
 POST /transaction/verify
@@ -4236,7 +4332,9 @@ Send Transaction for Broadcast
 
 * `base64` optional field. State transition buffer in base64
 * `hex` optional field. State transition buffer in hex
-* You must pass `hex` or `base64`
+* You must pass exactly one of `hex` or `base64`
+
+* Returns `400 Bad Request` for: Missing, conflicting, or invalid transaction encoding.
 
 ```
 POST /transaction/broadcast
@@ -4544,6 +4642,9 @@ Response codes:
 ___
 ### Quorum by Hash
 Returns a single active platform quorum with its members. Responds 404 for a quorum that is no longer signing-active.
+
+* Path parameter `hash` - Quorum hash.
+
 ```
 GET /quorum/000000153FE56C83B62D35897F3B05DCB60CFE95715EFB3014F7D2C8997C70F1
 
@@ -4579,6 +4680,9 @@ Response codes:
 ___
 ### Validator Quorums
 Returns every active platform quorum the validator is a member of, newest first. An empty array means the validator is in no quorum and will not propose blocks until it is included in one.
+
+* Path parameter `hash` - Validator ProTxHash.
+
 ```
 GET /validator/87075234AC47353B42BB97CE46330CB67CD4648C01F0B2393D7E729B0D678918/quorums
 
@@ -4671,6 +4775,8 @@ Return platform address info by given addres (base58check or bech32m)
   overflow a JSON number past ~90,000 DASH
 * an address with nothing on one side of the ledger reads `"0"` there, not `null`
 
+* Path parameter `platform_address` - Platform address.
+
 ```
 GET /platformAddress/tdashevo1zm37f22lmtkysgznz7mnf3d9tmuh9urrflvjul/info
 
@@ -4706,6 +4812,8 @@ Return all transitions for platform address paged and ordered by block height an
 * `transaction_type` narrows the page to the given state transition types, by name or by number,
   and repeats for more than one of them (`&transaction_type=SHIELD&transaction_type=17`). The
   total follows the filter, so the filtered set can be paged on its own
+
+* Path parameter `platform_address` - Platform address.
 
 ```
 GET /platformAddress/yRpNvoc3hd66c3rNrPRGubVd9vGUoAVpZV/transitions?page=1&limit=10&order=desc&transaction_type=ADDRESS_FUNDS_TRANSFER
