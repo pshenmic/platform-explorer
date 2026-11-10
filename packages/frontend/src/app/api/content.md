@@ -599,8 +599,7 @@ All parameters are optional. Omit a filter to include all matching statuses or v
 | `page` | Integer. Page number, starting at `1`. Default: `1`. |
 | `limit` | Integer from `0` to `100`. Default: `10`. Use `0` to return all matching validators. |
 | `order` | Sort direction: `asc` or `desc`. Default: `asc`. |
-| `orderBy` | Sort field: `id`, `latest_timestamp` or `proposed_blocks_amount`. Omitted or unsupported values use `id`. |
-| `order_by` | Compatibility alias for `orderBy`. If both are supplied, `orderBy` takes precedence. |
+| `order_by` | Sort field: `id`, `latest_timestamp` or `proposed_blocks_amount`. Omitted or unsupported values use `id`. |
 | `isActive` | Boolean. Filter by current active status. |
 | `isBanned` | Boolean. Filter by PoSe ban status. Validators no longer in the masternode list are also treated as banned. |
 | `owner` | String. Base58 validator identity identifier, 43–44 characters. |

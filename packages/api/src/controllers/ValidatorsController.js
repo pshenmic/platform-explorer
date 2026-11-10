@@ -202,7 +202,7 @@ class ValidatorsController {
       page = 1,
       limit = 10,
       order = 'asc',
-      orderBy = request.query.order_by ?? 'id',
+      order_by: orderBy = 'id',
       isActive = undefined,
       isBanned = undefined,
       owner,
@@ -261,7 +261,7 @@ class ValidatorsController {
       lastProposedBlockTimestampStart,
       lastProposedBlockTimestampEnd,
       lastProposedBlockHash,
-      ['id', 'latest_timestamp', 'proposed_blocks_amount'].includes(orderBy) ? orderBy : 'id'
+      orderBy
     )
 
     const activeValidatorsHashes = new Set(activeValidators.map(validator => validator.pro_tx_hash))
