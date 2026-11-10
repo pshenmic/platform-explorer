@@ -9,8 +9,10 @@ import { epochProgress } from '../../../util/epochProgress'
 import {
   validatorChartDateLabel,
   validatorChartHistory,
-  validatorChartRange
+  validatorChartRange,
+  validatorCurrentEpochReward
 } from '../../../util/validatorChart'
+import type { ValidatorPendingEpochReward } from '../../../types/Validator'
 import { creditsToDash, removeTrailingZeros } from '../../../util'
 import { BigNumber } from '../../../components/data'
 import ValidatorAmountDetails from './ValidatorAmountDetails'
@@ -55,10 +57,12 @@ function barPath(left: number, top: number, width: number, bottom: number) {
 
 export default function ValidatorEpochs({
   hash,
-  payouts
+  payouts,
+  pendingReward
 }: {
   hash: string
   payouts: ValidatorPayoutsProps
+  pendingReward?: ValidatorPendingEpochReward | null
 }) {
   const gradId = useId().replace(/:/g, '')
   const tooltipId = useId()
@@ -184,6 +188,13 @@ export default function ValidatorEpochs({
         from: point.data!.epoch,
         to: point.data!.endEpoch ?? point.data!.epoch,
         payout: point.data!.reward,
+        estimatedReward:
+          point.data!.reward == null &&
+          point.data!.endTime == null &&
+          point.data!.epoch === point.data!.endEpoch &&
+          point.data!.epoch === epoch?.number
+            ? validatorCurrentEpochReward(pendingReward, epoch.number)
+            : null,
         ongoing: point.data!.endTime == null,
         progress:
           point.data!.endTime == null &&
@@ -193,7 +204,7 @@ export default function ValidatorEpochs({
             : null,
         blocks: point.data!.blocksProposed
       })),
-    [visiblePoints, epoch?.number, progress]
+    [visiblePoints, epoch?.number, progress, pendingReward]
   )
 
   useEffect(() => {
@@ -229,6 +240,7 @@ export default function ValidatorEpochs({
         barWidth: slotWidth - gap,
         cy: y(payoutsInDash[index]),
         payout: slot.payout,
+        estimatedReward: slot.estimatedReward,
         ongoing: slot.ongoing,
         progress: slot.progress,
         blocks: slot.blocks
@@ -342,9 +354,17 @@ export default function ValidatorEpochs({
     <div>
       <dl className="ValidatorEpochs__TooltipDetails">
         <div>
-          <dt>{shown ? 'Epoch reward' : 'Period rewards'}</dt>
+          <dt>
+            {shown?.estimatedReward != null
+              ? 'Estimated so far'
+              : shown
+                ? 'Epoch reward'
+                : 'Period rewards'}
+          </dt>
           <dd>
-            {chart && (shown ? shown.payout : chart.totalPayouts) != null ? (
+            {shown?.estimatedReward != null ? (
+              <ValidatorAmountDetails dash={creditsToDash(shown.estimatedReward)} />
+            ) : chart && (shown ? shown.payout : chart.totalPayouts) != null ? (
               <ValidatorAmountDetails
                 dash={creditsToDash((shown ? shown.payout : chart.totalPayouts)!)}
               />
@@ -392,8 +412,11 @@ export default function ValidatorEpochs({
   const epochDetails = shown && (
     <div className="ValidatorEpochs__BarDetails">
       <div className="ValidatorEpochs__BarDates">{focusDate ?? '—'} UTC</div>
+      {shown.estimatedReward != null && <div>Estimated so far</div>}
       <div className="ValidatorEpochs__BarAmount">
-        {shown.payout != null ? (
+        {shown.estimatedReward != null ? (
+          <ValidatorAmountDetails dash={creditsToDash(shown.estimatedReward)} />
+        ) : shown.payout != null ? (
           <ValidatorAmountDetails dash={creditsToDash(shown.payout)} />
         ) : shown.ongoing ? (
           'In progress'
@@ -625,7 +648,7 @@ export default function ValidatorEpochs({
                   role={'button'}
                   aria-pressed={pinI === node.i}
                   aria-describedby={activeI === node.i ? tooltipId : undefined}
-                  aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.payout == null ? (node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable') : `${dashAmount(node.payout)} DASH`}`}
+                  aria-label={`Epoch ${node.from === node.to ? node.from : `${node.from}–${node.to}`}: ${node.estimatedReward != null ? `Estimated reward so far ${dashAmount(node.estimatedReward)} DASH; epoch in progress` : node.payout == null ? (node.progress != null ? `${Math.floor(node.progress)}% of estimated duration elapsed; payout unavailable` : node.ongoing ? 'Epoch in progress; payout unavailable' : 'Payout unavailable') : `${dashAmount(node.payout)} DASH`}`}
                   onFocus={() => {
                     setFocusedEpoch(node.i)
                     setHoverI(node.i)

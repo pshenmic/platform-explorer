@@ -1,4 +1,15 @@
 import type { DateRangeFilterValue } from '../components/filters/types'
+import type { ValidatorPendingEpochReward } from '../types/Validator'
+
+export function validatorCurrentEpochReward(
+  pending: ValidatorPendingEpochReward | null | undefined,
+  epoch: number | undefined
+) {
+  if (epoch == null || pending?.epoch !== epoch || typeof pending.reward !== 'string') return null
+  if (!/^\d+$/.test(pending.reward)) return null
+  const reward = Number(pending.reward)
+  return Number.isSafeInteger(reward) && reward >= 0 ? reward : null
+}
 
 export function validatorChartDateLabel(
   timestamp: string | null,

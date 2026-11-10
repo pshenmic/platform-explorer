@@ -804,6 +804,7 @@ function Validator({ hash }: ValidatorProps) {
           <InfoContainer className={'ValidatorPage__Epochs'}>
             <ValidatorEpochs
               hash={hash}
+              pendingReward={validatorQuery.isError ? null : validator.data?.pendingEpochReward}
               payouts={{
                 total: validator.data?.totalReward,
                 loading: validator.loading,

@@ -26,6 +26,18 @@ export interface GeoIpInfo {
   city?: string | null
 }
 
+export interface ValidatorPendingEpochReward {
+  epoch: number
+  blockHeight: number
+  proposedBlocks: number
+  totalBlocks: number
+  processingFees: string
+  distributedStorageFees: string
+  coreBlockRewards: string
+  reward: string
+  estimatedReward: string | null
+}
+
 export interface Validator {
   proTxHash: string | null
   isActive: boolean | null
@@ -37,6 +49,7 @@ export interface Validator {
   epochInfo: EpochData | null
   totalReward: number | null
   epochReward: number | null
+  pendingEpochReward?: ValidatorPendingEpochReward | null
   withdrawalsCount: number | null
   lastWithdrawal: string | null
   lastWithdrawalTime: string | null
