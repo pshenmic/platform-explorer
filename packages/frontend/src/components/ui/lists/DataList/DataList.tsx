@@ -32,7 +32,6 @@ export interface DataListColumn<T = any> {
   filterType?: DataListHeaderFilterType
   filterMultiple?: boolean
   filterOptions?: DataListHeaderMenuOption[]
-  filterMultiple?: boolean
   filterPlaceholder?: string
   cell?: (item: T, index?: number) => ReactNode
 }

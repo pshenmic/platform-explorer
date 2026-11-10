@@ -20,7 +20,6 @@ export interface DataListHeaderMenuProps {
   value?: unknown
   multiple?: boolean
   options?: DataListHeaderMenuOption[]
-  multiple?: boolean
   placeholder?: string
   onChange?: (value: unknown) => void
   onClose: () => void
