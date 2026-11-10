@@ -91,10 +91,23 @@ async function ApiRoute() {
                 components={{
                   pre: ({ children }) => <ApiCode text={plainText(children)} />,
                   h4: ({ children }) => <h3 className="ApiSubheading">{children}</h3>,
+                  table: ({ children }) => (
+                    <div className="Markdown__TableWrapper">
+                      <table role="table">{children}</table>
+                    </div>
+                  ),
+                  thead: ({ children }) => <thead role="rowgroup">{children}</thead>,
+                  tbody: ({ children }) => <tbody role="rowgroup">{children}</tbody>,
+                  tr: ({ children }) => <tr role="row">{children}</tr>,
+                  th: ({ children }) => (
+                    <th role="columnheader" scope="col">
+                      {children}
+                    </th>
+                  ),
                   td: ({ children }) => {
                     const value = plainText(children)
                     return (
-                      <td>
+                      <td role="cell">
                         {/^[245]\d{2}$/.test(value) ? (
                           <span
                             className="ApiStatus"

@@ -188,7 +188,11 @@
     grid-template-columns: minmax(0, 1fr);
   }
   .ApiNavigation {
-    position: static;
+    position: sticky;
+    top: 4.75rem;
+    z-index: 30;
+    background: var(--pe-color-bg);
+    border-radius: var(--pe-radius-lg);
   }
   .ApiNavigation__Toggle {
     display: flex;
@@ -532,4 +536,65 @@
 [data-theme="light"] .ApiEndpoint .Markdown :not(pre) > code,
 [data-theme="light"] .ApiRequest__Actions button[aria-pressed="true"] {
   background: #e6ecef;
+}
+
+@media (max-width: 40em) {
+  .Api__Introduction,
+  .ApiEndpoint > summary,
+  .ApiEndpoint__Body {
+    padding: var(--pe-space-4);
+  }
+  .ApiEndpoint__Heading {
+    gap: var(--pe-space-2);
+  }
+  .ApiEndpoint__Chevron {
+    width: 16px;
+  }
+  .Api .CopyButton {
+    width: 44px;
+    height: 44px;
+  }
+  .ApiExample__Toolbar {
+    gap: var(--pe-space-2);
+    padding: var(--pe-space-2);
+  }
+  .ApiRequest__Actions {
+    gap: var(--pe-space-1);
+  }
+  .ApiRequest__Actions button[aria-pressed] {
+    min-height: 44px;
+    padding-inline: 8px;
+  }
+  .ApiEndpoint .Markdown table,
+  .ApiEndpoint .Markdown tbody {
+    display: block;
+  }
+  .ApiEndpoint .Markdown thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  .ApiEndpoint .Markdown tbody tr {
+    display: grid;
+    padding: var(--pe-space-4);
+    gap: var(--pe-space-2);
+    border-bottom: 1px solid var(--pe-color-gray-800);
+  }
+  .ApiEndpoint .Markdown tbody tr:last-child {
+    border-bottom: 0;
+  }
+  .ApiEndpoint .Markdown td {
+    display: block;
+    width: auto;
+    padding: 0;
+    border: 0;
+  }
+  .ApiEndpoint .Markdown td:first-child {
+    font-weight: 600;
+  }
 }
