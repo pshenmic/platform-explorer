@@ -50,6 +50,9 @@ export const metadata: Metadata = {
 
 async function ApiRoute() {
   const { introduction, sections } = await readDocumentation()
+  const connectionStart = introduction.indexOf('API base URLs:')
+  const overview = connectionStart === -1 ? introduction : introduction.slice(0, connectionStart)
+  const connectionNotes = connectionStart === -1 ? '' : introduction.slice(connectionStart)
   const entries = sections.map(section => ({
     title: section.title,
     href: `#${section.id}`,
@@ -62,8 +65,18 @@ async function ApiRoute() {
         <ApiNavigation entries={entries} />
         <div className="Api__Reference">
           <div className="Api__Introduction InfoBlock">
+            <Markdown
+              components={{ h2: ({ children }) => <h1 className="Api__Title">{children}</h1> }}
+            >
+              {overview}
+            </Markdown>
             <ApiConnection />
-            <Markdown>{introduction}</Markdown>
+            {connectionNotes && (
+              <details className="Api__Notes">
+                <summary>Networks and error responses</summary>
+                <Markdown>{connectionNotes}</Markdown>
+              </details>
+            )}
           </div>
           {sections.map(section => (
             <ApiEndpoint
@@ -77,7 +90,7 @@ async function ApiRoute() {
               <Markdown
                 components={{
                   pre: ({ children }) => <ApiCode text={plainText(children)} />,
-                  h4: ({ children }) => <h4>{children}</h4>,
+                  h4: ({ children }) => <h3 className="ApiSubheading">{children}</h3>,
                   td: ({ children }) => {
                     const value = plainText(children)
                     return (

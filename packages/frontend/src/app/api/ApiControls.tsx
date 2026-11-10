@@ -68,10 +68,7 @@ export function ApiConnection() {
       ) : (
         <p>API URL is not configured for this deployment.</p>
       )}
-      <p>
-        Requests use this deployment’s network. Sample identifiers and responses may belong to a
-        different network or an earlier block.
-      </p>
+      <p>Sample identifiers and responses may belong to another network or an earlier block.</p>
       <a
         className="ApiConnection__Markdown"
         href="/api/markdown"
@@ -180,7 +177,9 @@ export function ApiEndpoint({
               {method}
             </span>
           )}
-          <span className="ApiEndpoint__Name">{title}</span>
+          <span className="ApiEndpoint__Name" role="heading" aria-level={2}>
+            {title}
+          </span>
           <span className="ApiEndpoint__Chevron" aria-hidden="true">
             <ChevronIcon w="6px" h="10px" />
           </span>
