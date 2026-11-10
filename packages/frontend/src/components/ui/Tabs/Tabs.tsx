@@ -7,7 +7,10 @@ import {
   isValidElement,
   useCallback,
   useContext,
+  useEffect,
+  useRef,
   useId,
+  useLayoutEffect,
   useMemo,
   useState,
   type CSSProperties,
@@ -54,13 +57,57 @@ export function Tabs({
   const [uncontrolled, setUncontrolled] = useState(defaultIndex)
   const selectedIndex = index ?? uncontrolled
   const baseId = useId()
+  const rootRef = useRef<HTMLDivElement>(null)
+  const scrollReserve = useRef<{ panel: HTMLElement; height: number; scrollY: number } | null>(null)
+
+  const pendingReserve = useRef(false)
+  useLayoutEffect(() => {
+    const reserve = scrollReserve.current
+    const root = rootRef.current
+    if (!pendingReserve.current || !reserve || !root) return
+    pendingReserve.current = false
+    const toolbarHeight =
+      root.getBoundingClientRect().height - reserve.panel.getBoundingClientRect().height
+    const height = Math.max(0, reserve.height - toolbarHeight)
+    reserve.panel.style.minHeight = height ? `${height}px` : ''
+    scrollReserve.current = height ? { ...reserve, height } : null
+  }, [selectedIndex])
+
+  useEffect(() => {
+    const releaseReserve = () => {
+      const reserve = scrollReserve.current
+      if (!reserve || window.scrollY >= reserve.scrollY) return
+      const height =
+        window.scrollY === 0 ? 0 : Math.max(0, reserve.height - (reserve.scrollY - window.scrollY))
+      reserve.panel.style.minHeight = height ? `${height}px` : ''
+      scrollReserve.current = height ? { ...reserve, height, scrollY: window.scrollY } : null
+    }
+    window.addEventListener('scroll', releaseReserve, { passive: true })
+    return () => window.removeEventListener('scroll', releaseReserve)
+  }, [])
 
   const setSelectedIndex = useCallback(
     (next: number) => {
+      // Reserve only the height needed to keep the current scroll position valid.
+      // Set it before hiding the old panel, so the browser never clamps the scroll.
+      const root = rootRef.current
+      const panel = root?.querySelector<HTMLElement>(':scope > .Tabs__TabPanels')
+      if (next !== selectedIndex && panel && root?.closest('.InfoContainer--Tabs')) {
+        const scrollY = window.scrollY
+        const spareHeight = Math.max(
+          0,
+          document.documentElement.scrollHeight - window.innerHeight - scrollY
+        )
+        const height =
+          scrollY > 0 ? Math.max(0, root.getBoundingClientRect().height - spareHeight) : 0
+        pendingReserve.current = height > 0
+        panel.style.minHeight = height ? `${height}px` : ''
+        scrollReserve.current = height ? { panel, height, scrollY } : null
+      }
       if (index === undefined) setUncontrolled(next)
       onChange?.(next)
     },
-    [index, onChange]
+    [index, onChange, selectedIndex]
   )
 
   const value = useMemo(
@@ -71,6 +118,7 @@ export function Tabs({
   return (
     <TabsContext.Provider value={value}>
       <div
+        ref={rootRef}
         className={['Tabs', variant ? `Tabs--${variant}` : '', className || '']
           .filter(Boolean)
           .join(' ')}
@@ -86,12 +134,34 @@ export interface TabListProps extends HTMLAttributes<HTMLDivElement> {
   children?: ReactNode
 }
 
-export function TabList({ className, children, ...props }: TabListProps) {
+export function TabList({ className, children, onKeyDown, ...props }: TabListProps) {
   const { selectedIndex, setSelectedIndex, baseId } = useTabsContext()
   let tabIndex = 0
 
   return (
     <div
+      onKeyDown={event => {
+        onKeyDown?.(event)
+        if (
+          event.defaultPrevented ||
+          !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)
+        )
+          return
+        const tabs = Array.from(
+          event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)')
+        )
+        const current = tabs.indexOf(event.target as HTMLButtonElement)
+        if (current < 0) return
+        event.preventDefault()
+        const next =
+          event.key === 'Home'
+            ? 0
+            : event.key === 'End'
+              ? tabs.length - 1
+              : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length
+        tabs[next]?.focus()
+        tabs[next]?.click()
+      }}
       role={'tablist'}
       className={['Tabs__TabList', className || ''].filter(Boolean).join(' ')}
       {...props}
