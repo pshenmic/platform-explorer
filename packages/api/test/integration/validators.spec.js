@@ -44,6 +44,19 @@ describe('Validators routes', () => {
   let epochInfo
   let fullEpochInfo
 
+  // 2 of the 10 blocks of the epoch, 10 Core blocks of the first Core reward year
+  const pendingEpochReward = {
+    epoch: 0,
+    blockHeight: 9,
+    proposedBlocks: 2,
+    totalBlocks: 10,
+    processingFees: '1000',
+    distributedStorageFees: '2000',
+    coreBlockRewards: '1125000000000',
+    reward: '225000000600',
+    estimatedReward: '450000001200'
+  }
+
   before(async () => {
     app = await server.start()
     client = supertest(app.server)
@@ -270,6 +283,26 @@ describe('Validators routes', () => {
 
     mock.method(NodeController.prototype, 'getEpochsInfo', epochInfo)
 
+    mock.method(NodeController.prototype, 'status', async () => ({
+      chain: { latestBlockHeight: '9', coreChainLockedHeight: 11 },
+      // half of the epoch has passed
+      time: { block: String(date + 1800000) }
+    }))
+
+    mock.method(NodeController.prototype, 'getPathElements', async (path, keys) => {
+      if (path.length === 2) {
+        return [
+          { key: Buffer.from('p'), element: { type: 'SumItem', sum: 1000n } },
+          { key: Buffer.from('s'), element: { type: 'SumItem', sum: 2000n } }
+        ]
+      }
+
+      const value = Buffer.alloc(8)
+      value.writeBigUInt64BE(2n)
+
+      return [{ key: keys[0], element: { type: 'Item', value } }]
+    })
+
     mock.method(IdentitiesController.prototype, 'getIdentityBalance', async () => 0)
 
     mock.fn(checkTcpConnect, () => 'ERROR')
@@ -307,6 +340,7 @@ describe('Validators routes', () => {
         },
         totalReward: 0,
         epochReward: 0,
+        pendingEpochReward,
         identity: identity.identifier,
         identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
@@ -377,6 +411,7 @@ describe('Validators routes', () => {
         },
         totalReward: 0,
         epochReward: 0,
+        pendingEpochReward,
         identity: identity.identifier,
         identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
@@ -439,6 +474,7 @@ describe('Validators routes', () => {
         },
         totalReward: 0,
         epochReward: 0,
+        pendingEpochReward,
         identity: identifier,
         identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
@@ -508,6 +544,7 @@ describe('Validators routes', () => {
         },
         totalReward: 0,
         epochReward: 0,
+        pendingEpochReward,
         identity: identifier,
         identityBalance: '0',
         epochInfo: { ...fullEpochInfo },
@@ -592,6 +629,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -662,6 +700,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -732,6 +771,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -804,6 +844,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -880,6 +921,7 @@ describe('Validators routes', () => {
                 },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -952,6 +994,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1023,6 +1066,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1092,6 +1136,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1185,6 +1230,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1266,6 +1312,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1347,6 +1394,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1417,6 +1465,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1493,6 +1542,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1564,6 +1614,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1637,6 +1688,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1710,6 +1762,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1783,6 +1836,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1856,6 +1910,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -1930,6 +1985,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2002,6 +2058,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2076,6 +2133,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2131,6 +2189,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2189,6 +2248,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2246,6 +2306,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2303,6 +2364,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2360,6 +2422,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2430,6 +2493,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },
@@ -2499,6 +2563,7 @@ describe('Validators routes', () => {
               },
               totalReward: null,
               epochReward: null,
+              pendingEpochReward: null,
               identity: identity.identifier,
               identityBalance: '0',
               epochInfo: { ...fullEpochInfo },

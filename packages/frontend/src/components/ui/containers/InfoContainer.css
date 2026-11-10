@@ -62,6 +62,11 @@
   padding-bottom: calc(var(--pe-space-3) + 0px);
 }
 
+/* Embedded empty lists should not inherit standalone mobile page height. */
+.InfoContainer--Tabs .DataList--empty.DataList--compactFirst {
+  min-height: 0;
+}
+
 @media screen and (min-width: 48em) {
   .InfoContainer--Tabs {
     padding-bottom: calc(var(--pe-space-4) + 0px);
@@ -78,19 +83,6 @@
   .InfoContainer--Tabs {
     padding-bottom: calc(var(--pe-space-6) + 0px);
   }
-}
-
-/* Embedded empty lists should not inherit the standalone mobile page height. */
-.InfoContainer--Tabs .DataList--empty.DataList--compactFirst {
-  min-height: 0;
-}
-
-.InfoContainer--Tabs .Tabs__Tab {
-  font-size: var(--pe-text-sm);
-  white-space: nowrap;
-  font-weight: var(--pe-font-weight-bold);
-  font-family: var(--pe-font-heading);
-  text-transform: uppercase;
 }
 
 .InfoContainer--Tabs .Tabs__TabList {
@@ -226,37 +218,37 @@
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .InfoContainer--Tabs .Tabs__TabList {
-    padding-left: calc(var(--pe-space-4) + -var(--pe-space-1));
+    padding-left: calc(var(--pe-space-4) - var(--pe-space-1));
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .InfoContainer--Tabs .Tabs__TabList {
-    padding-left: calc(var(--pe-space-5) + -var(--pe-space-1));
+    padding-left: calc(var(--pe-space-5) - var(--pe-space-1));
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .InfoContainer--Tabs .Tabs__TabList {
-    padding-left: calc(var(--pe-space-6) + -var(--pe-space-1));
+    padding-left: calc(var(--pe-space-6) - var(--pe-space-1));
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 48em) {
   .InfoContainer--Tabs .Tabs__TabList {
-    padding-right: calc(var(--pe-space-4) + -var(--pe-space-1));
+    padding-right: calc(var(--pe-space-4) - var(--pe-space-1));
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 62em) {
   .InfoContainer--Tabs .Tabs__TabList {
-    padding-right: calc(var(--pe-space-5) + -var(--pe-space-1));
+    padding-right: calc(var(--pe-space-5) - var(--pe-space-1));
   }
 }
 
 @media screen and (max-width: 30em) and (min-width: 80em) {
   .InfoContainer--Tabs .Tabs__TabList {
-    padding-right: calc(var(--pe-space-6) + -var(--pe-space-1));
+    padding-right: calc(var(--pe-space-6) - var(--pe-space-1));
   }
 }
 

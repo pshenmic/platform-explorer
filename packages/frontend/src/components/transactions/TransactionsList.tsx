@@ -32,6 +32,9 @@ function TransactionsList({
   onFilterChange,
   paging,
   title,
+  hiddenColumns = [],
+  excludeFilters = [],
+  toolbarTarget,
   pinFirst = false,
   showOwner = true,
   statusFirst = false
@@ -49,6 +52,9 @@ function TransactionsList({
   onFilterChange?: (key: string, value: unknown) => void
   paging?: DataListProps['paging']
   title?: ReactNode
+  toolbarTarget?: HTMLElement | null
+  excludeFilters?: string[]
+  hiddenColumns?: (keyof typeof columnLayout)[]
   pinFirst?: boolean
   showOwner?: boolean
   statusFirst?: boolean
@@ -205,14 +211,19 @@ function TransactionsList({
     <DataList
       className={'TransactionsList'}
       items={transactions}
-      columns={
-        statusFirst
-          ? [
-              ...columns.filter(column => column.key === 'status'),
-              ...columns.filter(column => column.key !== 'status')
-            ]
-          : columns
-      }
+      columns={(statusFirst
+        ? [
+            ...columns.filter(column => column.key === 'status'),
+            ...columns.filter(column => column.key !== 'status')
+          ]
+        : columns
+      )
+        .filter(column => !hiddenColumns.includes(column.key))
+        .map(column =>
+          'filterKey' in column && excludeFilters.includes(column.filterKey ?? '')
+            ? { ...column, filterKey: undefined }
+            : column
+        )}
       pinFirst={pinFirst}
       loading={loading}
       skeletonCount={skeletonCount}
@@ -227,6 +238,7 @@ function TransactionsList({
       filterValues={filterValues}
       onFilterChange={onFilterChange}
       paging={paging}
+      toolbarTarget={toolbarTarget}
       title={title}
       footer={
         pagination ? (

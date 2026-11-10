@@ -84,8 +84,8 @@ export function DataListPagingBar({
   if (paging.hideModeSwitch) return null
 
   return (
-    <div className={'DataList__StatusBar'}>
-      <DataListModeSwitch mode={paging.mode} onModeChange={paging.onModeChange} />
+    <div className="DataList__StatusBar">
+      <DataListModeSwitch {...paging} />
     </div>
   )
 }
@@ -95,11 +95,11 @@ export function DataListModeSwitch({
   onModeChange
 }: Pick<DataListPagingConfig, 'mode' | 'onModeChange'>) {
   return (
-    <div className={'DataList__ModeSwitch'} role={'group'} aria-label={'List view'}>
+    <div className="DataList__ModeSwitch" role="group" aria-label="List view">
       {(['continuous', 'pages'] as const).map(value => (
         <button
           key={value}
-          type={'button'}
+          type="button"
           aria-pressed={mode === value}
           className={`DataList__ModeBtn${mode === value ? ' DataList__ModeBtn--On' : ''}`}
           onClick={() => onModeChange(value)}

@@ -50,7 +50,7 @@ export function Tabs({
   defaultIndex = 0,
   onChange,
   isLazy = false,
-  preserveScroll = false,
+  preserveScroll = true,
   variant,
   className,
   children,

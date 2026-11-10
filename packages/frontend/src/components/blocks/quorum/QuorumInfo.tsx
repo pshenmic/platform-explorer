@@ -6,7 +6,7 @@ import { getL1ExplorerLink } from '../../../util/l1Explorer'
 import { Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../../data'
 import { ValueContainer } from '../../ui/containers'
 import { Badge } from '../../ui/Badge'
-import type { QuorumMember } from './QuorumMembersListItem'
+import type { QuorumMember } from './QuorumMembersList'
 import './QuorumInfo.css'
 
 const Identifier = IdentifierJs as ComponentType<{
