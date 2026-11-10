@@ -1,8 +1,13 @@
 ## HTTP API
 
-Platform Explorer HTTP API allow you to query and see platform blockchain data programmatically with a REST interface via HTTP calls. You can use it to build, test, or improve your applications.
+Query Dash Platform blocks, transactions, identities, contracts and documents over HTTP.
 
-API is still under ongoing development, so refer to this page or repo documentation for the most up-to-date latest specification.
+API base URLs:
+
+* Mainnet: [https://platform-explorer.pshenmic.dev](https://platform-explorer.pshenmic.dev)
+* Testnet: [https://testnet.platform-explorer.pshenmic.dev](https://testnet.platform-explorer.pshenmic.dev)
+
+Schema validation errors currently return `500 Internal Server Error` through the API error handler. `400 Bad Request` is used for the explicit checks described under each endpoint.
 
 Reference:
 
@@ -263,7 +268,7 @@ GET /epoch/2492
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Requested epoch not found. |
 
 ___
 ### Block by hash
@@ -472,7 +477,7 @@ GET /blocks?epoch_index_min=1000&epoch_index_max=1200&height_min=2000&height_max
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Invalid gas, height, transaction count, epoch, or timestamp range. |
 
 ___
 ### Average Block Time History
@@ -1049,7 +1054,7 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 
 ___
 ### Validator income stats by ProTxHash
@@ -1091,7 +1096,7 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 
 ___
 ### Validator stats by ProTxHash
@@ -1133,7 +1138,7 @@ GET /validator/F60A6BF9EC0794BB0CFD1E0F2217933F4B33EDE6FE810692BC275CA18148AEF0/
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 
 ___
 ### Validator epochs stats by ProTxHash
@@ -1190,7 +1195,7 @@ GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters or reversed timestamp range. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 
 ___
 ### Validator earnings by ProTxHash
@@ -1259,7 +1264,7 @@ GET /validator/88251BD4B124EFEB87537DEABEEC54F6C8F575F4DF81F10CF5E8EEA073092B6F/
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters or reversed timestamp range. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 | 404 | Requested validator not found. |
 
 ___
@@ -1461,7 +1466,7 @@ GET /transactions?page=1&limit=10&orderBy=id&order=asc&owner=6q9RFbeea73tE31LGMB
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Unsupported filter combination or invalid filter range. |
 | 500 | Internal Server Error |
 
 ---
@@ -1745,7 +1750,7 @@ GET /dataContracts?page=1&limit=10&order=asc&order_by=block_height&timestamp_sta
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Invalid filter values or reversed timestamp or document count range. |
 | 500 | Internal Server Error |
 
 ---
@@ -1907,7 +1912,7 @@ GET /dataContracts/rating?timestamp_start=2025-08-18T21:13:57.191Z&timestamp_end
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 | 500 | Internal Server Error |
 
 ---
@@ -2021,7 +2026,7 @@ GET /document/FUJsiMpQZWGfdrWPEUhBRExMAQB9q6MNfFgRqCdz42UJ?document_type_name=pr
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Document is not indexed and its contract ID or type is missing, or the contract is not found. |
 | 404 | Not found |
 | 500 | Internal Server Error |
 
@@ -2197,7 +2202,7 @@ GET /dataContract/GWRSAVFMjXx8HpQFaNJMqBV7MBgMK4br5UESsB4S31Ec/documents?documen
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Reversed revision or timestamp range. |
 | 500 | Internal Server Error |
 
 ---
@@ -2464,7 +2469,7 @@ GET /identities?limit=10&order=desc&order_by=tx_count&identity_type=regular&bala
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Reversed transaction count, document count, data contract count, or balance range. |
 | 500 | Internal Server Error |
 
 ---
@@ -2562,7 +2567,7 @@ GET /identities/history?timestamp_start=2025-09-09T00:00:00.000Z&timestamp_end=2
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 | 500 | Internal Server Error |
 
 ---
@@ -2932,7 +2937,7 @@ GET /masternodes/votes?timestamp_start=2024-09-18T01:10:57.833Z&timestamp_end=20
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Reversed timestamp range. |
 | 500 | Internal Server Error |
 
 ---
@@ -3450,7 +3455,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=/votes?choice=1&pro_tx_hash=36011F180
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid input, check start/end values |
+| 400 | Missing or empty resourceValue. |
 | 404 | Requested resource not found. |
 | 500 | Internal Server Error |
 
@@ -3550,7 +3555,7 @@ GET /contestedResource/WyJkYXNoIiwieHl6Il0=
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid input, check start/end values |
+| 400 | Missing or empty resourceValue. |
 | 404 | Requested resource not found. |
 | 500 | Internal Server Error |
 
@@ -4412,7 +4417,6 @@ IDENTITY_CREATE with instantLock
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Missing or invalid `base64` field. |
 | 500 | Internal Server Error |
 | 503 | Service Temporarily Unavailable |
 
@@ -4886,7 +4890,7 @@ GET /tokens/rating?order=desc&limit=10&page=1&timestamp_start=2025-06-20T17:10:2
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Missing timestamp boundaries or reversed timestamp range. |
 | 500 | Internal Server Error |
 | 503 | Service Temporarily Unavailable |
 
@@ -5459,7 +5463,7 @@ GET /quorum/info?quorumType=6&quorumHash=000001148d84a95dd1dbbe309900f3ed434c100
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
+| 400 | Missing quorumType. |
 | 500 | Internal Server Error |
 | 503 | Service Temporarily Unavailable |
 
@@ -5875,7 +5879,6 @@ Content-Type: application/json
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
 | 500 | Internal Server Error |
 
 ___
@@ -5955,5 +5958,4 @@ Content-Type: application/json
 | Status | Meaning |
 | --- | --- |
 | 200 | OK |
-| 400 | Invalid request parameters. |
 | 500 | Internal Server Error |
