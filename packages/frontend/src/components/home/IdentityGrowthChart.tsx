@@ -4,19 +4,14 @@ import { useState, useEffect, useRef, useId, useMemo, type RefObject } from 'rea
 
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Presets } from '../cards'
+import ChartDateRange from '../charts/ChartDateRange'
+import { resolveChartRange, type ChartRange } from '../charts/dateRanges'
+import type { DateRangeFilterValue } from '../filters/types'
 import { currencyRound } from '../../util'
 import { Skeleton } from './Skeleton'
-import {
-  PRESETS,
-  buildTimeTicks,
-  presetRange,
-  seriesTimeDomain,
-  tipTimeFormat
-} from './MetricChart'
+import { buildTimeTicks, seriesTimeDomain, tipTimeFormat } from './MetricChart'
 import './IdentityGrowthChart.css'
 
-const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 48 }
 
 const formatValue = (v: number) =>
@@ -33,17 +28,17 @@ export default function IdentityGrowthChart({
   yAbbr?: string
   enabled?: boolean
 }) {
-  const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(null)
   const [state, setState] = useState<{
     loading: boolean
     error: boolean
     points: any[]
-    dataPresetIdx: number
+    range: ChartRange | null
   }>({
     loading: true,
     error: false,
     points: [],
-    dataPresetIdx: DEFAULT_PRESET
+    range: null
   })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(160)
@@ -70,13 +65,13 @@ export default function IdentityGrowthChart({
       setState(s => ({ ...s, loading: true, error: false }))
       return
     }
-    const preset = PRESETS[presetIdx]
-    const { start, end } = presetRange(preset)
+    const range = resolveChartRange(dateRange)
+    const { start, end, intervals } = range
     const gen = ++fetchGen.current
     setState(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
     setPinI(null)
-    fetcher(start, end, preset.intervals)
+    fetcher(start, end, intervals)
       .then((res: any) => {
         if (gen !== fetchGen.current) return
         const pts = (res || [])
@@ -88,7 +83,7 @@ export default function IdentityGrowthChart({
           loading: false,
           error: false,
           points: pts.slice(s),
-          dataPresetIdx: presetIdx
+          range
         })
       })
       .catch(() => {
@@ -98,19 +93,19 @@ export default function IdentityGrowthChart({
           loading: false,
           error: true,
           points: [],
-          dataPresetIdx: presetIdx
+          range
         }))
       })
-  }, [presetIdx, fetcher, field, enabled])
+  }, [dateRange, fetcher, field, enabled])
 
-  const { loading, error, points, dataPresetIdx } = state
+  const { loading, error, points, range } = state
   const h = plotH
   const ready = width > 0 && h > 0 && points.length > 1
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(seriesTimeDomain(points, PRESETS[presetIdx]), [M.left, width - M.right])
-    const tipFmt = tipTimeFormat(PRESETS[presetIdx])
+    const x = d3.scaleTime(seriesTimeDomain(points, resolveChartRange(dateRange)), [M.left, width - M.right])
+    const tipFmt = tipTimeFormat({ ms: range!.ms })
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const minY = d3.min(points, (p: any) => p.y) || 0
     const pad = (maxY - minY) * 0.12 || maxY * 0.05 || 1
@@ -141,7 +136,7 @@ export default function IdentityGrowthChart({
     const delta = latest.y - first.y
     const growthPct = first.y > 0 ? (delta / first.y) * 100 : null
     return { lineD, areaD, nodes, xTicks, yTicks, tipFmt, first, latest, delta, growthPct }
-  }, [ready, points, width, h, presetIdx])
+  }, [ready, points, width, h, range, dateRange])
 
   const activeI = pinI != null ? pinI : hoverI
   const active = chart && activeI != null ? chart.nodes[activeI] : null
@@ -168,8 +163,8 @@ export default function IdentityGrowthChart({
     setPinI((p: any) => (p === hoverI ? null : hoverI))
   }
 
-  const isAll = PRESETS[dataPresetIdx].label === 'All'
-  const rangeLabel = isAll ? 'all time' : PRESETS[dataPresetIdx].label
+  const isAll = range?.isAll
+  const rangeLabel = isAll ? 'all time' : (range?.label ?? '')
   const rangeTotal = chart ? formatValue(chart.latest.y) : '—'
   const statMeta = active
     ? `${chart!.tipFmt(active.date)} · ${formatValue(active.value)} ${yAbbr}`
@@ -195,7 +190,7 @@ export default function IdentityGrowthChart({
           </p>
         </div>
         <div className={'IdentityGrowthChart__Controls'}>
-          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <ChartDateRange value={dateRange} onChange={setDateRange} />
           <div
             className={`IdentityGrowthChart__Stat${active ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}
           >

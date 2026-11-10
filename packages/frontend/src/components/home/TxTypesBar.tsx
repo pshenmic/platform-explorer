@@ -4,14 +4,15 @@ import { useState, useEffect, useMemo } from 'react'
 import Link from 'next/link'
 
 import * as Api from '../../util/Api'
-import { Presets } from '../cards'
+import ChartDateRange from '../charts/ChartDateRange'
+import { resolveChartRange, type ChartRange } from '../charts/dateRanges'
+import type { DateRangeFilterValue } from '../filters/types'
 import { TransactionTypesInfo } from '../../enums/state.transition.type'
 import { BatchActions } from '../../enums/batchTypes'
 import { Skeleton } from './Skeleton'
 import { Tooltip } from '../ui/Tooltips'
 import { transactionsListHref } from '../transactions/transactionsListHref'
 import { formatFullNumber } from '../../util'
-import { PRESETS, presetRange } from './MetricChart'
 import './TxTypesBar.css'
 
 const MIN_SEG_FRAC = 0.008
@@ -48,12 +49,18 @@ function flattenStatisticItems(items: any) {
 }
 
 export default function TxTypesBar({ enabled = true }) {
-  const [state, setState] = useState<{ loading: boolean; error: boolean; items: any[] }>({
+  const [state, setState] = useState<{
+    loading: boolean
+    error: boolean
+    items: any[]
+    range: ChartRange | null
+  }>({
     loading: true,
     error: false,
-    items: []
+    items: [],
+    range: null
   })
-  const [presetIdx, setPresetIdx] = useState(PRESETS.length - 1)
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(null)
   const [pin, setPin] = useState<any>(null)
   const [hover, setHover] = useState<any>(null)
 
@@ -65,14 +72,18 @@ export default function TxTypesBar({ enabled = true }) {
     setState(s => ({ ...s, loading: true, error: false }))
     setPin(null)
     setHover(null)
-    const { start, end } = presetRange(PRESETS[presetIdx])
+    const range = resolveChartRange(dateRange)
+    const { start, end } = range
     Api.getTransactionsStatistic(start, end)
-      .then(res => setState({ loading: false, error: false, items: Array.isArray(res) ? res : [] }))
-      .catch(() => setState({ loading: false, error: true, items: [] }))
-  }, [enabled, presetIdx])
+      .then(res => {
+        setState({ loading: false, error: false, items: Array.isArray(res) ? res : [], range })
+      })
+      .catch(() => {
+        setState({ loading: false, error: true, items: [], range })
+      })
+  }, [enabled, dateRange])
 
-  const preset = PRESETS[presetIdx]
-  const rangeLabel = preset.label === 'All' ? 'all time' : preset.label
+  const rangeLabel = state.range?.isAll ? 'all time' : (state.range?.label ?? '')
 
   const segments = useMemo(() => {
     const flat = flattenStatisticItems(state.items).sort((a, b) => b.count - a.count)
@@ -145,7 +156,7 @@ export default function TxTypesBar({ enabled = true }) {
           </p>
         </div>
         <div className={'TxTypesBar__Controls'}>
-          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <ChartDateRange value={dateRange} onChange={setDateRange} />
           <div className={`TxTypesBar__Stat${focused ? ' is-on' : ''}${pin ? ' is-pinned' : ''}`}>
             <div className={'TxTypesBar__StatMain'}>
               <span className={'TxTypesBar__StatCount'}>{rangeTotal}</span>

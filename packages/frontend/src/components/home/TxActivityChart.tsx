@@ -4,19 +4,14 @@ import { useState, useEffect, useRef, useId, useMemo, type RefObject } from 'rea
 
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
-import { Presets } from '../cards'
+import ChartDateRange from '../charts/ChartDateRange'
+import { resolveChartRange, type ChartRange } from '../charts/dateRanges'
+import type { DateRangeFilterValue } from '../filters/types'
 import { currencyRound } from '../../util'
 import { Skeleton } from './Skeleton'
-import {
-  PRESETS,
-  buildTimeTicks,
-  presetRange,
-  seriesTimeDomain,
-  tipTimeFormat
-} from './MetricChart'
+import { buildTimeTicks, seriesTimeDomain, tipTimeFormat } from './MetricChart'
 import './TxActivityChart.css'
 
-const DEFAULT_PRESET = PRESETS.length - 1
 const M = { top: 12, right: 10, bottom: 22, left: 44 }
 
 const formatValue = (v: number) =>
@@ -33,11 +28,17 @@ export default function TxActivityChart({
   yAbbr?: string
   enabled?: boolean
 }) {
-  const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState<{ loading: boolean; error: boolean; points: any[] }>({
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(null)
+  const [state, setState] = useState<{
+    loading: boolean
+    error: boolean
+    points: any[]
+    range: ChartRange | null
+  }>({
     loading: true,
     error: false,
-    points: []
+    points: [],
+    range: null
   })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(160)
@@ -63,13 +64,13 @@ export default function TxActivityChart({
       setState(s => ({ ...s, loading: true, error: false }))
       return
     }
-    const preset = PRESETS[presetIdx]
-    const { start, end } = presetRange(preset)
+    const range = resolveChartRange(dateRange)
+    const { start, end, intervals } = range
     let cancelled = false
     setState(s => ({ ...s, loading: true, error: false }))
     setHoverI(null)
     setPinI(null)
-    fetcher(start, end, preset.intervals)
+    fetcher(start, end, intervals)
       .then((res: any) => {
         if (cancelled) return
         const pts = (res || [])
@@ -77,24 +78,24 @@ export default function TxActivityChart({
           .filter((p: any) => typeof p.y === 'number' && !isNaN(p.y))
         let s = 0
         while (s < pts.length - 1 && pts[s].y === 0) s++
-        setState({ loading: false, error: false, points: pts.slice(s) })
+        setState({ loading: false, error: false, points: pts.slice(s), range })
       })
       .catch(() => {
-        if (!cancelled) setState({ loading: false, error: true, points: [] })
+        if (!cancelled) setState({ loading: false, error: true, points: [], range })
       })
     return () => {
       cancelled = true
     }
-  }, [presetIdx, fetcher, field, enabled])
+  }, [dateRange, fetcher, field, enabled])
 
-  const { loading, error, points } = state
+  const { loading, error, points, range } = state
   const h = plotH
   const ready = width > 0 && h > 0 && points.length > 1
 
   const chart = useMemo(() => {
     if (!ready) return null
-    const x = d3.scaleTime(seriesTimeDomain(points, PRESETS[presetIdx]), [M.left, width - M.right])
-    const tipFmt = tipTimeFormat(PRESETS[presetIdx])
+    const x = d3.scaleTime(seriesTimeDomain(points, resolveChartRange(dateRange)), [M.left, width - M.right])
+    const tipFmt = tipTimeFormat({ ms: range!.ms })
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const y = d3.scaleLinear([0, maxY], [h - M.bottom, M.top]).nice()
     const step = points.length > 1 ? Math.abs(x(points[1].x) - x(points[0].x)) : 8
@@ -115,7 +116,7 @@ export default function TxActivityChart({
     const peak = d3.max(points, (p: any) => p.y) || 0
     const latest = points[points.length - 1]
     return { bars, xTicks, yTicks, tipFmt, total, peak, latest, maxY }
-  }, [ready, points, width, h, presetIdx])
+  }, [ready, points, width, h, range, dateRange])
 
   const activeI = pinI != null ? pinI : hoverI
   const activeBar = chart && activeI != null ? chart.bars[activeI] : null
@@ -143,7 +144,7 @@ export default function TxActivityChart({
     setPinI((p: any) => (p === hoverI ? null : hoverI))
   }
 
-  const rangeLabel = PRESETS[presetIdx].label === 'All' ? 'all time' : PRESETS[presetIdx].label
+  const rangeLabel = range?.isAll ? 'all time' : (range?.label ?? '')
   const rangeTotal = chart ? formatValue(chart.total) : '—'
   const statMeta = activeBar
     ? `${chart!.tipFmt(activeBar.date)} · ${formatValue(activeBar.value)} ${yAbbr}`
@@ -160,7 +161,7 @@ export default function TxActivityChart({
           <p className={'TxActivityChart__Lede'}>Platform state transitions per bucket.</p>
         </div>
         <div className={'TxActivityChart__Controls'}>
-          <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
+          <ChartDateRange value={dateRange} onChange={setDateRange} />
           <div
             className={`TxActivityChart__Stat${activeBar ? ' is-on' : ''}${pinI != null ? ' is-pinned' : ''}`}
           >

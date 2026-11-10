@@ -4,36 +4,23 @@ import { useState, useEffect, useRef, useId, type RefObject } from 'react'
 import * as d3 from 'd3'
 import useResizeObserver from '@react-hook/resize-observer'
 
-import { CardHead, Presets } from '../cards'
+import { CardHead } from '../cards'
+import ChartDateRange from '../charts/ChartDateRange'
+import { chartPresetValue, resolveChartRange, type ChartRange } from '../charts/dateRanges'
+import type { DateRangeFilterValue } from '../filters/types'
 import { currencyRound } from '../../util'
 import './MetricChart.css'
 
 const DAY = 24 * 60 * 60 * 1000
-export const PRESETS = [
-  { label: '24h', ms: DAY, intervals: 48 },
-  { label: '1W', ms: 7 * DAY, intervals: 84 },
-  { label: '1M', ms: 30 * DAY, intervals: 100 },
-  { label: '6M', ms: 182 * DAY, intervals: 100 },
-  { label: '1Y', ms: 365 * DAY, intervals: 100 },
-  { label: 'All', start: '2024-01-01T00:00:00.000Z', intervals: 100 }
-]
-const DEFAULT_PRESET = 2
-
-export function presetRange(preset: any) {
-  // floor end to hour: history API drops partial trailing buckets
-  const endMs = Math.ceil(Date.now() / 3600000) * 3600000
-  return {
-    start: preset.start ?? new Date(endMs - preset.ms).toISOString(),
-    end: new Date(endMs).toISOString()
-  }
-}
-
-export function seriesTimeDomain(points: { x: Date }[], preset?: any): [Date, Date] {
+export function seriesTimeDomain(
+  points: { x: Date }[],
+  range?: { end: string } | null
+): [Date, Date] {
   const xs = points.map(p => Number(p.x)).filter(n => Number.isFinite(n))
   const dataStart = new Date(Math.min(...xs))
   const dataEnd = new Date(Math.max(...xs))
-  const presetEnd = preset ? new Date(presetRange(preset).end) : dataEnd
-  const end = presetEnd.getTime() > dataEnd.getTime() ? presetEnd : dataEnd
+  const rangeEnd = range ? new Date(range.end) : dataEnd
+  const end = rangeEnd.getTime() > dataEnd.getTime() ? rangeEnd : dataEnd
   return [dataStart, end]
 }
 
@@ -198,11 +185,19 @@ export function MetricChart({
   embedded = false,
   fill = false
 }: any) {
-  const [presetIdx, setPresetIdx] = useState(DEFAULT_PRESET)
-  const [state, setState] = useState<{ loading: boolean; error: boolean; points: any[] }>({
+  const [dateRange, setDateRange] = useState<DateRangeFilterValue | null>(() =>
+    chartPresetValue('1M')
+  )
+  const [state, setState] = useState<{
+    loading: boolean
+    error: boolean
+    points: any[]
+    range: ChartRange | null
+  }>({
     loading: true,
     error: false,
-    points: []
+    points: [],
+    range: null
   })
   const [width, setWidth] = useState(0)
   const [plotH, setPlotH] = useState(HEIGHT)
@@ -226,11 +221,11 @@ export function MetricChart({
       setState(s => ({ ...s, loading: true, error: false }))
       return
     }
-    const preset = PRESETS[presetIdx]
-    const { start, end } = presetRange(preset)
+    const range = resolveChartRange(dateRange)
+    const { start, end, intervals } = range
     let cancelled = false
     setState(s => ({ ...s, loading: true, error: false }))
-    fetcher(start, end, preset.intervals)
+    fetcher(start, end, intervals)
       .then((res: any) => {
         if (cancelled) return
         const pts = (res || [])
@@ -239,24 +234,24 @@ export function MetricChart({
         // drop leading empty buckets so the series starts at first activity
         let s = 0
         while (s < pts.length - 1 && pts[s].y === 0) s++
-        setState({ loading: false, error: false, points: pts.slice(s) })
+        setState({ loading: false, error: false, points: pts.slice(s), range })
       })
       .catch(() => {
-        if (!cancelled) setState({ loading: false, error: true, points: [] })
+        if (!cancelled) setState({ loading: false, error: true, points: [], range })
       })
     return () => {
       cancelled = true
     }
-  }, [presetIdx, fetcher, field, enabled])
+  }, [dateRange, fetcher, field, enabled])
 
-  const { loading, error, points } = state
+  const { loading, error, points, range } = state
 
   const h = fill ? plotH : HEIGHT
   const ready = width > 0 && h > 0 && points.length > 1
   let x: any, y: any, areaD: any, lineD: any, bars: any, xTicks: any, yTicks: any, tipFmt: any
   if (ready) {
-    x = d3.scaleTime(seriesTimeDomain(points, PRESETS[presetIdx]), [M.left, width - M.right])
-    tipFmt = tipTimeFormat(PRESETS[presetIdx])
+    x = d3.scaleTime(seriesTimeDomain(points, resolveChartRange(dateRange)), [M.left, width - M.right])
+    tipFmt = tipTimeFormat({ ms: range!.ms })
     const maxY = d3.max(points, (p: any) => p.y) || 1
     const minY = d3.min(points, (p: any) => p.y) || 0
     // bars from 0; line charts pad the domain around the series range
@@ -313,7 +308,7 @@ export function MetricChart({
   return (
     <div className={shellClass} aria-label={title || undefined}>
       <CardHead title={title || null}>
-        <Presets options={PRESETS} value={presetIdx} onChange={setPresetIdx} />
+        <ChartDateRange value={dateRange} onChange={setDateRange} />
       </CardHead>
 
       <div
