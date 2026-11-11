@@ -201,8 +201,6 @@ function Validator({ hash }: ValidatorProps) {
   const region = [validator.data?.geoIpInfo?.city, countryCode].filter(Boolean).join(', ')
 
   const proTxState = validator.data?.proTxInfo?.state
-  const ownerVotes =
-    !!proTxState?.ownerAddress && proTxState.ownerAddress === proTxState.votingAddress
   const collateralAmount = validatorCollateral(validator.data?.proTxInfo?.type)
   const votingBadge =
     validator.data?.votingIdentityBalance != null
@@ -389,42 +387,10 @@ function Validator({ hash }: ValidatorProps) {
           className={'ValidatorPage__Key'}
           postfix={''}
           title={
-            <span className={'ValidatorPage__StatusLabel'}>
-              <ValidatorFieldLabel
-                label={ownerVotes ? 'Owner, voting' : 'Owner'}
-                description={
-                  ownerVotes
-                    ? 'The same address is used for ownership and governance voting.'
-                    : 'Address associated with the key that controls this masternode’s registration.'
-                }
-              />
-              {ownerVotes && votingBadge ? (
-                <Tooltip
-                  className="ValidatorPage__Tooltip"
-                  title="Voting identity balance"
-                  content={
-                    <ValidatorAmountDetails
-                      dash={
-                        !validator.loading && !validator.error
-                          ? creditsToDash(Number(validator.data?.votingIdentityBalance))
-                          : null
-                      }
-                    />
-                  }
-                >
-                  <Badge
-                    size="xs"
-                    className="ValidatorPage__AmountBadge ValidatorPage__Help"
-                    tabIndex={0}
-                    colorScheme={
-                      Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
-                    }
-                  >
-                    {votingBadge}
-                  </Badge>
-                </Tooltip>
-              ) : null}
-            </span>
+            <ValidatorFieldLabel
+              label="Owner"
+              description="Address associated with the key that controls this masternode’s registration."
+            />
           }
           value={
             <KeyIdentifier
@@ -438,66 +404,30 @@ function Validator({ hash }: ValidatorProps) {
         />
       )
     },
-    ...(!ownerVotes && proTxState?.votingAddress
-      ? [
-          {
-            key: 'voting',
-            line: (
-              <InfoLine
-                className={'ValidatorPage__Key'}
-                postfix={''}
-                title={
-                  <span className={'ValidatorPage__StatusLabel'}>
-                    <ValidatorFieldLabel
-                      label="Voting"
-                      description="Address associated with the masternode’s governance voting key."
-                    />
-                    {votingBadge ? (
-                      <Tooltip
-                        className="ValidatorPage__Tooltip"
-                        title="Voting identity balance"
-                        content={
-                          <ValidatorAmountDetails
-                            dash={
-                              !validator.loading && !validator.error
-                                ? creditsToDash(Number(validator.data?.votingIdentityBalance))
-                                : null
-                            }
-                          />
-                        }
-                      >
-                        <Badge
-                          size="xs"
-                          className="ValidatorPage__AmountBadge ValidatorPage__Help"
-                          tabIndex={0}
-                          colorScheme={
-                            Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
-                          }
-                        >
-                          {votingBadge}
-                        </Badge>
-                      </Tooltip>
-                    ) : null}
-                  </span>
-                }
-                value={
-                  <KeyIdentifier
-                    value={proTxState.votingAddress}
-                    href={
-                      l1explorerBaseUrl
-                        ? getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState.votingAddress)
-                        : '#'
-                    }
-                    external={true}
-                  />
-                }
-                loading={validator.loading}
-                error={!proTxState.votingAddress}
-              />
-            )
+    {
+      key: 'voting',
+      line: (
+        <InfoLine
+          className={'ValidatorPage__Key'}
+          postfix={''}
+          title={
+            <ValidatorFieldLabel
+              label="Voting"
+              description="Address associated with the masternode’s governance voting key."
+            />
           }
-        ]
-      : []),
+          value={
+            <KeyIdentifier
+              value={proTxState?.votingAddress || ''}
+              href={getL1ExplorerLink(l1explorerBaseUrl, 'address', proTxState?.votingAddress)}
+              external={true}
+            />
+          }
+          loading={validator.loading}
+          error={validator.error || !proTxState?.votingAddress}
+        />
+      )
+    },
     {
       key: 'identity',
       line: (
@@ -528,10 +458,35 @@ function Validator({ hash }: ValidatorProps) {
           className="ValidatorPage__Key"
           postfix=""
           title={
-            <ValidatorFieldLabel
-              label="Voting identity"
-              description="Platform identity associated with the masternode’s voting key."
-            />
+            <span className="ValidatorPage__StatusLabel">
+              <ValidatorFieldLabel
+                label="Voting identity"
+                description="Platform identity associated with the masternode’s voting key."
+              />
+              {!validator.loading && !validator.error && votingBadge ? (
+                <Tooltip
+                  className="ValidatorPage__Tooltip"
+                  title="Voting identity balance"
+                  content={
+                    <ValidatorAmountDetails
+                      dash={creditsToDash(Number(validator.data?.votingIdentityBalance))}
+                    />
+                  }
+                >
+                  <Badge
+                    size="xs"
+                    className="ValidatorPage__AmountBadge ValidatorPage__Help"
+                    tabIndex={0}
+                    aria-label="Voting identity balance"
+                    colorScheme={
+                      Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
+                    }
+                  >
+                    {votingBadge}
+                  </Badge>
+                </Tooltip>
+              ) : null}
+            </span>
           }
           value={
             validator.data?.votingIdentity ? (
@@ -687,7 +642,7 @@ function Validator({ hash }: ValidatorProps) {
   ]
   const profileKeys = ['proTxHash', 'registration', 'identity', 'service']
   const stateKeys = ['node', 'votingIdentity', 'quorum', 'pose']
-  const detailKeys = ['payout', 'collateral', 'owner', 'voting', 'operator']
+  const detailKeys = ['collateral', 'owner', 'voting', 'payout', 'operator']
   const activityKeys = ['withdrawn', 'lastWithdrawal', 'lastBlock']
   const profileRows = profileKeys.flatMap(key => keyRows.filter(row => row.key === key))
   const stateRows = stateKeys.flatMap(key => keyRows.filter(row => row.key === key))
