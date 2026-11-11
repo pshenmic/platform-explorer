@@ -122,12 +122,16 @@ export default function ValidatorEarnings({
   })
   const data = query.isError ? undefined : query.data?.estimate
   const pending = loading || query.isPending
-  const ineligible = banned || data?.eligible === false
+  const missingEstimate = query.isError
+    ? 'Could not load earnings.'
+    : data?.eligible === true && data.platformPerMonth == null
+      ? '30 days of Platform history needed.'
+      : 'Estimate not provided.'
   const amount = (value?: number | null, showPeriod = true) =>
     pending ? (
       <Skeleton w={100} h={'1em'} />
-    ) : ineligible || value == null || !Number.isFinite(value) || value < 0 ? (
-      'Unavailable'
+    ) : value == null || !Number.isFinite(value) || value < 0 ? (
+      '—'
     ) : (
       <span className="ValidatorPage__MonthlyAmount">
         <span>{yieldDash(value)}</span>
@@ -137,13 +141,12 @@ export default function ValidatorEarnings({
         </span>
       </span>
     )
-  const apr = ineligible ? null : validatorApr(data?.totalPerMonth, nodeType)
+  const apr = validatorApr(data?.totalPerMonth, nodeType)
   const annual = data?.totalPerMonth == null ? null : data.totalPerMonth * (365 / 30)
   const core = data?.corePerMonth
   const platform = data?.platformPerMonth
   const coreShare =
     !pending &&
-    !ineligible &&
     core != null &&
     platform != null &&
     Number.isFinite(core) &&
@@ -201,14 +204,14 @@ export default function ValidatorEarnings({
             <Tooltip
               className="ValidatorPage__Tooltip"
               content={
-                <>
-                  <ValidatorAmountDetails
-                    dash={!pending && !ineligible ? data?.totalPerMonth : null}
-                  />
-                  <div>
-                    Estimated Core + Platform rewards over 30 days. Before splits and expenses.
-                  </div>
-                </>
+                !pending && data?.totalPerMonth != null ? (
+                  <>
+                    <ValidatorAmountDetails dash={data.totalPerMonth} />
+                    <div>Core + Platform, 30 days. Before splits and expenses.</div>
+                  </>
+                ) : (
+                  missingEstimate
+                )
               }
             >
               <Badge
@@ -216,9 +219,7 @@ export default function ValidatorEarnings({
                 colorScheme="gray"
                 tabIndex={0}
                 aria-label="Estimated monthly earnings"
-                data-unavailable={
-                  (!pending && (ineligible || data?.totalPerMonth == null)) || undefined
-                }
+                data-unavailable={(!pending && data?.totalPerMonth == null) || undefined}
               >
                 {amount(data?.totalPerMonth, false)}
               </Badge>
@@ -257,12 +258,14 @@ export default function ValidatorEarnings({
             <Tooltip
               className="ValidatorPage__Tooltip"
               content={
-                <>
-                  <ValidatorAmountDetails dash={!pending && !ineligible ? annual : null} />
-                  Monthly estimate × 365 / 30.
-                  <br />
-                  Without compounding.
-                </>
+                !pending && annual != null ? (
+                  <>
+                    <ValidatorAmountDetails dash={annual} />
+                    <div>Monthly × 365 / 30. No compounding.</div>
+                  </>
+                ) : (
+                  missingEstimate
+                )
               }
             >
               <Badge
@@ -270,7 +273,7 @@ export default function ValidatorEarnings({
                 colorScheme="gray"
                 tabIndex={0}
                 aria-label="Estimated yearly earnings"
-                data-unavailable={(!pending && (ineligible || annual == null)) || undefined}
+                data-unavailable={(!pending && annual == null) || undefined}
               >
                 {amount(annual, false)}
               </Badge>
@@ -283,13 +286,7 @@ export default function ValidatorEarnings({
               colorScheme="gray"
               data-unavailable={(!pending && apr == null) || undefined}
             >
-              {pending ? (
-                <Skeleton w={80} h="1em" />
-              ) : apr == null ? (
-                'Unavailable'
-              ) : (
-                `${apr.toFixed(2)}%`
-              )}
+              {pending ? <Skeleton w={80} h="1em" /> : apr == null ? '—' : `${apr.toFixed(2)}%`}
             </Badge>
           </div>
         </div>
@@ -303,17 +300,17 @@ export default function ValidatorEarnings({
             </div>
             <div
               className="ValidatorPage__EarningsAmount"
-              data-unavailable={
-                (!pending && (ineligible || data?.corePerMonth == null)) || undefined
-              }
+              data-unavailable={(!pending && data?.corePerMonth == null) || undefined}
             >
               <Tooltip
                 className="ValidatorPage__Tooltip"
-                title="Estimated Core rewards per month"
+                title="Core monthly estimate"
                 content={
-                  <ValidatorAmountDetails
-                    dash={!pending && !ineligible ? data?.corePerMonth : null}
-                  />
+                  !pending && data?.corePerMonth != null ? (
+                    <ValidatorAmountDetails dash={data.corePerMonth} />
+                  ) : (
+                    'Core estimate not provided.'
+                  )
                 }
               >
                 <span className="ValidatorPage__Help" tabIndex={0}>
@@ -333,10 +330,8 @@ export default function ValidatorEarnings({
               <span>
                 {pending ? (
                   <Skeleton w={100} h="1em" />
-                ) : banned ? (
-                  'Banned'
-                ) : blocksUntilCorePayment == null ? (
-                  'Unavailable'
+                ) : banned || blocksUntilCorePayment == null ? (
+                  '—'
                 ) : (
                   <PaymentCountdown
                     blocks={blocksUntilCorePayment}
@@ -356,17 +351,17 @@ export default function ValidatorEarnings({
             </div>
             <div
               className="ValidatorPage__EarningsAmount"
-              data-unavailable={
-                (!pending && (ineligible || data?.platformPerMonth == null)) || undefined
-              }
+              data-unavailable={(!pending && data?.platformPerMonth == null) || undefined}
             >
               <Tooltip
                 className="ValidatorPage__Tooltip"
-                title="Estimated Platform rewards per month"
+                title="Platform monthly estimate"
                 content={
-                  <ValidatorAmountDetails
-                    dash={!pending && !ineligible ? data?.platformPerMonth : null}
-                  />
+                  !pending && data?.platformPerMonth != null ? (
+                    <ValidatorAmountDetails dash={data.platformPerMonth} />
+                  ) : (
+                    missingEstimate
+                  )
                 }
               >
                 <span className="ValidatorPage__Help" tabIndex={0}>
@@ -398,18 +393,14 @@ export default function ValidatorEarnings({
         >
           {activity}
         </div>
-        {(query.isError || ineligible) && (
+        {query.isError && (
           <div className="ValidatorPage__SummaryHint">
-            {query.isError ? (
-              <span className="ValidatorPage__LoadError">
-                Earnings unavailable
-                <button type="button" onClick={() => void query.refetch()}>
-                  Retry
-                </button>
-              </span>
-            ) : (
-              'No forecast while the node is banned or unregistered.'
-            )}
+            <span className="ValidatorPage__LoadError">
+              Earnings unavailable
+              <button type="button" onClick={() => void query.refetch()}>
+                Retry
+              </button>
+            </span>
           </div>
         )}
       </InfoContainer>

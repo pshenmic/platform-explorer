@@ -8,7 +8,6 @@ import {
   validatorDashAmount as dashAmount
 } from '../../../util/validatorAmount'
 import { creditsToDash } from '../../../util'
-import { formatNumberWithSpaces } from '../../../util/numbers'
 import { Skeleton } from '../../../components/home/Skeleton'
 import ValidatorActivityLists from './ValidatorActivityLists'
 import ValidatorEpochs from './ValidatorEpochs'
@@ -308,12 +307,17 @@ function Validator({ hash }: ValidatorProps) {
                     target="_blank"
                     rel="noopener noreferrer"
                   >
-                    {formatNumberWithSpaces(posePenalty)}
+                    {posePenalty}
                   </a>
                 ) : (
-                  formatNumberWithSpaces(posePenalty)
+                  <span>{posePenalty}</span>
                 )}
-                {hasPoseScoreMax ? ` / ${formatNumberWithSpaces(poseScoreMax)}` : ''}
+                {hasPoseScoreMax && (
+                  <>
+                    <span>/</span>
+                    <span>{poseScoreMax}</span>
+                  </>
+                )}
               </span>
             )
           }

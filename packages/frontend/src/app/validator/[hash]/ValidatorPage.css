@@ -144,8 +144,12 @@
 }
 
 .ValidatorPage__PoseValue {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
   color: var(--pe-color-fg-muted);
   font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .ValidatorPage__PoseValue a,
