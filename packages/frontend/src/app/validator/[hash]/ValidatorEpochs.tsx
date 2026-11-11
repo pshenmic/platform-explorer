@@ -611,7 +611,13 @@ export default function ValidatorEpochs({
                     node.barWidth,
                     h - M.bottom
                   )}
-                  fill={node.payout == null ? `url(#epochMissing-${gradId})` : undefined}
+                  fill={
+                    node.payout == null
+                      ? node.ongoing
+                        ? 'none'
+                        : `url(#epochMissing-${gradId})`
+                      : undefined
+                  }
                 />
                 {node.payout == null && node.progress != null && (
                   <>
