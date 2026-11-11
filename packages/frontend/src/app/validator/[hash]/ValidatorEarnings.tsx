@@ -120,15 +120,20 @@ export default function ValidatorEarnings({
     retry: 1,
     queryFn: () => Api.getValidatorEarnings(hash)
   })
-  const data = query.isError ? undefined : query.data?.estimate
+  const estimate = query.isError ? undefined : query.data?.estimate
+  const data = estimate
+    ? {
+        ...estimate,
+        corePerMonth: estimate.corePerMonth ?? 0,
+        platformPerMonth: estimate.platformPerMonth ?? 0,
+        totalPerMonth:
+          estimate.totalPerMonth ?? (estimate.corePerMonth ?? 0) + (estimate.platformPerMonth ?? 0)
+      }
+    : undefined
   const pending = loading || query.isPending
-  const missingEstimate = query.isError
-    ? 'Could not load earnings.'
-    : data?.eligible === false
-      ? 'No estimate for banned or unregistered nodes.'
-      : data?.eligible === true && data.platformPerMonth == null
-        ? '30 days of Platform history needed.'
-        : 'Estimate not provided.'
+  const partialEstimate =
+    estimate != null && (estimate.corePerMonth == null || estimate.platformPerMonth == null)
+  const missingEstimate = query.isError ? 'Could not load earnings.' : 'Estimate not provided.'
   const amount = (value?: number | null, showPeriod = true) =>
     pending ? (
       <Skeleton w={100} h={'1em'} />
@@ -210,6 +215,7 @@ export default function ValidatorEarnings({
                   <>
                     <ValidatorAmountDetails dash={data.totalPerMonth} />
                     <div>Core + Platform, 30 days. Before splits and expenses.</div>
+                    {partialEstimate && <div>Missing estimates counted as 0.</div>}
                   </>
                 ) : (
                   missingEstimate
@@ -264,6 +270,7 @@ export default function ValidatorEarnings({
                   <>
                     <ValidatorAmountDetails dash={annual} />
                     <div>Monthly × 365 / 30. No compounding.</div>
+                    {partialEstimate && <div>Missing estimates counted as 0.</div>}
                   </>
                 ) : (
                   missingEstimate
@@ -309,7 +316,12 @@ export default function ValidatorEarnings({
                 title="Core monthly estimate"
                 content={
                   !pending && data?.corePerMonth != null ? (
-                    <ValidatorAmountDetails dash={data.corePerMonth} />
+                    <>
+                      <ValidatorAmountDetails dash={data.corePerMonth} />
+                      {estimate?.corePerMonth == null && (
+                        <div>No estimate returned. Shown as 0.</div>
+                      )}
+                    </>
                   ) : (
                     missingEstimate
                   )
@@ -360,7 +372,12 @@ export default function ValidatorEarnings({
                 title="Platform monthly estimate"
                 content={
                   !pending && data?.platformPerMonth != null ? (
-                    <ValidatorAmountDetails dash={data.platformPerMonth} />
+                    <>
+                      <ValidatorAmountDetails dash={data.platformPerMonth} />
+                      {estimate?.platformPerMonth == null && (
+                        <div>No estimate returned. Shown as 0.</div>
+                      )}
+                    </>
                   ) : (
                     missingEstimate
                   )
