@@ -146,6 +146,26 @@ export default function ValidatorEpochs({
     [selection, now]
   )
   const selectionKey = JSON.stringify(selection)
+  const includesCurrentEpoch = Boolean(
+    epoch &&
+      queryRange &&
+      Date.parse(queryRange.start) < epoch.endTime &&
+      Date.parse(queryRange.end) >= epoch.startTime
+  )
+  const epochStats = useQuery({
+    queryKey: ['validator-current-epoch-stats', hash, epoch?.number],
+    enabled: Boolean(hash && epoch && includesCurrentEpoch),
+    queryFn: () =>
+      Api.getEpochStatsByValidator(
+        hash,
+        new Date(epoch!.startTime).toISOString(),
+        new Date().toISOString(),
+        2
+      ),
+    staleTime: 60000,
+    refetchInterval: 60000,
+    retry: 1
+  })
 
   const statsQuery = useQuery({
     queryKey: [
@@ -154,23 +174,38 @@ export default function ValidatorEpochs({
       queryRange?.start,
       queryRange?.end,
       MAX_EPOCH_POINTS,
-      selectionKey
+      selectionKey,
+      epoch?.number
     ],
-    queryFn: () =>
-      Api.getEpochStatsByValidator(hash, queryRange!.start, queryRange!.end, MAX_EPOCH_POINTS),
-    enabled: Boolean(hash && queryRange),
+    queryFn: () => {
+      const end = includesCurrentEpoch
+        ? new Date(epoch!.startTime - 1).toISOString()
+        : queryRange!.end
+      return Date.parse(end) < Date.parse(queryRange!.start)
+        ? Promise.resolve([])
+        : Api.getEpochStatsByValidator(hash, queryRange!.start, end, MAX_EPOCH_POINTS - 1)
+    },
+    enabled: Boolean(hash && queryRange && !currentEpoch.isPending),
     staleTime: 60000,
     placeholderData: (previousData, previousQuery) =>
-      previousQuery?.queryKey[1] === hash && previousQuery?.queryKey[5] === selectionKey
+      previousQuery?.queryKey[1] === hash &&
+      previousQuery?.queryKey[5] === selectionKey &&
+      previousQuery?.queryKey[6] === epoch?.number
         ? previousData
         : undefined,
     retry: 1
   })
 
-  const { visiblePoints, totalBlocks } = useMemo(
-    () => validatorChartHistory(statsQuery.data ?? []),
-    [statsQuery.data]
+  const points = useMemo(
+    () => [
+      ...(statsQuery.data ?? []),
+      ...(includesCurrentEpoch && !epochStats.isError
+        ? (epochStats.data?.filter(point => point.data?.epoch === epoch?.number) ?? [])
+        : [])
+    ],
+    [statsQuery.data, includesCurrentEpoch, epochStats.data, epochStats.isError, epoch?.number]
   )
+  const { visiblePoints, totalBlocks } = useMemo(() => validatorChartHistory(points), [points])
 
   const epochWindow = useMemo(() => {
     const points = visiblePoints
