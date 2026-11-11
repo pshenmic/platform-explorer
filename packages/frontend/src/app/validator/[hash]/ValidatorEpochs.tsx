@@ -18,7 +18,6 @@ import { BigNumber } from '../../../components/data'
 import ValidatorAmountDetails from './ValidatorAmountDetails'
 import { Tooltip } from '../../../components/ui/Tooltips'
 import ValidatorPayouts, { type ValidatorPayoutsProps } from './ValidatorPayouts'
-import { Skeleton } from '../../../components/home/Skeleton'
 import ChartDateRange, {
   CHART_ALL_START,
   defaultChartRange
@@ -266,11 +265,17 @@ export default function ValidatorEpochs({
   }, [epochWindow?.fromEpoch, epochWindow?.toEpoch])
 
   const loading = statsQuery.isPending || (includesCurrentEpoch && epochStats.isPending)
+  const failed = statsQuery.isError || (includesCurrentEpoch && epochStats.isError)
+  const updating = !loading && !failed && (statsQuery.isFetching || epochStats.isFetching)
+  const empty =
+    !loading &&
+    !failed &&
+    statsQuery.isSuccess &&
+    slots.every(slot => (slot.estimatedReward ?? slot.payout) === 0)
   const h = plotH
   const chart = useMemo(() => {
-    if (loading || width <= 0 || !queryRange) return null
-    if (!epochWindow || slots.length === 0) {
-      if (!statsQuery.isSuccess) return null
+    if (width <= 0 || !queryRange) return null
+    if (loading || failed || !epochWindow || slots.length === 0) {
       const left = axisGutter(['0 DASH', '0.5', '1'])
       return {
         nodes: [],
@@ -348,10 +353,10 @@ export default function ValidatorEpochs({
       ? slots.reduce((sum, slot) => sum + (slot.payout ?? 0), 0)
       : null
     return { nodes, xTicks, yTicks, totalPayouts, left }
-  }, [loading, width, h, slots, epochWindow, queryRange, statsQuery.isSuccess])
+  }, [loading, failed, width, h, slots, epochWindow, queryRange])
 
   const activeI = pinI ?? hoverI
-  const shown = activeI != null ? chart?.nodes[activeI] : null
+  const shown = !empty && activeI != null ? chart?.nodes[activeI] : null
   const focusFrom = shown ? shown.from : epochWindow?.fromEpoch
   const focusTo = shown ? shown.to : epochWindow?.toEpoch
   const focusDate = (() => {
@@ -385,7 +390,7 @@ export default function ValidatorEpochs({
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
     keepHover()
     if (pinI != null) return
-    if (!chart || chart.nodes.length === 0) return
+    if (empty || !chart || chart.nodes.length === 0) return
     const rect = e.currentTarget.getBoundingClientRect()
     const px = e.clientX - rect.left
     const py = e.clientY - rect.top
@@ -514,7 +519,7 @@ export default function ValidatorEpochs({
           />
         </div>
       </header>
-      <div ref={wrapRef} className={'ValidatorEpochs__Plot'}>
+      <div ref={wrapRef} className={'ValidatorEpochs__Plot'} aria-busy={loading || updating}>
         <Tooltip
           className="ValidatorPage__Tooltip"
           title={
@@ -551,31 +556,18 @@ export default function ValidatorEpochs({
             }}
           />
         </Tooltip>
-        {statsQuery.isError ? (
-          <div className={'IdentityGrowthChart__Empty'} role="status">
-            {statsQuery.error instanceof Error && statsQuery.error.message.includes('updated API')
-              ? statsQuery.error.message
-              : 'Unable to load epochs. Try a shorter date range or retry.'}
-            <button type={'button'} onClick={() => void statsQuery.refetch()}>
-              Retry
-            </button>
-          </div>
-        ) : loading ? (
-          <div
-            className={'IdentityGrowthChart__Ghost'}
-            role="status"
-            aria-label="Loading Platform payouts"
-          >
-            <Skeleton w={'100%'} h={'70%'} radius={8} />
-          </div>
-        ) : chart ? (
+        {chart ? (
           <svg
-            className={`IdentityGrowthChart__Svg${statsQuery.isFetching || epochStats.isFetching ? ' is-stale' : ''}`}
+            className={`IdentityGrowthChart__Svg${loading ? ' ValidatorEpochs__Loading' : ''}${empty ? ' is-empty' : ''}`}
             viewBox={`0 0 ${width} ${h}`}
             width={width}
             height={h}
             role={'group'}
-            aria-label={`Platform payouts by epoch, ${chart.totalPayouts == null ? 'unavailable' : `${dashAmount(chart.totalPayouts)} DASH indexed`}`}
+            aria-label={
+              loading
+                ? 'Loading Platform payouts'
+                : `Platform payouts by epoch, ${chart.totalPayouts == null ? 'unavailable' : `${dashAmount(chart.totalPayouts)} DASH indexed`}`
+            }
             onMouseMove={onMove}
             onMouseLeave={leaveHover}
           >
@@ -591,7 +583,7 @@ export default function ValidatorEpochs({
             </defs>
             {chart.yTicks.map((tick, i) => (
               <g key={`y${i}`}>
-                <title>{`${tick.label} DASH`}</title>
+                {!loading && <title>{`${tick.label} DASH`}</title>}
                 <line
                   className="IdentityGrowthChart__Grid ValidatorEpochs__Grid"
                   x1={chart.left}
@@ -599,7 +591,16 @@ export default function ValidatorEpochs({
                   y1={tick.v}
                   y2={tick.v}
                 />
-                {tick.label === '0' ? (
+                {loading && tick.label !== '0' ? (
+                  <rect
+                    className="ValidatorEpochs__AxisSkeleton"
+                    x={chart.left - 40}
+                    y={tick.v - 6}
+                    width={32}
+                    height={12}
+                    rx={4}
+                  />
+                ) : tick.label === '0' ? (
                   <text
                     className="IdentityGrowthChart__Tick"
                     x={chart.left - 8}
@@ -653,7 +654,7 @@ export default function ValidatorEpochs({
                 </text>
               </g>
             ))}
-            {chart.nodes.map(node => (
+            {(empty ? [] : chart.nodes).map(node => (
               <g className="ValidatorEpochs__Datum" key={`${node.from}-${node.to}`}>
                 {(node.ongoing
                   ? (node.estimatedReward ?? node.payout ?? 0) > 0
@@ -756,6 +757,38 @@ export default function ValidatorEpochs({
             ))}
           </svg>
         ) : null}
+        {(loading || failed || empty || updating) && (
+          <div
+            className={`ValidatorEpochs__State${updating ? ' ValidatorEpochs__State--Updating' : ''}`}
+            style={{ left: chart?.left ?? 60, right: M.right, top: M.top, bottom: M.bottom }}
+            role="status"
+          >
+            <span
+              className={
+                loading && !failed ? 'ValidatorEpochs__LoadingStatus' : 'ValidatorEpochs__StateText'
+              }
+            >
+              {failed
+                ? 'Unable to load rewards'
+                : loading
+                  ? 'Loading rewards…'
+                  : empty
+                    ? 'No rewards in this range'
+                    : 'Updating…'}
+            </span>
+            {failed && (
+              <button
+                type="button"
+                onClick={() => {
+                  void statsQuery.refetch()
+                  if (includesCurrentEpoch) void epochStats.refetch()
+                }}
+              >
+                Retry
+              </button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   )
