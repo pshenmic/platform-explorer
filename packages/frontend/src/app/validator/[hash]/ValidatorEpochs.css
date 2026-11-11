@@ -135,11 +135,18 @@
   stroke-linejoin: miter;
 }
 
-.ValidatorEpochs__Bar:not(.is-missing) {
+.ValidatorEpochs .ValidatorEpochs__Grid {
+  stroke: var(--pe-color-fg-muted);
+  stroke-opacity: 0.25;
+  stroke-width: 1;
+  pointer-events: none;
+}
+
+.ValidatorEpochs__Bar:not(.is-missing):not(.is-current) {
   fill: var(--pe-color-brand-normal);
 }
 
-.ValidatorEpochs__Bar.is-on:not(.is-missing) {
+.ValidatorEpochs__Bar.is-on:not(.is-missing):not(.is-current) {
   fill: rgba(var(--pe-color-brand-light-rgb), 0.75);
   stroke: var(--pe-color-brand-light);
 }
@@ -170,17 +177,19 @@
   stroke-opacity: 0.75;
 }
 
-.ValidatorEpochs__TimeFill {
+.ValidatorEpochs__Bar.is-current {
+  fill: none;
+  stroke: var(--pe-color-fg-muted);
+}
+
+.ValidatorEpochs__CurrentReward {
   fill: var(--pe-color-fg-muted);
-  fill-opacity: 0.3;
+  fill-opacity: 0.65;
   pointer-events: none;
 }
 
-.ValidatorEpochs__ProgressLabel {
-  fill: var(--pe-color-fg);
-  text-anchor: middle;
-  font-size: var(--pe-text-xs);
-  pointer-events: none;
+.ValidatorEpochs__Bar.is-current.is-on {
+  stroke: var(--pe-color-brand-light);
 }
 
 .ValidatorEpochs__Hit {

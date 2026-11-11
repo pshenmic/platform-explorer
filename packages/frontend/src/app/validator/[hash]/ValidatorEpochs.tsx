@@ -49,6 +49,23 @@ function axisGutter(labels: string[]) {
   return Math.ceil(widest * 6.7) + 20
 }
 
+function dateRangeTicks(start: string, end: string, left: number, right: number) {
+  const first = Date.parse(start)
+  const duration = Date.parse(end) - first
+  const count = Math.max(2, Math.min(5, Math.floor((right - left) / 110)))
+  return Array.from({ length: count }, (_, index) => {
+    const fraction = index / (count - 1)
+    return {
+      v: left + (right - left) * fraction,
+      label: validatorChartDateLabel(
+        new Date(first + duration * fraction).toISOString(),
+        start,
+        end
+      )
+    }
+  })
+}
+
 function barPath(left: number, top: number, width: number, bottom: number) {
   const radius = width < 6 ? 0 : Math.min(2, (bottom - top) / 2)
   const right = left + width
@@ -228,7 +245,8 @@ export default function ValidatorEpochs({
           point.data!.endTime == null &&
           point.data!.epoch === point.data!.endEpoch &&
           point.data!.epoch === epoch?.number
-            ? validatorCurrentEpochReward(pendingReward, epoch.number)
+            ? (validatorCurrentEpochReward(pendingReward, epoch.number) ??
+              (point.data!.blocksProposed === 0 ? 0 : null))
             : null,
         ongoing: point.data!.endTime == null,
         progress:
@@ -247,32 +265,45 @@ export default function ValidatorEpochs({
     setHoverI(null)
   }, [epochWindow?.fromEpoch, epochWindow?.toEpoch])
 
+  const loading = statsQuery.isPending || (includesCurrentEpoch && epochStats.isPending)
   const h = plotH
   const chart = useMemo(() => {
-    if (width <= 0 || !epochWindow || !queryRange || slots.length === 0) return null
-    const payoutsInDash = slots.map(slot => (slot.payout == null ? 0 : creditsToDash(slot.payout)))
+    if (loading || width <= 0 || !queryRange) return null
+    if (!epochWindow || slots.length === 0) {
+      if (!statsQuery.isSuccess) return null
+      const left = axisGutter(['0 DASH', '0.5', '1'])
+      return {
+        nodes: [],
+        xTicks: dateRangeTicks(queryRange.start, queryRange.end, left, width - M.right),
+        yTicks: [0, 0.5, 1].map(value => ({
+          v: h - M.bottom - value * (h - M.bottom - M.top),
+          label: axisDash(value)
+        })),
+        totalPayouts: null,
+        left
+      }
+    }
+    const payoutsInDash = slots.map(slot => creditsToDash(slot.estimatedReward ?? slot.payout ?? 0))
     const maxY = d3.max(payoutsInDash) || 0
     const y = d3.scaleLinear([0, maxY > 0 ? maxY : 1], [h - M.bottom, M.top]).nice()
     const yTickCount = Math.max(2, Math.min(4, Math.floor((h - M.top - M.bottom) / 40)))
-    const yTickValues: number[] = maxY > 0 ? y.ticks(yTickCount) : [0]
-    const left = axisGutter(yTickValues.map(axisDash))
-    const x = d3.scaleLinear(
-      [epochWindow.fromEpoch - 0.5, epochWindow.toEpoch + 0.5],
-      [left, width - M.right]
-    )
+    const yTickValues: number[] = y.ticks(yTickCount)
+    const left = axisGutter(yTickValues.map(value => (value === 0 ? '0 DASH' : axisDash(value))))
+    const x = d3.scaleLinear([-0.5, slots.length - 0.5], [left, width - M.right])
     const nodes = slots.map((slot, index) => {
-      const slotX = x(slot.from - 0.5)
-      const slotWidth = x(slot.to + 0.5) - slotX
+      const slotX = x(index - 0.5)
+      const slotWidth = x(index + 0.5) - slotX
       const gap = Math.min(4, slotWidth * 0.32)
+      const barWidth = Math.min(32, slotWidth - gap)
       return {
         i: index,
         from: slot.from,
         to: slot.to,
-        cx: x((slot.from + slot.to) / 2),
+        cx: x(index),
         slotX,
         slotWidth,
-        barX: slotX + gap / 2,
-        barWidth: slotWidth - gap,
+        barX: slotX + (slotWidth - barWidth) / 2,
+        barWidth,
         cy: y(payoutsInDash[index]),
         payout: slot.payout,
         estimatedReward: slot.estimatedReward,
@@ -300,16 +331,7 @@ export default function ValidatorEpochs({
     ).toISOString()
     const xTicks =
       slots.length === 1
-        ? [
-            {
-              v: left,
-              label: validatorChartDateLabel(firstTimestamp, firstTimestamp, lastTimestamp)
-            },
-            {
-              v: width - M.right,
-              label: validatorChartDateLabel(lastTimestamp, firstTimestamp, lastTimestamp)
-            }
-          ]
+        ? dateRangeTicks(firstTimestamp, lastTimestamp, left, width - M.right)
         : tickIndices.map(index => ({
             v: nodes[index].cx,
             label: validatorChartDateLabel(
@@ -326,7 +348,7 @@ export default function ValidatorEpochs({
       ? slots.reduce((sum, slot) => sum + (slot.payout ?? 0), 0)
       : null
     return { nodes, xTicks, yTicks, totalPayouts, left }
-  }, [width, h, slots, epochWindow, queryRange])
+  }, [loading, width, h, slots, epochWindow, queryRange, statsQuery.isSuccess])
 
   const activeI = pinI ?? hoverI
   const shown = activeI != null ? chart?.nodes[activeI] : null
@@ -334,7 +356,6 @@ export default function ValidatorEpochs({
   const focusTo = shown ? shown.to : epochWindow?.toEpoch
   const focusDate = (() => {
     if (focusFrom == null || focusTo == null || !queryRange) return null
-    const points = statsQuery.data ?? []
     const first = points.find(point => point.data?.epoch === focusFrom)
     const last = points.find(point => (point.data?.endEpoch ?? point.data?.epoch) === focusTo)
     if (!first?.timestamp || !last?.data) return null
@@ -360,7 +381,6 @@ export default function ValidatorEpochs({
     const toLabel = stamp(to)
     return fromLabel === toLabel ? fromLabel : `${fromLabel}–${toLabel}`
   })()
-  const loading = statsQuery.isPending
 
   const onMove = (e: React.MouseEvent<SVGSVGElement>) => {
     keepHover()
@@ -389,13 +409,7 @@ export default function ValidatorEpochs({
     <div>
       <dl className="ValidatorEpochs__TooltipDetails">
         <div>
-          <dt>
-            {shown?.estimatedReward != null
-              ? 'Estimated so far'
-              : shown
-                ? 'Epoch reward'
-                : 'Period rewards'}
-          </dt>
+          <dt>{shown && shown.from === shown.to ? 'Epoch reward' : 'Period rewards'}</dt>
           <dd>
             {shown?.estimatedReward != null ? (
               <ValidatorAmountDetails dash={creditsToDash(shown.estimatedReward)} />
@@ -447,7 +461,6 @@ export default function ValidatorEpochs({
   const epochDetails = shown && (
     <div className="ValidatorEpochs__BarDetails">
       <div className="ValidatorEpochs__BarDates">{focusDate ?? '—'} UTC</div>
-      {shown.estimatedReward != null && <div>Estimated so far</div>}
       <div className="ValidatorEpochs__BarAmount">
         {shown.estimatedReward != null ? (
           <ValidatorAmountDetails dash={creditsToDash(shown.estimatedReward)} />
@@ -547,11 +560,7 @@ export default function ValidatorEpochs({
               Retry
             </button>
           </div>
-        ) : statsQuery.isSuccess && visiblePoints.length === 0 ? (
-          <div className={'IdentityGrowthChart__Empty'} role="status">
-            No payout data in this range
-          </div>
-        ) : loading && !chart ? (
+        ) : loading ? (
           <div
             className={'IdentityGrowthChart__Ghost'}
             role="status"
@@ -561,7 +570,7 @@ export default function ValidatorEpochs({
           </div>
         ) : chart ? (
           <svg
-            className={`IdentityGrowthChart__Svg${statsQuery.isFetching ? ' is-stale' : ''}`}
+            className={`IdentityGrowthChart__Svg${statsQuery.isFetching || epochStats.isFetching ? ' is-stale' : ''}`}
             viewBox={`0 0 ${width} ${h}`}
             width={width}
             height={h}
@@ -584,7 +593,7 @@ export default function ValidatorEpochs({
               <g key={`y${i}`}>
                 <title>{`${tick.label} DASH`}</title>
                 <line
-                  className={'IdentityGrowthChart__Grid'}
+                  className="IdentityGrowthChart__Grid ValidatorEpochs__Grid"
                   x1={chart.left}
                   x2={width - M.right}
                   y1={tick.v}
@@ -598,7 +607,7 @@ export default function ValidatorEpochs({
                     dy="0.32em"
                     textAnchor="end"
                   >
-                    DASH
+                    0 DASH
                   </text>
                 ) : (
                   <>
@@ -624,58 +633,69 @@ export default function ValidatorEpochs({
               </g>
             ))}
             {chart.xTicks.map((tick, i) => (
-              <text
-                key={`x${i}`}
-                className={'IdentityGrowthChart__Tick IdentityGrowthChart__Tick--X'}
-                style={{
-                  textAnchor: i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle'
-                }}
-                x={tick.v}
-                y={h - 4}
-              >
-                {tick.label}
-              </text>
+              <g key={`x${i}`}>
+                <line
+                  className="ValidatorEpochs__Grid"
+                  x1={tick.v}
+                  x2={tick.v}
+                  y1={M.top}
+                  y2={h - M.bottom}
+                />
+                <text
+                  className={'IdentityGrowthChart__Tick IdentityGrowthChart__Tick--X'}
+                  style={{
+                    textAnchor: i === 0 ? 'start' : i === chart.xTicks.length - 1 ? 'end' : 'middle'
+                  }}
+                  x={tick.v}
+                  y={h - 4}
+                >
+                  {tick.label}
+                </text>
+              </g>
             ))}
             {chart.nodes.map(node => (
               <g className="ValidatorEpochs__Datum" key={`${node.from}-${node.to}`}>
-                <path
-                  className={`ValidatorEpochs__Bar${node.i === activeI ? ' is-on' : ''}${node.payout == null ? ' is-missing' : ''}`}
-                  d={barPath(
-                    node.barX,
-                    node.payout == null ? M.top : Math.min(node.cy, h - M.bottom - 2),
-                    node.barWidth,
-                    h - M.bottom
-                  )}
-                  fill={
-                    node.payout == null
-                      ? node.ongoing
-                        ? 'none'
-                        : `url(#epochMissing-${gradId})`
-                      : undefined
-                  }
-                />
-                {node.payout == null && node.progress != null && (
+                {(node.ongoing
+                  ? (node.estimatedReward ?? node.payout ?? 0) > 0
+                  : node.payout == null || node.payout > 0) && (
                   <>
                     <path
-                      className={'ValidatorEpochs__TimeFill'}
+                      className={`ValidatorEpochs__Bar${node.i === activeI ? ' is-on' : ''}${node.ongoing ? ' is-current' : node.payout == null ? ' is-missing' : ''}`}
                       d={barPath(
                         node.barX,
-                        h - M.bottom - ((h - M.bottom - M.top) * node.progress) / 100,
+                        node.ongoing || node.payout == null
+                          ? M.top
+                          : Math.min(node.cy, h - M.bottom - 2),
                         node.barWidth,
                         h - M.bottom
                       )}
+                      fill={
+                        !node.ongoing && node.payout == null
+                          ? `url(#epochMissing-${gradId})`
+                          : undefined
+                      }
                     />
-                    {node.barWidth >= 60 && (
-                      <text className={'ValidatorEpochs__ProgressLabel'} x={node.cx} y={M.top + 16}>
-                        {Math.floor(node.progress)}% time
-                      </text>
+                    {node.ongoing && (
+                      <path
+                        className="ValidatorEpochs__CurrentReward"
+                        d={barPath(
+                          node.barX,
+                          Math.min(node.cy, h - M.bottom - 2),
+                          node.barWidth,
+                          h - M.bottom
+                        )}
+                      />
                     )}
                   </>
                 )}
                 <rect
                   className={'ValidatorEpochs__Hit'}
-                  x={node.slotX}
-                  width={node.slotWidth}
+                  x={
+                    node.ongoing
+                      ? Math.max(chart.left, Math.min(node.cx - 8, width - M.right - 16))
+                      : node.slotX
+                  }
+                  width={node.ongoing ? Math.max(16, node.slotWidth) : node.slotWidth}
                   y={M.top}
                   height={h - M.bottom - M.top}
                   tabIndex={
