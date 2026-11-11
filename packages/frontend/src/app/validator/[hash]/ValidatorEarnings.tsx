@@ -4,8 +4,9 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { validatorApr } from '../../../util/validatorApr'
+import { validatorPlatformMonthly } from '../../../util/validatorEarnings'
 import { formatNumberWithSpaces } from '../../../util/numbers'
-import { epochProgress } from '../../../util/epochProgress'
+import type { ValidatorPendingEpochReward } from '../../../types/Validator'
 import { Skeleton } from '../../../components/home/Skeleton'
 import { InfoContainer } from '../../../components/ui/containers'
 import { Badge } from '../../../components/ui/Badge/Badge'
@@ -62,33 +63,26 @@ function yieldDash(dash: number) {
   return formatNumberWithSpaces(dash, { minimumFractionDigits: 2, maximumFractionDigits: 2 })
 }
 
-function EpochCountdown() {
+function EpochCountdown({
+  end,
+  blocks,
+  loading
+}: {
+  end?: number | null
+  blocks: number | null
+  loading: boolean
+}) {
   const [now, setNow] = useState(() => Date.now())
-  const query = useQuery({
-    queryKey: ['validator-current-epoch'],
-    queryFn: () => Api.getEpoch(),
-    staleTime: 60000,
-    refetchInterval: 60000
-  })
   useEffect(() => {
+    if (blocks == null || blocks <= 0) return
     const timer = setInterval(() => setNow(Date.now()), 1000)
     return () => clearInterval(timer)
-  }, [])
-  if (query.isPending) return <Skeleton w={100} h={'1em'} />
-  const end = query.data?.epoch.endTime
-  if (query.isError || end == null || !Number.isFinite(end)) return <>Unavailable</>
+  }, [blocks])
+  if (loading) return <Skeleton w={100} h={'1em'} />
+  if (blocks == null || blocks <= 0 || end == null || !Number.isFinite(end)) return <>—</>
   const remaining = end - now
   if (remaining <= 0) return <>Awaiting next epoch</>
-  const start = query.data?.epoch.startTime
-  const progress = start == null ? null : epochProgress(start, end, now)
-  return (
-    <span
-      className="ValidatorPage__EpochCountdown"
-      title={`${progress == null ? '' : `${Math.floor(progress)}% of epoch time elapsed\n`}Estimated epoch end`}
-    >
-      {formatCountdown(remaining)}
-    </span>
-  )
+  return <span className="ValidatorPage__EpochCountdown">{formatCountdown(remaining)}</span>
 }
 
 export default function ValidatorEarnings({
@@ -99,6 +93,7 @@ export default function ValidatorEarnings({
   coreTipTime,
   coreBlockIntervalMs,
   banned,
+  pendingReward,
   collateralAmount,
   activity
 }: {
@@ -109,6 +104,7 @@ export default function ValidatorEarnings({
   coreTipTime?: string | null
   coreBlockIntervalMs?: number | null
   banned: boolean
+  pendingReward?: ValidatorPendingEpochReward | null
   collateralAmount: number | null
   activity: ReactNode
 }) {
@@ -120,19 +116,64 @@ export default function ValidatorEarnings({
     retry: 1,
     queryFn: () => Api.getValidatorEarnings(hash)
   })
+  const currentEpoch = useQuery({
+    queryKey: ['validator-current-epoch'],
+    queryFn: () => Api.getEpoch(),
+    staleTime: 60000,
+    refetchInterval: 60000
+  })
+  const epoch = currentEpoch.isError ? undefined : currentEpoch.data?.epoch
+  const pendingBlocks =
+    epoch &&
+    pendingReward?.epoch === epoch.number &&
+    Number.isSafeInteger(pendingReward.proposedBlocks) &&
+    pendingReward.proposedBlocks >= 0
+      ? pendingReward.proposedBlocks
+      : null
+  const epochStats = useQuery({
+    queryKey: ['validator-current-epoch-stats', hash, epoch?.number],
+    enabled: Boolean(hash && epoch && pendingBlocks == null),
+    queryFn: () =>
+      Api.getEpochStatsByValidator(
+        hash,
+        new Date(epoch!.startTime).toISOString(),
+        new Date().toISOString(),
+        2
+      ),
+    staleTime: 60000,
+    refetchInterval: 60000,
+    retry: 1
+  })
+  const epochPoint = epochStats.isError
+    ? undefined
+    : epochStats.data?.find(point => point.data?.epoch === epoch?.number)?.data
+  const epochBlocks =
+    pendingBlocks ??
+    (epochPoint && Number.isSafeInteger(epochPoint.blocksProposed) && epochPoint.blocksProposed >= 0
+      ? epochPoint.blocksProposed
+      : null)
   const estimate = query.isError ? undefined : query.data?.estimate
+  const stopped = banned || estimate?.eligible === false
+  const currentPlatform = validatorPlatformMonthly(pendingReward, epoch, stopped)
+  const corePerMonth = stopped ? 0 : (estimate?.corePerMonth ?? 0)
+  const platformPerMonth =
+    epochBlocks === 0 ? 0 : (currentPlatform ?? estimate?.platformPerMonth ?? 0)
   const data = estimate
     ? {
         ...estimate,
-        corePerMonth: estimate.corePerMonth ?? 0,
-        platformPerMonth: estimate.platformPerMonth ?? 0,
-        totalPerMonth:
-          estimate.totalPerMonth ?? (estimate.corePerMonth ?? 0) + (estimate.platformPerMonth ?? 0)
+        corePerMonth,
+        platformPerMonth,
+        totalPerMonth: corePerMonth + platformPerMonth
       }
     : undefined
-  const pending = loading || query.isPending
+  const epochActivityPending =
+    currentEpoch.isPending ||
+    (pendingBlocks == null && epochStats.isPending && !currentEpoch.isError)
+  const pending = loading || query.isPending || epochActivityPending
   const partialEstimate =
-    estimate != null && (estimate.corePerMonth == null || estimate.platformPerMonth == null)
+    estimate != null &&
+    ((!stopped && estimate.corePerMonth == null) ||
+      (epochBlocks !== 0 && currentPlatform == null && estimate.platformPerMonth == null))
   const missingEstimate = query.isError ? 'Could not load earnings.' : 'Estimate not provided.'
   const amount = (value?: number | null, showPeriod = true) =>
     pending ? (
@@ -215,6 +256,7 @@ export default function ValidatorEarnings({
                   <>
                     <ValidatorAmountDetails dash={data.totalPerMonth} />
                     <div>Core + Platform, 30 days. Before splits and expenses.</div>
+                    {currentPlatform != null && <div>Platform scaled from the current epoch.</div>}
                     {partialEstimate && <div>Missing estimates counted as 0.</div>}
                   </>
                 ) : (
@@ -318,7 +360,7 @@ export default function ValidatorEarnings({
                   !pending && data?.corePerMonth != null ? (
                     <>
                       <ValidatorAmountDetails dash={data.corePerMonth} />
-                      {estimate?.corePerMonth == null && (
+                      {!stopped && estimate?.corePerMonth == null && (
                         <div>No estimate returned. Shown as 0.</div>
                       )}
                     </>
@@ -374,9 +416,16 @@ export default function ValidatorEarnings({
                   !pending && data?.platformPerMonth != null ? (
                     <>
                       <ValidatorAmountDetails dash={data.platformPerMonth} />
-                      {estimate?.platformPerMonth == null && (
+                      {epochBlocks === 0 ? (
+                        <div>No blocks in the current epoch.</div>
+                      ) : currentPlatform != null ? (
+                        <div>
+                          {stopped ? 'Accrued this epoch' : 'Current-epoch projection'}, scaled to
+                          30 days.
+                        </div>
+                      ) : estimate?.platformPerMonth == null ? (
                         <div>No estimate returned. Shown as 0.</div>
-                      )}
+                      ) : null}
                     </>
                   ) : (
                     missingEstimate
@@ -392,14 +441,18 @@ export default function ValidatorEarnings({
               <div className="ValidatorPage__EarningsNext">
                 <Tooltip
                   className="ValidatorPage__Tooltip"
-                  content="Estimated time until the current Platform epoch ends."
+                  content="Expected payment after the current epoch ends."
                 >
                   <span className="ValidatorPage__Help" tabIndex={0}>
-                    Epoch ends in
+                    Next payment
                   </span>
                 </Tooltip>
                 <span>
-                  <EpochCountdown />
+                  <EpochCountdown
+                    end={epoch?.endTime}
+                    blocks={epochBlocks}
+                    loading={loading || epochActivityPending}
+                  />
                 </span>
               </div>
             </div>

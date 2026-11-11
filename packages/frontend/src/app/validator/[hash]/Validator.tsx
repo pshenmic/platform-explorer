@@ -740,6 +740,7 @@ function Validator({ hash }: ValidatorProps) {
             />
           </InfoContainer>
           <ValidatorEarnings
+            pendingReward={validatorQuery.isError ? null : validator.data?.pendingEpochReward}
             loading={validator.loading}
             nodeType={validator.data?.proTxInfo?.type}
             hash={hash}
