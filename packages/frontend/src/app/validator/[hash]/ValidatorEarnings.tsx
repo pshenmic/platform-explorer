@@ -124,9 +124,11 @@ export default function ValidatorEarnings({
   const pending = loading || query.isPending
   const missingEstimate = query.isError
     ? 'Could not load earnings.'
-    : data?.eligible === true && data.platformPerMonth == null
-      ? '30 days of Platform history needed.'
-      : 'Estimate not provided.'
+    : data?.eligible === false
+      ? 'No estimate for banned or unregistered nodes.'
+      : data?.eligible === true && data.platformPerMonth == null
+        ? '30 days of Platform history needed.'
+        : 'Estimate not provided.'
   const amount = (value?: number | null, showPeriod = true) =>
     pending ? (
       <Skeleton w={100} h={'1em'} />
@@ -309,7 +311,7 @@ export default function ValidatorEarnings({
                   !pending && data?.corePerMonth != null ? (
                     <ValidatorAmountDetails dash={data.corePerMonth} />
                   ) : (
-                    'Core estimate not provided.'
+                    missingEstimate
                   )
                 }
               >
