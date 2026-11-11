@@ -152,12 +152,6 @@
   white-space: nowrap;
 }
 
-.ValidatorPage__PoseValue a,
-.ValidatorPage__RegistrationDetails a {
-  color: var(--pe-color-brand-light);
-  text-underline-offset: 3px;
-}
-
 .ValidatorPage__Ledger .InfoLine__Title {
   width: 8.5rem;
 }

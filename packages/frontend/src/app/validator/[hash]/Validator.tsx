@@ -184,16 +184,6 @@ function Validator({ hash }: ValidatorProps) {
     registeredDate && Number.isFinite(registeredDate.getTime())
       ? registeredDate.toLocaleDateString('en-GB', { timeZone: 'UTC' }).replaceAll('/', '.')
       : null
-  const registrationTransactionLink = getL1ExplorerLink(
-    l1explorerBaseUrl,
-    'transaction',
-    validator.data?.proTxHash
-  )
-  const bannedBlockLink = getL1ExplorerLink(
-    l1explorerBaseUrl,
-    'block',
-    validator.data?.poseBanCoreBlockHash
-  )
   const countryCode = validator.data?.geoIpInfo?.countryCode
   const country = countryCode?.trim().toLowerCase()
   const host = validator.error ? null : validator.data?.endpoints?.coreP2PPortStatus?.host
@@ -240,24 +230,13 @@ function Validator({ hash }: ValidatorProps) {
                     : 'Registration date not returned by the API'
                 }
               >
-                {registrationDate && registrationTransactionLink ? (
-                  <a
-                    className="ValidatorPage__Registered ValidatorPage__Link"
-                    href={registrationTransactionLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
+                <span className="ValidatorPage__Registered ValidatorPage__Help" tabIndex={0}>
+                  {registrationDate ? (
                     <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
-                  </a>
-                ) : (
-                  <span className="ValidatorPage__Registered ValidatorPage__Help" tabIndex={0}>
-                    {registrationDate ? (
-                      <TimeDelta endDate={registeredDate} showTimestampTooltip={false} />
-                    ) : (
-                      'Unavailable'
-                    )}
-                  </span>
-                )}
+                  ) : (
+                    'Unavailable'
+                  )}
+                </span>
               </Tooltip>
             </span>
           }
@@ -300,18 +279,7 @@ function Validator({ hash }: ValidatorProps) {
               'Unavailable'
             ) : (
               <span className="ValidatorPage__PoseValue">
-                {isPoseBanned && bannedBlockLink ? (
-                  <a
-                    className="ValidatorPage__Link"
-                    href={bannedBlockLink}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                  >
-                    {posePenalty}
-                  </a>
-                ) : (
-                  <span>{posePenalty}</span>
-                )}
+                <span>{posePenalty}</span>
                 {hasPoseScoreMax && (
                   <>
                     <span>/</span>
