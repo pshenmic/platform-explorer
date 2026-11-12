@@ -9,8 +9,8 @@ export function getValidatorStatus(validator?: ValidatorStatusData | null) {
     return { key: 'banned', label: 'Banned', colorScheme: 'red' } as const
   }
   if (validator?.isActive === true)
-    return { key: 'quorum', label: 'Proposing', colorScheme: 'green' } as const
+    return { key: 'quorum', label: 'In quorum', colorScheme: 'green' } as const
   if (validator?.isActive === false)
-    return { key: 'waiting', label: 'Waiting for quorum', colorScheme: 'gray' } as const
+    return { key: 'waiting', label: 'Not in quorum', colorScheme: 'gray' } as const
   return { key: 'unknown', label: 'Unknown', colorScheme: 'gray' } as const
 }

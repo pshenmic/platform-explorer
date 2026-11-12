@@ -1,14 +1,7 @@
-import { Ban, Circle, CircleHelp, Clock } from 'lucide-react'
 import type { getValidatorStatus } from './validatorStatus'
+import { Badge } from '../ui/Badge'
 import { Tooltip } from '../ui/Tooltips'
 import './ValidatorStatusIndicator.css'
-
-const statusIcons = {
-  banned: Ban,
-  quorum: Circle,
-  waiting: Clock,
-  unknown: CircleHelp
-}
 
 const descriptions = {
   banned: 'Banned by Proof of Service.',
@@ -27,28 +20,21 @@ export default function ValidatorStatusIndicator({
   showLabel?: boolean
 }) {
   const key = unavailable ? 'unknown' : status.key
-  const Icon = statusIcons[key]
   const label = unavailable ? 'Unavailable' : status.label
-
-  if (showLabel)
-    return (
-      <span className="ValidatorStatus" data-status={key}>
-        <Icon className="ValidatorStatus__Icon" size={14} aria-hidden="true" focusable="false" />
-        <span>{label}</span>
-      </span>
-    )
+  const badge = (
+    <Badge
+      className="ValidatorStatus"
+      colorScheme={unavailable ? 'gray' : status.colorScheme}
+      tabIndex={showLabel ? undefined : 0}
+      onClick={event => event.stopPropagation()}
+    >
+      {label}
+    </Badge>
+  )
+  if (showLabel) return badge
   return (
     <Tooltip title={label} content={descriptions[key]}>
-      <span
-        className="ValidatorStatus ValidatorStatus--compact"
-        data-status={key}
-        role="img"
-        aria-label={label}
-        tabIndex={0}
-        onClick={event => event.stopPropagation()}
-      >
-        <Icon className="ValidatorStatus__Icon" size={16} aria-hidden="true" focusable="false" />
-      </span>
+      {badge}
     </Tooltip>
   )
 }

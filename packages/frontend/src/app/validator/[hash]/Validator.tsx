@@ -191,10 +191,6 @@ function Validator({ hash }: ValidatorProps) {
 
   const proTxState = validator.data?.proTxInfo?.state
   const collateralAmount = validatorCollateral(validator.data?.proTxInfo?.type)
-  const votingBadge =
-    validator.data?.votingIdentityBalance != null
-      ? `${dashAmount(Number(validator.data.votingIdentityBalance))} DASH`
-      : ''
   const keyRows = [
     {
       key: 'service',
@@ -430,35 +426,10 @@ function Validator({ hash }: ValidatorProps) {
           className="ValidatorPage__Key"
           postfix=""
           title={
-            <span className="ValidatorPage__StatusLabel">
-              <ValidatorFieldLabel
-                label="Voting identity"
-                description="Platform identity associated with the masternode’s voting key."
-              />
-              {!validator.loading && !validator.error && votingBadge ? (
-                <Tooltip
-                  className="ValidatorPage__Tooltip"
-                  title="Voting identity balance"
-                  content={
-                    <ValidatorAmountDetails
-                      dash={creditsToDash(Number(validator.data?.votingIdentityBalance))}
-                    />
-                  }
-                >
-                  <Badge
-                    size="xs"
-                    className="ValidatorPage__AmountBadge ValidatorPage__Help"
-                    tabIndex={0}
-                    aria-label="Voting identity balance"
-                    colorScheme={
-                      Number(validator.data?.votingIdentityBalance) > 0 ? 'blue' : 'dimGray'
-                    }
-                  >
-                    {votingBadge}
-                  </Badge>
-                </Tooltip>
-              ) : null}
-            </span>
+            <ValidatorFieldLabel
+              label="Voting identity"
+              description="Platform identity associated with the masternode’s voting key."
+            />
           }
           value={
             validator.data?.votingIdentity ? (
