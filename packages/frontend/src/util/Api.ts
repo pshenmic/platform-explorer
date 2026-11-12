@@ -705,6 +705,36 @@ const getValidatorByProTxHash = (proTxHash: string): Promise<Validator> => {
   return call<Validator>(`validator/${proTxHash}`, 'GET')
 }
 
+export interface ValidatorEarnings {
+  core: { payments: number; amount: number }
+  platform: {
+    epochs: number
+    firstEpoch: number | null
+    lastEpoch: number | null
+    blocksProposed: number
+    reward: number
+  }
+  estimate: ValidatorEarningsEstimate | null
+}
+
+export interface ValidatorEarningsEstimate {
+  periodDays: number
+  eligible: boolean | null
+  corePerMonth: number | null
+  platformPerMonth: number | null
+  totalPerMonth: number | null
+  platformHistory: {
+    firstEpoch: number | null
+    lastEpoch: number | null
+    startTime: string
+    endTime: string
+    reward: number
+  } | null
+}
+
+export const getValidatorEarnings = (hash: string): Promise<ValidatorEarnings> =>
+  call<ValidatorEarnings>(`validator/${hash}/earnings`, 'GET')
+
 export interface QuorumMember {
   proTxHash: string
   service?: string | null
@@ -744,36 +774,40 @@ const getValidatorByMasternodeIdentity = (identity: string): Promise<Validator> 
   return call<Validator>(`validator/identity/${identity}`, 'GET')
 }
 
-interface ValidatorBlocksStatsPoint {
-  blocksCount: number
+interface ValidatorEpochStatsPoint {
+  epoch: number
+  endEpoch: number
+  endTime: string | null
+  blocksProposed: number
+  totalBlocks: number
+  fees: number
+  reward: number | null
 }
 
-interface ValidatorRewardsStatsPoint {
-  reward: number
-}
-
-const getBlocksStatsByValidator = (
+const getEpochStatsByValidator = async (
   proTxHash: string,
   start: string,
   end: string,
   intervalsCount?: number
-): Promise<Array<SeriesData<ValidatorBlocksStatsPoint>>> => {
-  return call<Array<SeriesData<ValidatorBlocksStatsPoint>>>(
-    `validator/${proTxHash}/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
+): Promise<Array<SeriesData<ValidatorEpochStatsPoint>>> => {
+  const points = await call<Array<SeriesData<ValidatorEpochStatsPoint>>>(
+    `validator/${proTxHash}/epochs/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount != null ? `&intervalsCount=${intervalsCount}` : ''}`,
     'GET'
   )
-}
-
-const getRewardsStatsByValidator = (
-  proTxHash: string,
-  start: string,
-  end: string,
-  intervalsCount?: number
-): Promise<Array<SeriesData<ValidatorRewardsStatsPoint>>> => {
-  return call<Array<SeriesData<ValidatorRewardsStatsPoint>>>(
-    `validator/${proTxHash}/rewards/stats?timestamp_start=${start}&timestamp_end=${end}${intervalsCount ? `&intervalsCount=${intervalsCount}` : ''}`,
-    'GET'
-  )
+  if (
+    !Array.isArray(points) ||
+    points.some(
+      point =>
+        !point.data ||
+        !Number.isFinite(point.data.fees) ||
+        !Number.isFinite(point.data.blocksProposed) ||
+        !('endTime' in point.data) ||
+        !(point.data.reward === null || Number.isFinite(point.data.reward))
+    )
+  ) {
+    throw new Error('Epoch statistics require the updated API. Restart the local API and retry.')
+  }
+  return points
 }
 
 const getMasternodeVotes = (
@@ -892,8 +926,7 @@ export {
   getCurrentQuorum,
   getQuorumByHash,
   getBlocksByValidator,
-  getBlocksStatsByValidator,
-  getRewardsStatsByValidator,
+  getEpochStatsByValidator,
   getEpoch,
   getContestedResourcesStats,
   getMasternodeVotes,

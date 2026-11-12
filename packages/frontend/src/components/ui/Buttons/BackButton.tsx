@@ -11,7 +11,7 @@ function BackButton({ link, children, ...props }: BackButtonProps) {
   const router = useRouter()
 
   return (
-    <button onClick={() => router.back()} {...props}>
+    <button type="button" aria-label="Go back" onClick={() => router.back()} {...props}>
       {children}
     </button>
   )

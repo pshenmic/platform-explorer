@@ -1,4 +1,7 @@
+'use client'
+
 import type { ComponentType, ReactNode } from 'react'
+import { getL1ExplorerLink } from '../../../util/l1Explorer'
 // Untyped JS components — loose wrappers until data/* is migrated
 import { Identifier as IdentifierJs, InfoLine as InfoLineJs } from '../../data'
 import { ValueContainer } from '../../ui/containers'
@@ -46,6 +49,8 @@ export default function QuorumInfo({
   l1explorerBaseUrl,
   showQuorumMembers
 }: QuorumInfoProps) {
+  const blockLink = getL1ExplorerLink(l1explorerBaseUrl, 'block', quorum?.quorumHash)
+
   return (
     <div className={'QuorumInfo'}>
       <div className={'QuorumInfo__LineContainer'}>
@@ -87,11 +92,7 @@ export default function QuorumInfo({
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Block Height'}
           value={
-            <ValueContainer
-              size={'md'}
-              external={true}
-              link={`${l1explorerBaseUrl}/block/${quorum?.blockHeight}`}
-            >
+            <ValueContainer size={'md'} external={true} link={blockLink}>
               {quorum?.blockHeight}
             </ValueContainer>
           }
@@ -104,15 +105,7 @@ export default function QuorumInfo({
         <InfoLine
           className={'QuorumInfo__InfoLine'}
           title={'Quorum Creation Height'}
-          value={
-            <ValueContainer
-              size={'md'}
-              external={true}
-              link={`${l1explorerBaseUrl}/block/${quorum?.creationHeight}`}
-            >
-              {quorum?.creationHeight}
-            </ValueContainer>
-          }
+          value={<ValueContainer size={'md'}>{quorum?.creationHeight}</ValueContainer>}
           loading={loading}
           error={typeof quorum?.creationHeight !== 'number'}
         />
@@ -126,7 +119,7 @@ export default function QuorumInfo({
             <ValueContainer
               size={'md'}
               external={true}
-              link={`${l1explorerBaseUrl}/block/${quorum?.minedBlockHash}`}
+              link={getL1ExplorerLink(l1explorerBaseUrl, 'block', quorum?.minedBlockHash)}
             >
               <Identifier styles={['highlight-both']} ellipsis={false}>
                 {quorum?.minedBlockHash}

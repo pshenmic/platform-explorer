@@ -85,7 +85,7 @@ function Footer() {
             {currentYear} © Dash Platform Explorer
             <br />v{version} MIT LICENCE
           </p>
-          <Link className={'Footer__Logo'} href={'/'}>
+          <Link className={'Footer__Logo'} href={'/'} aria-label="Dash Platform Explorer home">
             <PlatformExplorerLogoStroke w={'2rem'} h={'2rem'} color={'gray.250'} />
           </Link>
         </div>

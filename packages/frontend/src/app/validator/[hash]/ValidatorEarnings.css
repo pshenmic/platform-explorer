@@ -1,0 +1,337 @@
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel {
+  --earnings-core-color: var(--pe-color-fg-muted);
+  --earnings-platform-color: var(--pe-color-brand-light);
+  grid-template-columns: minmax(0, 42fr) minmax(0, 58fr);
+  align-items: stretch;
+  gap: 0;
+  padding: 0;
+  border: 1px solid var(--pe-color-border-subtle);
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--pe-color-surface) 30%, var(--pe-color-gray-675));
+  box-shadow: none;
+}
+
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel::before,
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel::after {
+  display: none;
+}
+
+@media (min-width: 80.01em) {
+  .ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel {
+    border-color: transparent;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .ValidatorPage .ValidatorPage__Earnings .ValidatorPage__EarningsOverview {
+    gap: var(--pe-space-2);
+    padding-block: var(--pe-space-3);
+  }
+
+  .ValidatorPage .ValidatorPage__Earnings .ValidatorPage__EarningsSource {
+    padding-block: var(--pe-space-3);
+  }
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsOverview {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-content: start;
+  align-items: start;
+  gap: var(--pe-space-3);
+  padding: var(--pe-space-4);
+  border: 0;
+  border-inline-end: 1px solid var(--pe-color-border-subtle);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__ForecastRow {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pe-space-1);
+  min-width: 0;
+}
+
+.ValidatorPage__ForecastRow--Monthly {
+  grid-column: 1 / -1;
+  grid-row: 2;
+}
+
+.ValidatorPage__ForecastRow--Yearly {
+  grid-column: 1;
+  grid-row: 3;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__Apr {
+  grid-column: 2;
+  grid-row: 3;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pe-space-1);
+  padding: 0;
+  border: 0;
+  text-align: left;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__CollateralHeader {
+  grid-row: 1;
+  grid-column: 1 / -1;
+  grid-template-columns: auto minmax(0, 1fr);
+  justify-content: stretch;
+  gap: var(--pe-space-2) var(--pe-space-1);
+  padding-top: 0;
+  border-top: 0;
+  padding-bottom: var(--pe-space-3);
+  border-bottom: 1px solid var(--pe-color-border-subtle);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__CollateralHeader > .Badge {
+  justify-self: end;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__SummaryLabel {
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__EarningsOverview :is(.ValidatorPage__ForecastRow, .ValidatorPage__Apr) .Badge {
+  padding: 0;
+  min-height: 0;
+  background: transparent;
+  color: var(--pe-color-fg);
+  border: 0;
+  border-radius: 0;
+  font-size: var(--pe-text-md);
+  font-weight: var(--pe-font-weight-normal);
+}
+
+.ValidatorPage__EarningsOverview .ValidatorPage__ForecastRow--Monthly .Badge {
+  font-size: var(--pe-text-2xl);
+  line-height: 1.25;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__ForecastRow--Monthly {
+  gap: var(--pe-space-1);
+}
+
+.ValidatorPage__EarningsComposition {
+  display: flex;
+  width: 100%;
+  height: 24px;
+  padding-block: 10px;
+  box-sizing: border-box;
+  border-radius: 2px;
+}
+
+.ValidatorPage__EarningsComposition:focus-visible {
+  outline: 2px solid var(--pe-color-focus-ring);
+  outline-offset: 2px;
+}
+
+.ValidatorPage__EarningsComposition > span:first-child {
+  background: var(--earnings-core-color);
+  border-radius: 2px 0 0 2px;
+}
+
+.ValidatorPage__EarningsComposition > span:last-child {
+  background: var(--earnings-platform-color);
+  border-radius: 0 2px 2px 0;
+}
+
+.ValidatorPage__TooltipMetrics {
+  display: grid;
+  gap: var(--pe-space-2);
+  margin: 0;
+}
+
+.ValidatorPage__TooltipMetrics > div {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--pe-space-6);
+}
+
+.ValidatorPage__TooltipMetrics dd {
+  margin: 0;
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorPage__EarningsSourceHead .ValidatorPage__SummaryLabel::before {
+  content: "";
+  display: inline-block;
+  width: 3px;
+  height: 10px;
+  margin-inline-end: 6px;
+  border-radius: 2px;
+  background: var(--earnings-core-color);
+}
+
+.ValidatorPage__EarningsSource--Platform .ValidatorPage__SummaryLabel::before {
+  background: var(--earnings-platform-color);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__ForecastRow--Monthly .ValidatorPage__SummaryLabel {
+  color: var(--pe-color-fg);
+}
+
+.ValidatorPage__MonthlyAmount {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--pe-space-1);
+  max-width: 100%;
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorPage__MonthlyAmount > .ValidatorPage__EarningsUnit {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-1);
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsSources {
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: repeat(2, minmax(min-content, 1fr));
+  gap: 0;
+  margin: 0;
+  padding-inline: var(--pe-space-4);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsSource {
+  grid-template-columns: auto minmax(0, 1fr);
+  grid-template-rows: auto auto;
+  align-items: baseline;
+  align-content: center;
+  gap: var(--pe-space-3) var(--pe-space-2);
+  padding-block: var(--pe-space-4);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsSource + .ValidatorPage__EarningsSource {
+  border-top: 1px solid var(--pe-color-border-subtle);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsSourceHead {
+  grid-row: 1;
+  grid-column: 1;
+  padding: 0;
+  width: auto;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsAmount {
+  grid-row: 1;
+  grid-column: 2;
+  min-height: 0;
+  font-size: var(--pe-text-lg);
+  text-align: right;
+}
+
+.ValidatorPage__EarningsAmount .ValidatorPage__MonthlyAmount {
+  justify-content: flex-end;
+}
+
+.ValidatorPage__Earnings
+  .ValidatorPage__EarningsSource
+  > :is(.ValidatorPage__EarningsNext, .ValidatorPage__PlatformTiming) {
+  grid-row: 2;
+  grid-column: 1 / -1;
+  padding: 0;
+  border: 0;
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsNext {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pe-space-1) var(--pe-space-2);
+  padding: 0;
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorPage__Earnings .ValidatorPage__EarningsNext > span:last-child {
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorPage__EarningsActivity {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 1.15fr 1fr 1fr;
+  gap: var(--pe-space-3);
+  padding: var(--pe-space-3) var(--pe-space-4);
+  border-top: 1px solid var(--pe-color-border-subtle);
+}
+
+.ValidatorPage__EarningsActivity > div {
+  min-width: 0;
+}
+
+.ValidatorPage__EarningsActivity > div + div {
+  border-inline-start: 1px solid var(--pe-color-border-subtle);
+  padding-inline-start: var(--pe-space-3);
+}
+
+.ValidatorPage__EarningsActivity .InfoLine {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--pe-space-2);
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ValidatorPage .ValidatorPage__EarningsActivity .InfoLine__Title {
+  flex: none;
+  width: auto;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__EarningsActivity .InfoLine__Value {
+  width: auto;
+  min-width: 0;
+  padding: 0;
+  font-size: var(--pe-text-sm);
+  overflow-wrap: anywhere;
+}
+
+.ValidatorPage__EarningsActivity .Badge {
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorPage__EarningsPanel > .ValidatorPage__SummaryHint {
+  padding: var(--pe-space-3) var(--pe-space-4);
+}
+
+@container validator-earnings (max-width: 32rem) {
+  .ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ValidatorPage__Earnings .ValidatorPage__EarningsOverview {
+    border-inline-end: 0;
+    border-bottom: 1px solid var(--pe-color-border-subtle);
+  }
+
+  .ValidatorPage__EarningsActivity {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ValidatorPage__EarningsActivity > div + div {
+    border: 0;
+    padding: 0;
+  }
+
+  .ValidatorPage__EarningsActivity .InfoLine {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+
+  .ValidatorPage__EarningsActivity .InfoLine__Value {
+    text-align: right;
+  }
+}

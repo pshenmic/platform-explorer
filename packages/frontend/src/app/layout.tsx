@@ -32,8 +32,7 @@ const robotoMono = RobotoMono({
 
 export const viewport: Viewport = {
   width: 'device-width',
-  initialScale: 1,
-  userScalable: false
+  initialScale: 1
 }
 
 interface RootLayoutProps {

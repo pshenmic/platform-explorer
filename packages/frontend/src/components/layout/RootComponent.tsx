@@ -33,7 +33,7 @@ export default function RootComponent({ children }: RootComponentProps) {
                   <Background />
                   <BreadcrumbsProvider>
                     <Navbar />
-                    {children}
+                    <main>{children}</main>
                   </BreadcrumbsProvider>
                   <Footer />
                 </ModalProvider>

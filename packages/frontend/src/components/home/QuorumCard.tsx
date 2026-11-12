@@ -8,6 +8,8 @@ import { quorumKey, memberKey, memberKeysInCoreOrder, sortProTxKeys } from './qu
 
 import { Tooltip } from '../ui/Tooltips'
 import { BlockIcon } from '../ui/icons'
+import { useActiveNetwork } from '../../contexts'
+import { getL1ExplorerLink } from '../../util/l1Explorer'
 import { useCountUp } from './hooks'
 import { Skeleton } from './Skeleton'
 import './QuorumCard.css'
@@ -602,7 +604,8 @@ export default function QuorumCard({
     typeof selectedMeta?.quorumHash === 'string' && selectedMeta.quorumHash.length > 0
       ? selectedMeta.quorumHash.toLowerCase()
       : null
-  const headHref = headHash ? `https://dashscan.io/blocks/${headHash}` : null
+  const { l1explorerBaseUrl } = useActiveNetwork()
+  const headHref = getL1ExplorerLink(l1explorerBaseUrl, 'block', headHash)
 
   const togglePin = (key: any) => setPin(p => (p === key ? null : key))
 

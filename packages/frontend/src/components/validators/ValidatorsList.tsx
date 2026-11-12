@@ -1,5 +1,8 @@
 'use client'
 
+import { getValidatorStatus } from './validatorStatus'
+import ValidatorStatus from './ValidatorStatusIndicator'
+
 import { columnLayout } from './ValidatorsList.columns'
 
 import type { ReactNode } from 'react'
@@ -14,13 +17,13 @@ import { ErrorMessageBlock } from '../Errors'
 const ACTIVE_OPTIONS = [
   {
     value: 'current',
-    label: <Badge colorScheme={'orange'}>Current</Badge>,
-    searchText: 'current active'
+    label: <ValidatorStatus status={getValidatorStatus({ isActive: true })} showLabel />,
+    searchText: 'proposing in quorum'
   },
   {
     value: 'queued',
-    label: <Badge colorScheme={'gray'}>Queued</Badge>,
-    searchText: 'queued inactive'
+    label: <ValidatorStatus status={getValidatorStatus({ isActive: false })} showLabel />,
+    searchText: 'waiting quorum'
   }
 ]
 
@@ -46,13 +49,23 @@ interface ValidatorsListProps {
   paging?: DataListProps['paging']
   title?: ReactNode
   pinFirst?: boolean
-  sort?: { order_by?: string; order?: string }
-  sortDefault?: { order_by: string; order: string }
-  onSortChange?: (sort: { order_by: string; order: string }) => void
+  sort?: DataListProps['sort']
+  sortDefault?: DataListProps['sortDefault']
+  onSortChange?: DataListProps['onSortChange']
 }
 
 function validatorColumns(canFilter: boolean) {
   return [
+    {
+      ...columnLayout.active,
+      filterKey: canFilter ? 'isActive' : undefined,
+      filterType: canFilter ? ('options' as const) : undefined,
+      filterOptions: ACTIVE_OPTIONS,
+      cell: (validator: Validator) => {
+        const status = getValidatorStatus(validator)
+        return <ValidatorStatus status={status} />
+      }
+    },
     {
       ...columnLayout.identifier,
       filterKey: canFilter ? 'identifier' : undefined,
@@ -70,18 +83,20 @@ function validatorColumns(canFilter: boolean) {
         )
     },
     {
-      ...columnLayout.active,
-      filterKey: canFilter ? 'isActive' : undefined,
-      filterType: canFilter ? ('options' as const) : undefined,
-      filterOptions: ACTIVE_OPTIONS,
-      cell: (validator: Validator) =>
-        validator?.isActive != null ? (
-          <Badge colorScheme={validator.isActive ? 'orange' : 'gray'}>
-            {validator.isActive ? 'Current' : 'Queued'}
+      ...columnLayout.proposedBlocksAmount,
+      filterKey: canFilter ? 'blocks_proposed' : undefined,
+      filterType: canFilter ? ('range' as const) : undefined,
+      priority: 1,
+      cell: (validator: Validator) => {
+        const count = validator?.proposedBlocksAmount
+        if (count == null || !Number.isSafeInteger(count) || count < 0)
+          return <NotActive>—</NotActive>
+        return (
+          <Badge colorScheme={count > 0 ? 'gray' : 'dimGray'} size={'xs'}>
+            <BigNumber>{String(count)}</BigNumber>
           </Badge>
-        ) : (
-          <NotActive />
         )
+      }
     },
     {
       ...columnLayout.lastBlockHeight,
@@ -90,27 +105,13 @@ function validatorColumns(canFilter: boolean) {
       priority: 1,
       cell: (validator: Validator) => {
         const height = validator?.lastProposedBlockHeader?.height
-        if (height == null) return <NotActive>—</NotActive>
+        if (height == null || !Number.isSafeInteger(height) || height < 0)
+          return <NotActive>—</NotActive>
         return (
           <span className={'DataList__Entity'}>
             <BlockIcon w={'1.125rem'} h={'1.125rem'} mr={'0.5rem'} />
-            {height}
+            <BigNumber>{String(height)}</BigNumber>
           </span>
-        )
-      }
-    },
-    {
-      ...columnLayout.proposedBlocksAmount,
-      filterKey: canFilter ? 'blocks_proposed' : undefined,
-      filterType: canFilter ? ('range' as const) : undefined,
-      priority: 1,
-      cell: (validator: Validator) => {
-        const n = Number(validator?.proposedBlocksAmount)
-        if (!Number.isFinite(n)) return <NotActive>—</NotActive>
-        return (
-          <Badge colorScheme={n > 0 ? 'gray' : 'dimGray'} size={'xs'}>
-            <BigNumber>{String(n)}</BigNumber>
-          </Badge>
         )
       }
     },

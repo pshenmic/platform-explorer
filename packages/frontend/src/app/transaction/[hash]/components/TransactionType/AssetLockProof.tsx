@@ -1,4 +1,5 @@
 import { CopyButton } from 'src/components/ui/Buttons'
+import { getL1ExplorerLink } from 'src/util/l1Explorer'
 import { InfoLine, Identifier } from '@components/data'
 import { ValueCard } from '@components/cards'
 import { ValueContainer } from '@components/ui/containers'
@@ -77,7 +78,7 @@ export const AssetLockProof = ({ assetLockProof, loading }: AssetLockProofProps)
           title={'Core Transaction Hash'}
           value={
             <a
-              href={l1explorerBaseUrl ? `${l1explorerBaseUrl}/tx/${fundingCoreTx}` : '#'}
+              href={getL1ExplorerLink(l1explorerBaseUrl, 'transaction', fundingCoreTx)}
               target={'_blank'}
               rel={'noopener noreferrer'}
             >

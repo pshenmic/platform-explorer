@@ -8,10 +8,10 @@ import {
   useCallback,
   useContext,
   useEffect,
-  useRef,
   useId,
   useLayoutEffect,
   useMemo,
+  useRef,
   useState,
   type CSSProperties,
   type HTMLAttributes,
@@ -40,6 +40,7 @@ export interface TabsProps extends Omit<HTMLAttributes<HTMLDivElement>, 'onChang
   defaultIndex?: number
   onChange?: (index: number) => void
   isLazy?: boolean
+  preserveScroll?: boolean
   variant?: string
   children?: ReactNode
 }
@@ -49,6 +50,7 @@ export function Tabs({
   defaultIndex = 0,
   onChange,
   isLazy = false,
+  preserveScroll = true,
   variant,
   className,
   children,
@@ -59,8 +61,8 @@ export function Tabs({
   const baseId = useId()
   const rootRef = useRef<HTMLDivElement>(null)
   const scrollReserve = useRef<{ panel: HTMLElement; height: number; scrollY: number } | null>(null)
-
   const pendingReserve = useRef(false)
+
   useLayoutEffect(() => {
     const reserve = scrollReserve.current
     const root = rootRef.current
@@ -88,11 +90,15 @@ export function Tabs({
 
   const setSelectedIndex = useCallback(
     (next: number) => {
-      // Reserve only the height needed to keep the current scroll position valid.
-      // Set it before hiding the old panel, so the browser never clamps the scroll.
+      // Keep enough panel height that a shorter tab does not pull the page up.
       const root = rootRef.current
       const panel = root?.querySelector<HTMLElement>(':scope > .Tabs__TabPanels')
-      if (next !== selectedIndex && panel && root?.closest('.InfoContainer--Tabs')) {
+      if (
+        preserveScroll &&
+        next !== selectedIndex &&
+        panel &&
+        root?.closest('.InfoContainer--Tabs')
+      ) {
         const scrollY = window.scrollY
         const spareHeight = Math.max(
           0,
@@ -107,7 +113,7 @@ export function Tabs({
       if (index === undefined) setUncontrolled(next)
       onChange?.(next)
     },
-    [index, onChange, selectedIndex]
+    [index, onChange, selectedIndex, preserveScroll]
   )
 
   const value = useMemo(
@@ -140,16 +146,19 @@ export function TabList({ className, children, onKeyDown, ...props }: TabListPro
 
   return (
     <div
+      role={'tablist'}
+      className={['Tabs__TabList', className || ''].filter(Boolean).join(' ')}
+      {...props}
       onKeyDown={event => {
         onKeyDown?.(event)
-        if (
-          event.defaultPrevented ||
-          !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)
-        )
-          return
+        if (event.defaultPrevented) return
+        const vertical = event.currentTarget.getAttribute('aria-orientation') === 'vertical'
+        const forward = vertical ? 'ArrowDown' : 'ArrowRight'
+        const backward = vertical ? 'ArrowUp' : 'ArrowLeft'
+        if (![forward, backward, 'Home', 'End'].includes(event.key)) return
         const tabs = Array.from(
           event.currentTarget.querySelectorAll<HTMLButtonElement>('[role="tab"]:not(:disabled)')
-        )
+        ).filter(tab => tab.closest('[role="tablist"]') === event.currentTarget)
         const current = tabs.indexOf(event.target as HTMLButtonElement)
         if (current < 0) return
         event.preventDefault()
@@ -158,13 +167,10 @@ export function TabList({ className, children, onKeyDown, ...props }: TabListPro
             ? 0
             : event.key === 'End'
               ? tabs.length - 1
-              : (current + (event.key === 'ArrowRight' ? 1 : -1) + tabs.length) % tabs.length
-        tabs[next]?.focus()
-        tabs[next]?.click()
+              : (current + (event.key === forward ? 1 : -1) + tabs.length) % tabs.length
+        tabs[next].focus()
+        tabs[next].click()
       }}
-      role={'tablist'}
-      className={['Tabs__TabList', className || ''].filter(Boolean).join(' ')}
-      {...props}
     >
       {Children.map(children, child => {
         if (!isValidElement(child) || child.type !== Tab) return child
