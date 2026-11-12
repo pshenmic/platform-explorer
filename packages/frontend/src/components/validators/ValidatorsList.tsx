@@ -18,12 +18,12 @@ const ACTIVE_OPTIONS = [
   {
     value: 'current',
     label: <ValidatorStatus status={getValidatorStatus({ isActive: true })} showLabel />,
-    searchText: 'proposing in quorum'
+    searchText: 'in quorum'
   },
   {
     value: 'queued',
     label: <ValidatorStatus status={getValidatorStatus({ isActive: false })} showLabel />,
-    searchText: 'waiting quorum'
+    searchText: 'not in quorum'
   }
 ]
 

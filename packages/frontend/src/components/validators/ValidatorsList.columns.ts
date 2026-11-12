@@ -1,6 +1,6 @@
 export const columnLayout = {
   identifier: { key: 'identifier', header: 'Validator', grow: true, minWidth: 176 },
-  active: { key: 'active', header: 'Status', minWidth: 88, align: 'center' },
+  active: { key: 'active', header: 'Status', minWidth: 128, align: 'center' },
   lastBlockHeight: { key: 'lastBlockHeight', numeric: true, header: 'Last height', minWidth: 128 },
   proposedBlocksAmount: {
     key: 'proposedBlocksAmount',
