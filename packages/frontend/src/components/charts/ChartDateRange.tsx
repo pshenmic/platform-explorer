@@ -6,26 +6,10 @@ import { Presets } from '../cards'
 import { Tooltip } from '../ui/Tooltips'
 import { DateRangeFilter } from '../filters/DateRangeFilter'
 import type { DateRangeFilterValue } from '../filters/types'
-import { PRESETS } from './MetricChart'
-import './PoolDateRange.css'
+import { CHART_PRESETS, chartPresetValue, chartRangeLabel } from './dateRanges'
+import './ChartDateRange.css'
 
-const presets = [...PRESETS.slice(0, 3), { label: '3M', ms: 90 * 86400000 }, ...PRESETS.slice(3)]
-
-export function poolRangeLabel(value: DateRangeFilterValue | null) {
-  if (!value?.start || !value.end) return 'All time'
-  if (value.mode === 'rolling') {
-    const duration = value.end.getTime() - value.start.getTime()
-    const preset = presets.find(option => option.ms === duration)
-    if (preset) return preset.label
-  }
-  const format = (date: Date) =>
-    date.toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: '2-digit' })
-  const start = format(value.start)
-  const end = format(value.end)
-  return start === end ? start : `${start} – ${end}`
-}
-
-export default function PoolDateRange({
+export default function ChartDateRange({
   value,
   onChange
 }: {
@@ -39,35 +23,31 @@ export default function PoolDateRange({
   const [position, setPosition] = useState({ top: 12, left: 12 })
   const selectedPreset =
     !value?.start || !value.end
-      ? presets.length - 1
+      ? CHART_PRESETS.length - 1
       : value.mode === 'rolling'
-        ? presets.findIndex(preset => preset.ms === value.end!.getTime() - value.start!.getTime())
+        ? CHART_PRESETS.findIndex(
+            preset => preset.ms === value.end!.getTime() - value.start!.getTime()
+          )
         : -1
   const customRange = selectedPreset === -1
   const calendarLabel = customRange
-    ? `Custom range: ${poolRangeLabel(value)}`
+    ? `Custom range: ${chartRangeLabel(value)}`
     : 'Choose custom dates'
   return (
     <>
-      <div className="PoolDateRange" role="group" aria-label="Chart date range">
+      <div className="ChartDateRange" role="group" aria-label="Chart date range">
         <Presets
-          options={presets}
+          options={CHART_PRESETS}
           value={selectedPreset}
           onChange={index => {
-            const preset = presets[index]
-            if (preset.ms == null) {
-              onChange(null)
-              return
-            }
-            const end = new Date()
-            onChange({ start: new Date(end.getTime() - preset.ms), end, mode: 'rolling' })
+            onChange(chartPresetValue(CHART_PRESETS[index].label))
           }}
         />
         <Tooltip content={calendarLabel} placement="bottom" isDisabled={open}>
           <button
             ref={triggerRef}
             type={'button'}
-            className={`PoolDateRange__Trigger Presets__Chip${customRange ? ' Presets__Chip--active' : ''}`}
+            className={`ChartDateRange__Trigger Presets__Chip${customRange ? ' Presets__Chip--active' : ''}`}
             popoverTarget={id}
             aria-expanded={open}
             aria-controls={id}
@@ -93,7 +73,7 @@ export default function PoolDateRange({
         popover={'auto'}
         role={'dialog'}
         aria-label={'Chart date range'}
-        className={'PoolDateRange__Panel'}
+        className={'ChartDateRange__Panel'}
         style={position}
         onToggle={event => setOpen(event.newState === 'open')}
       >

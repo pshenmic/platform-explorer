@@ -1,0 +1,45 @@
+.ChartDateRange__Trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 36px;
+  max-width: 100%;
+  padding: 6px 10px;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 8px;
+  background: rgba(var(--pe-color-brand-light-rgb), 0.04);
+  color: var(--pe-color-fg);
+  font: 0.6875rem var(--pe-font-mono);
+  cursor: pointer;
+}
+.ChartDateRange__Trigger svg {
+  flex-shrink: 0;
+}
+.ChartDateRange__Trigger:hover,
+.ChartDateRange__Trigger[aria-expanded="true"] {
+  border-color: var(--pe-color-brand-light);
+}
+.ChartDateRange__Trigger:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 3px;
+}
+.ChartDateRange__Panel {
+  position: fixed;
+  margin: 0;
+  box-sizing: border-box;
+  width: min(352px, calc(100vw - 24px));
+  max-height: calc(100dvh - 24px);
+  overflow: auto;
+  padding: 14px;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 12px;
+  background: var(--pe-color-gray-800);
+  color: var(--pe-color-fg);
+  box-shadow: 0 16px 40px #0006;
+}
+.ChartDateRange__Hint {
+  margin: 12px 0 0;
+  color: var(--pe-color-fg-muted);
+  font: 0.625rem var(--pe-font-mono);
+}

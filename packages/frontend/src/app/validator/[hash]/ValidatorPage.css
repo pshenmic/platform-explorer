@@ -1,202 +1,652 @@
-.ValidatorPage__Card {
-  margin-bottom: var(--pe-space-6);
+.ValidatorPage__Title {
+  margin: 0;
+  font: inherit;
+  display: flex;
+  align-items: center;
+  gap: var(--pe-space-3);
+  min-width: 0;
+}
+
+.ValidatorPage .PageDataContainer__Title {
+  min-width: 0;
+}
+
+.ValidatorPage__Title > .Identifier {
+  min-width: 0;
+}
+
+.ValidatorPage__ProfileIdentifiers {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 9rem;
+  gap: var(--pe-space-4);
+  row-gap: 0;
+  align-items: start;
+}
+
+.ValidatorPage__ProfileRows {
+  min-width: 0;
+}
+
+.ValidatorPage__ProfileDetails {
+  min-width: 0;
+}
+
+.ValidatorPage__SectionTitle {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+.ValidatorPage__ProfileAvatar {
+  width: 88px;
+  height: 88px;
+}
+
+.ValidatorPage__ProfileState {
+  grid-column: 2;
+  grid-row: 1;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pe-space-2);
+  min-width: 0;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorPage__ProfileIp {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) 16px;
+  align-items: center;
+  gap: 2px;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+}
+
+.ValidatorPage__ProfileBalance {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pe-space-1);
+  min-width: 0;
+  max-width: 100%;
+  text-align: center;
+}
+
+.ValidatorPage__ActivityValue {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: flex-end;
+  gap: var(--pe-space-2);
+}
+
+.ValidatorPage__ProfileIpAddress {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pe-space-1);
+  min-width: 0;
+  overflow-wrap: anywhere;
+  max-width: 100%;
+  text-align: center;
+}
+
+.ValidatorPage__Ledger .ValidatorPage__ProfileIp .Identifier__CopyButton {
+  grid-column: 3;
+  grid-row: 1;
+  flex-shrink: 0;
+  margin-inline-start: 0;
+  width: 16px;
+  height: 16px;
+}
+
+.ValidatorPage__ProfileIp > .ValidatorPage__Flag {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: center;
+}
+
+@media (min-width: 80.01em) {
+  .ValidatorPage__ProfileState {
+    padding-top: var(--pe-space-2);
+  }
+}
+
+.ValidatorPage__ProfileIp .Identifier__CopyButton svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ValidatorPage__RegistrationDetails {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--pe-space-3);
+  min-width: 0;
+}
+
+.ValidatorPage__Ledger .ValidatorPage__RegistrationRow .InfoLine__Title {
+  width: auto;
+  flex-shrink: 1;
+}
+
+.ValidatorPage__PoseValue {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.35em;
+  color: var(--pe-color-fg-muted);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+.ValidatorPage__Ledger .InfoLine__Title {
+  width: 8.5rem;
+}
+
+@media (max-width: 30em) {
+  .ValidatorPage__Ledger .InfoLine {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--pe-space-2);
+  }
+
+  .ValidatorPage__Ledger .InfoLine__Title {
+    width: auto;
+  }
+
+  .ValidatorPage__Service {
+    grid-column: 1 / -1;
+  }
 }
 
 .ValidatorPage__ContentContainer {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--pe-space-3);
-}
-
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ContentContainer {
-    gap: var(--pe-space-4);
-  }
-}
-
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ContentContainer {
-    gap: var(--pe-space-5);
-  }
-}
-
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ContentContainer {
-    gap: var(--pe-space-6);
-  }
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: stretch;
 }
 
 .ValidatorPage__Column {
   display: flex;
   flex-direction: column;
+  gap: 16px;
   position: relative;
   overflow: hidden;
   flex-shrink: 0;
+  min-width: 0;
+}
+
+.ValidatorPage__CollateralHeader {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: max-content max-content max-content;
+  justify-content: start;
+  align-items: center;
+  gap: var(--pe-space-1) var(--pe-space-2);
+}
+
+.ValidatorPage__CollateralInfo {
+  grid-column: 1;
+  grid-row: 1;
+  justify-self: start;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: var(--pe-color-fg-muted);
+  font: inherit;
+  cursor: help;
+}
+
+.ValidatorPage__CollateralInfo:focus-visible {
+  outline: 2px solid var(--pe-color-focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--pe-radius-sm);
+}
+
+@media (min-width: 80.01em) {
+  .ValidatorPage__Column--Metrics {
+    justify-content: flex-start;
+  }
+
+  .ValidatorPage__Column--Details > .InfoContainer {
+    flex: 0 0 auto;
+  }
+
+  .ValidatorPage__Column--Metrics > .ValidatorPage__Epochs {
+    margin-block-start: 0;
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+
+  .ValidatorPage__Column--Metrics .ValidatorEpochs {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .ValidatorPage__Column--Metrics .EpochsOverview__Head {
+    flex-shrink: 0;
+  }
+
+  .ValidatorPage__Column--Metrics .ValidatorEpochs__Plot {
+    flex: 1 1 0;
+    height: auto;
+    min-height: 140px;
+  }
+
+  .ValidatorPage__Column--Metrics .ValidatorEpochs__Plot > .IdentityGrowthChart__Svg {
+    position: absolute;
+    inset: 0;
+  }
+
+  .ValidatorPage__Column--Metrics > .ValidatorPage__Earnings {
+    flex: 0 0 auto;
+  }
 }
 
 .ValidatorPage__Lists {
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
-  margin-top: var(--pe-space-6);
-  margin-top: var(--pe-space-3);
+  grid-column: 1 / -1;
+  min-width: 0;
 }
 
-@media screen and (min-width: 48em) {
-  .ValidatorPage__Lists {
-    margin-top: var(--pe-space-4);
+.ValidatorPage .InfoContainer.ValidatorPage__Group {
+  padding: 16px;
+}
+
+.ValidatorPage__SummaryHint {
+  margin-top: 0;
+}
+
+.ValidatorPage__WithdrawalsBadge {
+  display: inline-flex;
+  max-width: 100%;
+  text-decoration: none;
+}
+
+.ValidatorPage__WithdrawalsBadge .Badge {
+  overflow-wrap: anywhere;
+  font-variant-numeric: tabular-nums;
+  min-height: 1.125rem;
+}
+
+.ValidatorPage__Ledger .Badge,
+.ValidatorPage .ValidatorPage__AmountBadge,
+.ValidatorEpochs__TooltipDetails .ValidatorPage__AmountBadge {
+  min-height: 1.25rem;
+  max-width: 100%;
+  padding: 0 var(--pe-space-2);
+  border-radius: var(--pe-radius-full);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  font-variant-numeric: tabular-nums;
+  line-height: 1.25rem;
+}
+
+.ValidatorPage .ValidatorPage__AmountBadge,
+.ValidatorEpochs__TooltipDetails .ValidatorPage__AmountBadge {
+  color: var(--pe-color-fg);
+  border-radius: 4px;
+  padding-inline: var(--pe-space-1_5);
+}
+
+.ValidatorPage .ValidatorPage__AmountBadge.Badge--dimGray,
+.ValidatorEpochs__TooltipDetails .ValidatorPage__AmountBadge.Badge--dimGray {
+  color: var(--pe-color-fg-muted);
+  background: var(--pe-color-surface);
+}
+
+.ValidatorPage__WithdrawalsBadge:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 3px;
+  border-radius: var(--pe-radius-sm);
+}
+
+.ValidatorPage__SummaryLabel {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  letter-spacing: 0;
+  line-height: var(--pe-leading-normal);
+  text-transform: none;
+  color: var(--pe-color-fg);
+  overflow-wrap: break-word;
+}
+
+.ValidatorPage__StatusLabel {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.ValidatorPage__StatusLabel .Badge {
+  text-transform: none;
+  letter-spacing: 0;
+}
+
+.ValidatorPage__Registered {
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+.ValidatorPage__SummaryHint a {
+  color: var(--pe-color-brand-light);
+  text-decoration: none;
+}
+
+.ValidatorPage__SummaryHint {
+  min-height: 1rem;
+  font-family: var(--pe-font-mono);
+  font-size: 0.75rem;
+  line-height: 1.3;
+  color: var(--pe-color-gray-400);
+  overflow-wrap: anywhere;
+}
+
+@media screen and (max-width: 42em) {
+  .ValidatorPage__Service {
+    grid-column: 1 / -1;
   }
 }
 
-@media screen and (min-width: 62em) {
-  .ValidatorPage__Lists {
-    margin-top: var(--pe-space-5);
+.ValidatorPage__Flag {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.12);
+}
+
+.ValidatorPage__Group {
+  padding: 12px 16px;
+}
+
+.ValidatorPage__Ledger .Identifier__CopyButton {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.ValidatorPage__Ledger .InfoLine:hover .Identifier__CopyButton,
+.ValidatorPage__Ledger .InfoLine:focus-within .Identifier__CopyButton {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (hover: none) {
+  .ValidatorPage__Ledger .Identifier__CopyButton {
+    opacity: 1;
+    pointer-events: auto;
   }
 }
 
-@media screen and (min-width: 80em) {
-  .ValidatorPage__Lists {
-    margin-top: var(--pe-space-6);
-  }
+.ValidatorPage__KeyLink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  color: var(--pe-color-fg-muted);
+  text-decoration: none;
 }
 
-.ValidatorPage__ListContainer {
+.ValidatorPage .ValidatorPage__Link {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-1);
+  min-width: 0;
+}
+
+.ValidatorPage__Link > .Identifier {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.ValidatorPage a.ValidatorPage__Link[href],
+.ValidatorPage a.ValidatorPage__Link .Identifier__SymbolsContainer {
+  color: var(--pe-color-brand-light);
+  text-decoration: none;
+  text-decoration-color: currentColor;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.ValidatorPage a.ValidatorPage__Link .Identifier,
+.ValidatorPage a.ValidatorPage__Link .Identifier__Symbols {
+  color: inherit;
+}
+
+.ValidatorPage a.ValidatorPage__Link:hover,
+.ValidatorPage a.ValidatorPage__Link:hover .Identifier__SymbolsContainer {
+  color: var(--pe-color-brand-light);
+  text-decoration: underline;
+  text-decoration-color: currentColor;
+}
+
+.ValidatorPage__Link:focus-visible {
+  outline: 2px solid var(--pe-color-focus-ring);
+  outline-offset: 3px;
+  border-radius: var(--pe-radius-sm);
+}
+
+.ValidatorPage .InfoLine__Title {
+  letter-spacing: 0;
+  text-transform: none;
+  color: #fff;
+}
+
+.ValidatorPage .InfoLine__Value {
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__Ledger .Endpoint {
+  justify-content: flex-end;
+}
+
+.ValidatorPage__Ledger .Endpoint__Value {
+  white-space: nowrap;
+}
+
+.ValidatorPage__Ledger {
+  --validator-copy-size: var(--pe-size-icon-sm);
+  --validator-copy-gap: var(--pe-space-3);
+  min-width: 0;
+}
+
+.ValidatorPage__Ledger .InfoLine {
   display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  padding-top: var(--pe-space-3);
+  justify-content: flex-start;
+  align-items: center;
+  gap: 12px;
+  margin: 0;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--pe-color-border);
+}
+
+.ValidatorPage__Ledger .InfoLine:first-child {
+  padding-top: 0;
+}
+
+.ValidatorPage__Ledger .InfoLine:last-child {
+  border-bottom: 0;
   padding-bottom: 0;
-  padding-left: calc(var(--pe-space-3) + 0px);
 }
 
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-4) + 0px);
+.ValidatorPage__Ledger .InfoLine__Title {
+  flex: 0 0 auto;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  line-height: var(--pe-leading-normal);
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__Ledger .InfoLine__Value a,
+.ValidatorPage__Ledger .Identifier,
+.ValidatorPage__Ledger .Identifier__Symbols {
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__Ledger .InfoLine__Value {
+  display: flex;
+  justify-content: flex-end;
+  min-width: 0;
+  flex: 1 1 auto;
+  text-align: right;
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorPage__Ledger .InfoLine__Value:not(:has(.Identifier__CopyButton)) {
+  padding-inline-end: calc(var(--validator-copy-size) + var(--validator-copy-gap));
+  box-sizing: border-box;
+}
+
+.ValidatorPage__Ledger .Identifier__CopyButton {
+  width: var(--validator-copy-size);
+  height: var(--validator-copy-size);
+  margin-inline-start: var(--validator-copy-gap);
+}
+
+.ValidatorPage__Ledger .Identifier__CopyButton svg {
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+}
+
+.ValidatorPage__ProfileState:hover .Identifier__CopyButton,
+.ValidatorPage__ProfileState:focus-within .Identifier__CopyButton {
+  opacity: 1;
+}
+
+.ValidatorPage__Ledger .ValidatorPage__KeyLine {
+  gap: 0;
+}
+
+.ValidatorPage__Ledger .Identifier,
+.ValidatorPage__Ledger .ValidatorPage__KeyLine {
+  width: max-content;
+  max-width: 100%;
+  min-width: 0;
+  justify-content: flex-end;
+}
+
+.ValidatorPage__Ledger .Identifier__SymbolsContainer {
+  text-align: right;
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorPage__Ledger .Identifier {
+  align-items: center;
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorPage__Ledger .ValidatorPage__BalancedKey {
+  width: calc(48ch + var(--validator-copy-size) + var(--validator-copy-gap));
+}
+
+.ValidatorPage__ProTxHashRow .ValidatorPage__BalancedKey {
+  width: 32ch;
+}
+
+.ValidatorPage__BalancedKey .Identifier__SymbolsContainer {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+@media (min-width: 30.01em) {
+  .ValidatorPage__ProfileRows,
+  .ValidatorPage__ProfileDetails {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    column-gap: var(--pe-space-3);
+  }
+
+  .ValidatorPage__Ledger
+    :is(.ValidatorPage__ProfileRows, .ValidatorPage__ProfileDetails)
+    > .InfoLine {
+    display: grid;
+    grid-template-columns: subgrid;
+    grid-column: 1 / -1;
+  }
+
+  .ValidatorPage__Ledger
+    :is(.ValidatorPage__ProfileRows, .ValidatorPage__ProfileDetails)
+    .InfoLine__Title {
+    width: auto;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__StatusLabel {
+    flex-wrap: nowrap;
   }
 }
 
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-5) + 0px);
-  }
+.ValidatorPage__Ledger .ValidatorPage__KeyLine > a {
+  flex: 0 1 auto;
 }
 
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ListContainer {
-    padding-left: calc(var(--pe-space-6) + 0px);
-  }
+.ValidatorPage__KeyLine {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  width: 100%;
+  min-width: 0;
+  gap: 8px;
 }
 
-.ValidatorPage__ListContainer {
-  padding-right: calc(var(--pe-space-3) + 0px);
+.ValidatorPage__KeyLine > a {
+  flex: 1 1 auto;
+  min-width: 0;
+  color: inherit;
+  text-decoration: none;
 }
 
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-4) + 0px);
-  }
+.ValidatorPage__KeyLine > a:hover .Identifier__SymbolsContainer {
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-5) + 0px);
-  }
+.ValidatorPage__KeyLine .DateBlock {
+  flex: 0 0 auto;
 }
 
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ListContainer {
-    padding-right: calc(var(--pe-space-6) + 0px);
-  }
+.ValidatorPage__Ledger .InfoLine--Loading .InfoLine__Value {
+  width: 100%;
+  max-width: 28rem;
 }
 
-.ValidatorPage__ChartsContainer .Chart {
-  overflow: visible;
+.ValidatorPage__Group .InfoLine:last-child {
+  margin-bottom: 0;
 }
 
-.ValidatorPage__ChartsContainer {
-  padding-bottom: 0;
+.ValidatorPage__Epochs {
   overflow-x: hidden;
 }
 
-.ValidatorPage__ListPagination {
-  margin-top: calc(var(--pe-space-3) + 0px);
-}
-
-@media screen and (min-width: 48em) {
-  .ValidatorPage__ListPagination {
-    margin-top: calc(var(--pe-space-4) + 0px);
-  }
-}
-
-@media screen and (min-width: 62em) {
-  .ValidatorPage__ListPagination {
-    margin-top: calc(var(--pe-space-5) + 0px);
-  }
-}
-
-@media screen and (min-width: 80em) {
-  .ValidatorPage__ListPagination {
-    margin-top: calc(var(--pe-space-6) + 0px);
-  }
-}
-
-.ValidatorPage__ListPagination .PageItem--Previous,
-.ValidatorPage__ListPagination .PageItem--Next {
-  display: block;
-}
-
-.ValidatorPage__ListPagination .PageItem--Previous {
-  margin-right: auto;
-  margin-left: 0;
-}
-
-.ValidatorPage__ListPagination .PageItem--Next {
-  margin-left: auto;
-  margin-right: 0;
-}
-
-.ValidatorPage__GroupContainer .InfoLine--Loading .InfoLine__Value {
-  height: 28px;
-}
-
-.ValidatorPage__InfoLine {
-  min-height: 28px;
-}
-
-.ValidatorPage__InfoLine .DateBlock__InfoContainer {
-  justify-content: flex-end;
-}
-
-.ValidatorPage__ValueContainer .DateBlock {
-  margin-bottom: var(--pe-space-1);
-}
-
-.ValidatorPage__List {
-  flex-grow: 1;
-}
-
-.ValidatorPage__GroupContainer {
-  flex-grow: 1;
-  border-radius: 18px;
-  border: 1px solid var(--pe-color-gray-800);
-}
-
-.ValidatorPage__InfoLine {
-  margin-bottom: var(--pe-space-3_5);
-}
-
-.ValidatorPage__ValueContainer {
-  display: flex;
-  justify-content: flex-end;
-  overflow: hidden;
-}
-
-.ValidatorPage__PoseScroreValue {
-  display: flex;
-  align-items: center;
-}
-
-@media screen and (max-width: 62em) {
+@media screen and (max-width: 80em) {
   .ValidatorPage .PageDataContainer__Content {
     border-radius: 0;
     background: transparent;
@@ -204,6 +654,26 @@
 
   .ValidatorPage__ContentContainer {
     grid-template-columns: 1fr;
+  }
+
+  .ValidatorPage__Column {
+    display: contents;
+  }
+
+  .ValidatorPage__Ledger {
+    order: 0;
+  }
+
+  .ValidatorPage__Epochs {
+    order: 2;
+  }
+
+  .ValidatorPage__Earnings {
+    order: 3;
+  }
+
+  .ValidatorPage__Lists {
+    order: 5;
   }
 }
 
@@ -213,19 +683,601 @@
   }
 }
 
-@media screen and (min-width: 62em) and (max-width: 1100px) {
-  .ValidatorPage__ListPagination .PageLink {
-    padding: var(--pe-space-2_5) var(--pe-space-2);
-    min-width: 45px;
-  }
-
-  .ValidatorPage__ListPagination .PageItem:not(.PageItem--Previous):not(.PageItem--Next) {
-    margin: 0 var(--pe-space-1);
-  }
-}
-
 @media screen and (max-width: 420px) {
   .ValidatorPage .PageDataContainer__Content {
     padding-bottom: 0;
   }
+}
+
+.ValidatorPage__ActivityList {
+  min-width: 0;
+  padding: 0 0 12px;
+}
+
+.ValidatorPage__ActivityError {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
+  color: var(--pe-color-fg-muted);
+}
+.ValidatorPage__ActivityError button {
+  padding: 6px 12px;
+  border: 1px solid var(--pe-color-calendar-border);
+  border-radius: 6px;
+  background: transparent;
+  color: var(--pe-color-fg);
+  cursor: pointer;
+}
+.ValidatorPage__Lists .Tabs__TabList {
+  overflow-x: auto;
+}
+.ValidatorPage__Lists .Tabs__Tab {
+  flex-shrink: 0;
+  min-height: var(--pe-space-10);
+}
+
+.ValidatorPage__Lists .Tabs__TabItemsCount {
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorPage__Lists .Tabs__Tab .Tabs__TabItemsCount[data-state="error"] {
+  color: var(--pe-color-fg);
+  background: var(--pe-color-surface);
+  box-shadow: inset 0 0 0 1px var(--pe-color-red-default);
+}
+
+.ValidatorPage__Lists .Tabs__Tab:focus-visible {
+  outline: 2px solid var(--pe-color-focus-ring);
+  outline-offset: -2px;
+}
+
+@media screen and (max-width: 420px) {
+  .ValidatorPage .PageDataContainer__ContentContainer {
+    margin-inline: 0;
+  }
+}
+
+.ValidatorPage__LoadError {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorPage__LoadError button {
+  align-self: flex-start;
+  color: var(--pe-color-brand-light);
+  background: transparent;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+  font: inherit;
+  text-decoration: underline;
+}
+
+.ValidatorPage__Earnings {
+  min-width: 0;
+  container: validator-earnings / inline-size;
+}
+
+.ValidatorPage__EarningsPanel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1.8fr);
+  align-items: start;
+  gap: var(--pe-space-6);
+  min-width: 0;
+}
+
+.ValidatorPage .InfoContainer.ValidatorPage__EarningsPanel {
+  padding: var(--pe-space-5);
+}
+
+.ValidatorPage__EarningsPanel > .ValidatorPage__SummaryHint {
+  grid-column: 1 / -1;
+}
+
+.ValidatorPage__EarningsOverview {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  align-items: start;
+  gap: var(--pe-space-2);
+}
+
+.ValidatorPage__EarningsOverview > div {
+  min-width: 0;
+}
+
+@container validator-earnings (min-width: 38.01rem) {
+  .ValidatorPage__EarningsOverview {
+    align-self: stretch;
+    align-content: space-between;
+  }
+}
+
+@media (max-width: 80em) {
+  .ValidatorPage__EarningsOverview {
+    padding: var(--pe-space-3);
+    min-width: 0;
+  }
+}
+
+.ValidatorPage__Earnings .ValidatorPage__SummaryLabel {
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-normal);
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorPage__EarningsUnit {
+  color: var(--pe-color-fg-muted);
+  font-size: var(--pe-text-md);
+  white-space: nowrap;
+}
+
+.ValidatorPage__Apr {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  gap: var(--pe-space-3);
+  width: 100%;
+  text-align: left;
+  border-top: 1px solid var(--pe-color-border);
+  padding-top: var(--pe-space-2);
+  max-width: 100%;
+}
+
+.ValidatorPage__EarningsSources {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--pe-space-3);
+}
+
+.ValidatorPage__EarningsSource {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr);
+  grid-template-rows: var(--pe-space-5) min-content;
+  align-content: start;
+  align-items: start;
+  gap: var(--pe-space-2) var(--pe-space-5);
+  min-width: 0;
+}
+
+.ValidatorPage__EarningsSource > :is(.ValidatorPage__EarningsNext, .ValidatorPage__PlatformTiming) {
+  grid-column: 2;
+  grid-row: 1 / 3;
+  border-inline-start: 1px solid var(--pe-color-border);
+  padding-inline-start: var(--pe-space-5);
+  padding-top: 0;
+}
+
+.ValidatorPage__PlatformTiming {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  gap: var(--pe-space-3);
+}
+
+.ValidatorPage__PlatformTiming .ValidatorPage__EarningsNext {
+  padding-top: 0;
+}
+
+.ValidatorPage__EarningsSourceHead {
+  grid-column: 1;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--pe-space-1) var(--pe-space-2);
+  min-width: 0;
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorPage__EarningsAmount {
+  grid-column: 1;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-2xl);
+  line-height: var(--pe-leading-tight);
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+  min-height: var(--pe-space-6);
+}
+
+.ValidatorPage__EarningsNext {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pe-space-2);
+  padding-top: var(--pe-space-3);
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
+  color: var(--pe-color-fg-muted);
+}
+
+.ValidatorPage__EarningsNext > span:last-child {
+  color: var(--pe-color-fg);
+  font-size: var(--pe-text-md);
+  font-variant-numeric: tabular-nums;
+}
+
+.ValidatorPage__EpochCountdown {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pe-space-2);
+}
+
+.ValidatorPage__Earnings [data-unavailable] {
+  font-size: var(--pe-text-sm);
+  line-height: var(--pe-leading-normal);
+  color: var(--pe-color-fg-muted);
+}
+
+@container validator-earnings (max-width: 38rem) {
+  .ValidatorPage__EarningsPanel {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ValidatorPage__EarningsOverview {
+    grid-template-columns: minmax(0, 1fr) auto;
+    border-bottom: 1px solid var(--pe-color-border);
+    padding-bottom: var(--pe-space-4);
+  }
+
+  .ValidatorPage__Apr {
+    width: 100%;
+    max-width: none;
+    border-top: 0;
+    padding-top: 0;
+    text-align: right;
+  }
+
+  .ValidatorPage__EarningsSources {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--pe-space-4);
+  }
+
+  .ValidatorPage__EarningsAmount {
+    font-size: var(--pe-text-xl);
+  }
+}
+
+@container validator-earnings (max-width: 30rem) {
+  .ValidatorPage__EarningsOverview {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .ValidatorPage__Apr {
+    justify-content: space-between;
+  }
+}
+
+@container validator-earnings (max-width: 22rem) {
+  .ValidatorPage__EarningsSource
+    > :is(.ValidatorPage__EarningsNext, .ValidatorPage__PlatformTiming) {
+    padding-inline-start: var(--pe-space-3);
+  }
+
+  .ValidatorPage__EarningsNext > span:last-child {
+    font-size: var(--pe-text-sm);
+  }
+
+  .ValidatorPage__EarningsNext {
+    font-size: var(--pe-text-sm);
+    gap: var(--pe-space-2);
+  }
+
+  .ValidatorPage__EpochCountdown {
+    white-space: nowrap;
+    gap: var(--pe-space-1);
+  }
+
+  .ValidatorPage__EarningsOverview {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--pe-space-3);
+  }
+
+  .ValidatorPage__Apr {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: var(--pe-space-2);
+    text-align: start;
+  }
+}
+
+@media (max-width: 30em) {
+  .ValidatorPage .PageDataContainer__Content {
+    padding-block: var(--pe-space-4);
+  }
+
+  .ValidatorPage__ContentContainer {
+    gap: var(--pe-space-3);
+  }
+
+  .ValidatorPage .InfoContainer.ValidatorPage__Group,
+  .ValidatorPage .InfoContainer.ValidatorPage__Epochs {
+    padding: var(--pe-space-3);
+  }
+
+  .ValidatorPage .InfoContainer.ValidatorPage__Ledger {
+    padding: var(--pe-space-4);
+  }
+
+  .ValidatorPage__EarningsPanel {
+    gap: var(--pe-space-4);
+  }
+
+  .ValidatorPage__EarningsOverview {
+    padding-bottom: var(--pe-space-4);
+  }
+
+  .ValidatorPage__EarningsAmount {
+    font-size: var(--pe-text-xl);
+  }
+
+  .ValidatorPage__ProfileIdentifiers {
+    grid-template-columns: minmax(0, 1fr);
+    column-gap: var(--pe-space-2);
+    row-gap: 0;
+  }
+
+  .ValidatorPage__ProfileAvatar {
+    width: 48px;
+    height: 48px;
+  }
+
+  .ValidatorPage__ProfileIp {
+    font-size: var(--pe-text-2xs);
+  }
+
+  .ValidatorPage__RegistrationDetails {
+    gap: var(--pe-space-1) var(--pe-space-2);
+  }
+
+  .ValidatorPage__ServiceEndpoints {
+    row-gap: var(--pe-space-1);
+  }
+
+  .ValidatorPage__ProfileRows {
+    display: contents;
+  }
+
+  .ValidatorPage__ProfileRows > .InfoLine {
+    grid-column: 1 / -1;
+    min-width: 0;
+  }
+
+  .ValidatorPage__ProfileRows > .ValidatorPage__ProTxHashRow {
+    grid-column: 1 / -1;
+    padding-top: var(--pe-space-2);
+  }
+
+  .ValidatorPage__ProfileState {
+    grid-column: 1;
+    grid-row: 1;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    width: 100%;
+    padding-bottom: var(--pe-space-3);
+  }
+
+  .ValidatorPage__ProfileAvatar {
+    grid-column: 1;
+    grid-row: 1 / 3;
+  }
+
+  .ValidatorPage__ProfileBalance {
+    grid-column: 2;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: var(--pe-space-2);
+  }
+
+  .ValidatorPage__ProfileIp {
+    grid-column: 2;
+    justify-self: end;
+    width: auto;
+    max-width: 100%;
+  }
+
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .InfoLine__Value,
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .ValidatorPage__KeyLine,
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .Identifier {
+    justify-content: flex-start;
+    text-align: left;
+  }
+
+  .ValidatorPage__Ledger .InfoLine:not(.ValidatorPage__CompactRow) .Identifier__SymbolsContainer {
+    text-align: left;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__ProTxHashRow .ValidatorPage__BalancedKey {
+    width: 100%;
+  }
+
+  .ValidatorPage__ProfileRows > .ValidatorPage__ServiceRow {
+    grid-column: 1 / -1;
+    padding-bottom: 0;
+  }
+
+  .ValidatorPage .ValidatorPage__Ledger .InfoLine {
+    align-items: stretch;
+    gap: var(--pe-space-1_5);
+    padding: var(--pe-space-3) 0;
+  }
+
+  .ValidatorPage .ValidatorPage__Ledger .InfoLine:first-child {
+    padding-top: 0;
+  }
+
+  .ValidatorPage .ValidatorPage__Ledger .InfoLine:last-child {
+    padding-bottom: 0;
+  }
+
+  .ValidatorPage .ValidatorPage__Ledger .ValidatorPage__CompactRow {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--pe-space-2);
+  }
+
+  .ValidatorPage .ValidatorPage__CompactRow .InfoLine__Value {
+    width: auto;
+  }
+
+  .ValidatorPage__Ledger .InfoLine__Value {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .ValidatorPage__Ledger .InfoLine__Value:not(:has(.Identifier__CopyButton)) {
+    padding-inline-end: 0;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__KeyLine,
+  .ValidatorPage__Ledger .Identifier {
+    width: 100%;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__KeyLine > a {
+    flex: 1 1 auto;
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__BalancedKey {
+    gap: var(--validator-copy-gap);
+  }
+
+  .ValidatorPage__Ledger .ValidatorPage__BalancedKey .Identifier__CopyButton {
+    margin-inline-start: auto;
+  }
+}
+
+.ValidatorPage__ServiceInline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: var(--pe-space-2);
+  min-width: 0;
+  max-width: 100%;
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-sm);
+}
+
+.ValidatorPage__ServiceEndpoints {
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: var(--pe-space-1_5);
+  max-width: 100%;
+}
+
+.ValidatorPage__ServiceEndpoint,
+.ValidatorPage__ServiceEndpointValue {
+  display: inline-flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+.ValidatorPage__ServiceEndpointValue {
+  gap: var(--pe-space-1);
+}
+
+@media (max-width: 30em) {
+  .ValidatorPage__ServiceInline {
+    font-size: var(--pe-text-xs);
+  }
+
+  .ValidatorPage__ServiceEndpoints {
+    gap: 2px;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+.ValidatorPage__ServiceEndpoint > span {
+  display: inline-flex;
+}
+
+.ValidatorPage__ServiceEndpoint .Identifier__CopyButton svg {
+  width: 100%;
+  height: 100%;
+}
+
+.ValidatorPage__ServiceEndpoint a {
+  color: var(--pe-color-brand-light);
+  text-underline-offset: 3px;
+}
+
+.ValidatorPage__Help {
+  cursor: help;
+}
+
+.Tooltip.ValidatorPage__Tooltip {
+  font-family: var(--pe-font-mono);
+  font-size: var(--pe-text-xs);
+  font-weight: var(--pe-font-weight-normal);
+  line-height: var(--pe-leading-normal);
+}
+
+.Tooltip.ValidatorPage__Tooltip .Tooltip__Title {
+  font-family: inherit;
+  font-size: var(--pe-text-sm);
+  font-weight: var(--pe-font-weight-medium);
+  line-height: var(--pe-leading-normal);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.Tooltip.ValidatorPage__Tooltip .Tooltip__Content {
+  font-family: inherit;
+  font-size: var(--pe-text-xs);
+  line-height: var(--pe-leading-normal);
+}
+
+.ValidatorPage__EndpointDot {
+  width: 6px;
+  height: 6px;
+  flex-shrink: 0;
+  border-radius: 1px;
+  background: var(--pe-color-red-default);
+}
+
+.ValidatorPage__EndpointDot[data-status="OK"] {
+  border-radius: 50%;
+  background: var(--pe-color-green-label);
+}
+
+.ValidatorPage__EndpointDot[data-status="UNKNOWN"] {
+  border: 1px solid var(--pe-color-fg-muted);
+  border-radius: 50%;
+  background: transparent;
+  box-sizing: border-box;
+}
+
+.ValidatorPage__CollateralInfo,
+.ValidatorEpochs__Info {
+  position: relative;
+}
+
+.ValidatorPage__CollateralInfo::after,
+.ValidatorEpochs__Info::after {
+  content: "";
+  position: absolute;
+  width: max(100%, 24px);
+  height: max(100%, 24px);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
 }

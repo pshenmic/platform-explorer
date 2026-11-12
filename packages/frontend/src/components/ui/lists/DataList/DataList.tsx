@@ -13,6 +13,7 @@ import DataListHeaderMenu, {
 } from './DataListHeaderMenu'
 import type { DateRangeFilterValue, RangeFilterValue } from '../../../filters/types'
 import './DataList.css'
+import { formatNumberWithSpaces } from '../../../../util/numbers'
 
 const COMPACT_FIRST_MAX = 768
 const DEFAULT_SKELETON_ROWS = 8
@@ -102,9 +103,7 @@ function formatChipDate(value: unknown): string {
 }
 
 function compactCount(value: number) {
-  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(
-    value
-  )
+  return formatNumberWithSpaces(value, { notation: 'compact', maximumFractionDigits: 1 })
 }
 
 function formatFilterChip(type: DataListHeaderFilterType | undefined, value: unknown): string {
@@ -225,6 +224,17 @@ export default function DataList<T = any>({
   const wrapRef = useRef<HTMLDivElement | null>(null)
   const scrollRef = useRef<HTMLDivElement | null>(null)
   const sentinelRef = useRef<HTMLDivElement | null>(null)
+  const containedScroll = paging?.scrollTarget === 'container'
+  const scrollResetKey = containedScroll
+    ? `${paging?.mode}:${paging?.page}:${paging?.pageSize}`
+    : ''
+  const previousScrollKey = useRef('')
+  useEffect(() => {
+    if (scrollResetKey && previousScrollKey.current !== scrollResetKey && scrollRef.current) {
+      scrollRef.current.scrollTop = 0
+    }
+    previousScrollKey.current = scrollResetKey
+  }, [scrollResetKey])
   const [width, setWidth] = useState(0)
   const [canScrollEnd, setCanScrollEnd] = useState(false)
   const [overflowX, setOverflowX] = useState(false)
@@ -396,7 +406,7 @@ export default function DataList<T = any>({
           <div className={'DataList__TitleRow'}>
             <h1 className={'DataList__Title'}>{title}</h1>
             {paging && paging.total > 0 ? (
-              <span className={'DataList__Total'} title={paging.total.toLocaleString('en-US')}>
+              <span className={'DataList__Total'} title={formatNumberWithSpaces(paging.total)}>
                 {compactCount(paging.total)}
               </span>
             ) : null}
@@ -466,7 +476,7 @@ export default function DataList<T = any>({
             scrollRef={scrollRef}
             sentinelRef={sentinelRef}
             loading={loading}
-            pageScroll={true}
+            pageScroll={!containedScroll}
           />
         ) : null}
       </div>
@@ -475,7 +485,7 @@ export default function DataList<T = any>({
   return (
     <div
       ref={wrapRef}
-      className={`DataList ${fillList ? 'DataList--fill' : ''} ${compactFirst ? 'DataList--compactFirst' : ''} ${isFeed ? 'DataList--feed' : ''} ${showCenteredEmpty ? 'DataList--empty' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX && !showCenteredEmpty && !isFeed ? 'DataList--overflowX' : ''} ${canScrollEnd && !showCenteredEmpty && !isFeed ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
+      className={`DataList ${containedScroll ? 'DataList--contained' : ''} ${fillList ? 'DataList--fill' : ''} ${compactFirst ? 'DataList--compactFirst' : ''} ${isFeed ? 'DataList--feed' : ''} ${showCenteredEmpty ? 'DataList--empty' : ''} ${loading || paging?.loadingMore ? 'DataList--loading' : ''} ${overflowX && !showCenteredEmpty && !isFeed ? 'DataList--overflowX' : ''} ${canScrollEnd && !showCenteredEmpty && !isFeed ? 'DataList--fadeEnd' : ''} ${className}`.trim()}
       aria-busy={loading || paging?.loadingMore ? true : undefined}
       {...wrapperProps}
     >
@@ -487,10 +497,16 @@ export default function DataList<T = any>({
           scrollRef={scrollRef}
           sentinelRef={sentinelRef}
           loading={loading}
-          pageScroll
+          pageScroll={!containedScroll}
         />
       ) : null}
-      <div ref={scrollRef} className={'DataList__Scroll pe-QuietScroll'}>
+      <div
+        ref={scrollRef}
+        className={'DataList__Scroll pe-QuietScroll'}
+        tabIndex={containedScroll ? 0 : undefined}
+        role={containedScroll ? 'region' : undefined}
+        aria-label={containedScroll ? 'Table rows' : undefined}
+      >
         {showCenteredEmpty ? (
           <EmptyListMessage>{emptyMessage}</EmptyListMessage>
         ) : (

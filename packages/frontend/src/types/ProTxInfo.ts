@@ -1,8 +1,15 @@
 // Mirrors packages/api/src/models/ProTxInfo.js
-// `state` is the raw Dash Core protx state object (large nested shape from
-// `protx info`). Keep as opaque record until a consumer actually needs it.
-
-export type ProTxState = Record<string, unknown>
+export interface ProTxState extends Record<string, unknown> {
+  registeredHeight?: number | null
+  PoSeBanHeight?: number | null
+  PoSeRevivedHeight?: number | null
+  PoSePenalty?: number | null
+  ownerAddress?: string | null
+  votingAddress?: string | null
+  payoutAddress?: string | null
+  pubKeyOperator?: string | null
+  platformNodeID?: string | null
+}
 
 export interface ProTxInfo {
   type: string | null

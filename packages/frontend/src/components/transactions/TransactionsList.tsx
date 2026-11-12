@@ -35,7 +35,9 @@ function TransactionsList({
   hiddenColumns = [],
   excludeFilters = [],
   toolbarTarget,
-  pinFirst = false
+  pinFirst = false,
+  showOwner = true,
+  statusFirst = false
 }: {
   transactions?: Transaction[]
   showMoreLink?: any
@@ -54,6 +56,8 @@ function TransactionsList({
   excludeFilters?: string[]
   hiddenColumns?: (keyof typeof columnLayout)[]
   pinFirst?: boolean
+  showOwner?: boolean
+  statusFirst?: boolean
 }) {
   const router = useRouter()
   const canFilter = Boolean(onFilterChange)
@@ -132,50 +136,54 @@ function TransactionsList({
           <NotActive />
         )
     },
-    {
-      ...columnLayout.owner,
-      filterKey: canFilter ? 'owner' : undefined,
-      filterType: canFilter ? ('search' as const) : undefined,
-      filterPlaceholder: 'Owner ID',
-      priority: 4,
-      cell: (tx: Transaction) => {
-        if (!tx?.owner?.identifier) return <NotActive>-</NotActive>
-        const activeAlias = tx?.owner?.aliases?.find((alias: any) => alias.status === 'ok')
-        return (
-          <LinkContainer
-            onClick={e => {
-              e.stopPropagation()
-              e.preventDefault()
-              router.push(`/identity/${tx?.owner?.identifier}`)
-            }}
-          >
-            {activeAlias ? (
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <ImageGenerator
-                  className={'Identifier__Avatar'}
-                  username={tx?.owner?.identifier}
-                  lightness={50}
-                  saturation={50}
-                  width={24}
-                  height={24}
-                />
-                <Alias
-                  alias={
-                    typeof activeAlias?.alias === 'string'
-                      ? activeAlias.alias
-                      : String(activeAlias?.alias || '')
-                  }
-                />
-              </div>
-            ) : (
-              <Identifier avatar={true} copyButton={true} ellipsis={true}>
-                {tx?.owner?.identifier}
-              </Identifier>
-            )}
-          </LinkContainer>
-        )
-      }
-    },
+    ...(showOwner
+      ? [
+          {
+            ...columnLayout.owner,
+            filterKey: canFilter ? 'owner' : undefined,
+            filterType: canFilter ? ('search' as const) : undefined,
+            filterPlaceholder: 'Owner ID',
+            priority: 4,
+            cell: (tx: Transaction) => {
+              if (!tx?.owner?.identifier) return <NotActive>-</NotActive>
+              const activeAlias = tx?.owner?.aliases?.find((alias: any) => alias.status === 'ok')
+              return (
+                <LinkContainer
+                  onClick={e => {
+                    e.stopPropagation()
+                    e.preventDefault()
+                    router.push(`/identity/${tx?.owner?.identifier}`)
+                  }}
+                >
+                  {activeAlias ? (
+                    <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <ImageGenerator
+                        className={'Identifier__Avatar'}
+                        username={tx?.owner?.identifier}
+                        lightness={50}
+                        saturation={50}
+                        width={24}
+                        height={24}
+                      />
+                      <Alias
+                        alias={
+                          typeof activeAlias?.alias === 'string'
+                            ? activeAlias.alias
+                            : String(activeAlias?.alias || '')
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <Identifier avatar={true} copyButton={true} ellipsis={true}>
+                      {tx?.owner?.identifier}
+                    </Identifier>
+                  )}
+                </LinkContainer>
+              )
+            }
+          }
+        ]
+      : []),
     {
       ...columnLayout.timestamp,
       filterKey: canFilter ? 'timestamp' : undefined,
@@ -203,7 +211,13 @@ function TransactionsList({
     <DataList
       className={'TransactionsList'}
       items={transactions}
-      columns={columns
+      columns={(statusFirst
+        ? [
+            ...columns.filter(column => column.key === 'status'),
+            ...columns.filter(column => column.key !== 'status')
+          ]
+        : columns
+      )
         .filter(column => !hiddenColumns.includes(column.key))
         .map(column =>
           'filterKey' in column && excludeFilters.includes(column.filterKey ?? '')

@@ -12,6 +12,7 @@ interface CopyButtonProps {
   label?: string
   text?: string
   className?: string
+  'aria-label'?: string
 }
 
 function CopyIcon() {
@@ -22,7 +23,7 @@ function CopyIcon() {
   )
 }
 
-function CopyButton({ text, className, label = 'Copy' }: CopyButtonProps) {
+function CopyButton({ text, className, label, 'aria-label': ariaLabel }: CopyButtonProps) {
   const [messageState, setMessageState] = useState({
     active: false,
     text: copyMessageSuccess
@@ -46,7 +47,7 @@ function CopyButton({ text, className, label = 'Copy' }: CopyButtonProps) {
   return (
     <button
       type={'button'}
-      aria-label={label}
+      aria-label={ariaLabel || label || `Copy ${text || 'value'}`}
       onClick={event => {
         event.stopPropagation()
         event.preventDefault()

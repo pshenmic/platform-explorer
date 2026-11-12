@@ -1,4 +1,5 @@
 .DateRangePicker {
+  --calendar-range: rgba(var(--pe-color-brand-light-rgb), 0.12);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -120,15 +121,21 @@
 }
 
 .DateRangePicker__DayBtn:hover {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--calendar-range);
+}
+
+.DateRangePicker__DayBtn:focus-visible,
+.DateRangePicker__Arrow:focus-visible {
+  outline: 2px solid var(--pe-color-brand-light);
+  outline-offset: 2px;
 }
 
 .DateRangePicker__Day--Today .DateRangePicker__DayBtn {
-  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  box-shadow: inset 0 0 0 1px var(--pe-color-brand-light);
 }
 
 .DateRangePicker__Day--RangeMiddle {
-  background: var(--pe-color-white-alpha-200);
+  background: var(--calendar-range);
 }
 
 .DateRangePicker__Day--RangeMiddle .DateRangePicker__DayBtn {
@@ -143,17 +150,17 @@
 }
 
 .DateRangePicker__Day--RangeStart:not(.DateRangePicker__Day--RangeEnd) {
-  background: linear-gradient(90deg, transparent 50%, var(--pe-color-white-alpha-200) 50%);
+  background: linear-gradient(90deg, transparent 50%, var(--calendar-range) 50%);
 }
 
 .DateRangePicker__Day--RangeEnd:not(.DateRangePicker__Day--RangeStart) {
-  background: linear-gradient(90deg, var(--pe-color-white-alpha-200) 50%, transparent 50%);
+  background: linear-gradient(90deg, var(--calendar-range) 50%, transparent 50%);
 }
 
 .DateRangePicker__Day--RangeStart .DateRangePicker__DayBtn,
 .DateRangePicker__Day--RangeEnd .DateRangePicker__DayBtn,
 .DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle) .DateRangePicker__DayBtn {
-  background: var(--pe-color-gray-100);
+  background: var(--pe-color-brand-light);
   color: var(--pe-color-gray-900);
   font-weight: 700;
 }
@@ -162,7 +169,7 @@
 .DateRangePicker__Day--RangeEnd .DateRangePicker__DayBtn:hover,
 .DateRangePicker__Day--Selected:not(.DateRangePicker__Day--RangeMiddle)
   .DateRangePicker__DayBtn:hover {
-  background: var(--pe-color-white-50);
+  background: var(--pe-color-brand-light);
 }
 
 .DateRangePicker__Day--Outside .DateRangePicker__DayBtn {
