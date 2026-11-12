@@ -224,12 +224,12 @@ export default function ValidatorEarnings({
                 type="button"
                 className="ValidatorPage__CollateralInfo ValidatorPage__SummaryLabel"
               >
-                Staked
+                Collateral
               </button>
             </Tooltip>
             <Tooltip
               className="ValidatorPage__Tooltip"
-              title="Staked"
+              title="Collateral"
               content={<ValidatorAmountDetails dash={loading ? null : collateralAmount} />}
             >
               <Badge
