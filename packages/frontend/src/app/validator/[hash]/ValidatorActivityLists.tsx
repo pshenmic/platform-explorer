@@ -9,7 +9,11 @@ import TransactionsList from '../../../components/transactions/TransactionsList'
 import { WithdrawalsList } from '../../../components/transfers'
 import VotesList from '../../../components/contestedResources/votes/VotesList'
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from '../../../components/ui/Tabs'
-import { DataListModeSwitch } from '../../../components/ui/lists/DataList/DataListPaging'
+import {
+  DataListModeSwitch,
+  type DataListPagingConfig
+} from '../../../components/ui/lists/DataList/DataListPaging'
+import { useBreakpointKey } from '../../../hooks/useBreakpointKey'
 import {
   readListScrollMode,
   writeListScrollMode,
@@ -63,12 +67,14 @@ function ActivityList({
   active,
   mode,
   onModeChange,
+  scrollTarget,
   ...props
 }: ActivityProps & {
   kind: Exclude<ListKind, 'votes'>
   active: boolean
   mode: ListScrollMode
   onModeChange: (mode: ListScrollMode) => void
+  scrollTarget: DataListPagingConfig['scrollTarget']
 }) {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(25)
@@ -127,7 +133,7 @@ function ActivityList({
   const unavailable = !props.loading && !resourceId
   const failed = query.isError || unavailable
   const paging: DataListProps['paging'] = {
-    scrollTarget: 'container',
+    scrollTarget,
     mode,
     hideModeSwitch: true,
     onModeChange: next => {
@@ -209,11 +215,13 @@ function VotesActivity({
   active,
   loading,
   mode,
-  onModeChange
+  onModeChange,
+  scrollTarget
 }: Pick<ActivityProps, 'votingIdentity' | 'loading'> & {
   active: boolean
   mode: ListScrollMode
   onModeChange: (mode: ListScrollMode) => void
+  scrollTarget: DataListPagingConfig['scrollTarget']
 }) {
   const [page, setPage] = useState(0)
   const [pageSize, setPageSize] = useState(25)
@@ -271,7 +279,7 @@ function VotesActivity({
           blankMissing={true}
           pinFirst={true}
           paging={{
-            scrollTarget: 'container',
+            scrollTarget,
             mode,
             hideModeSwitch: true,
             onModeChange: next => {
@@ -302,6 +310,8 @@ const LIST_MODE_KEY = 'validator-activity'
 const ACTIVITY_ORDER = ['withdrawals', 'transactions', 'votes', 'blocks'] as const
 
 export default function ValidatorActivityLists(props: ActivityProps) {
+  const breakpoint = useBreakpointKey()
+  const scrollTarget = ['xl', '2xl', '3xl'].includes(breakpoint) ? 'container' : 'page'
   const [active, setActive] = useState(0)
   const [mode, setMode] = useState<ListScrollMode>('continuous')
   const blockCount = useQuery({
@@ -389,7 +399,7 @@ export default function ValidatorActivityLists(props: ActivityProps) {
             />
           </Tab>
         </TabList>
-        <DataListModeSwitch mode={mode} onModeChange={changeMode} />
+        <DataListModeSwitch mode={mode} onModeChange={changeMode} responsiveIcons />
       </div>
       <TabPanels>
         {ACTIVITY_ORDER.map((kind, index) => (
@@ -402,6 +412,7 @@ export default function ValidatorActivityLists(props: ActivityProps) {
                 loading={props.loading}
                 mode={mode}
                 onModeChange={changeMode}
+                scrollTarget={scrollTarget}
               />
             ) : (
               <ActivityList
@@ -411,6 +422,7 @@ export default function ValidatorActivityLists(props: ActivityProps) {
                 active={active === index}
                 mode={mode}
                 onModeChange={changeMode}
+                scrollTarget={scrollTarget}
               />
             )}
           </TabPanel>

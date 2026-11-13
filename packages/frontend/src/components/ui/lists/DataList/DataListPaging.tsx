@@ -1,7 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState, type RefObject } from 'react'
-import { Check, ChevronDown, ChevronLeft, ChevronRight, MoreHorizontal } from 'lucide-react'
+import {
+  Check,
+  ChevronDown,
+  ChevronLeft,
+  ChevronRight,
+  FileText,
+  List,
+  MoreHorizontal
+} from 'lucide-react'
+import { Tooltip } from '../../Tooltips'
 import type { ListScrollMode } from './listScrollMode'
 import { formatNumberWithSpaces } from '../../../../util/numbers'
 
@@ -92,21 +101,36 @@ export function DataListPagingBar({
 
 export function DataListModeSwitch({
   mode,
-  onModeChange
-}: Pick<DataListPagingConfig, 'mode' | 'onModeChange'>) {
+  onModeChange,
+  responsiveIcons = false
+}: Pick<DataListPagingConfig, 'mode' | 'onModeChange'> & { responsiveIcons?: boolean }) {
   return (
     <div className="DataList__ModeSwitch" role="group" aria-label="List view">
-      {(['continuous', 'pages'] as const).map(value => (
-        <button
-          key={value}
-          type="button"
-          aria-pressed={mode === value}
-          className={`DataList__ModeBtn${mode === value ? ' DataList__ModeBtn--On' : ''}`}
-          onClick={() => onModeChange(value)}
-        >
-          {value === 'continuous' ? 'Scroll' : 'Pages'}
-        </button>
-      ))}
+      {(['continuous', 'pages'] as const).map(value => {
+        const label = value === 'continuous' ? 'Scroll' : 'Pages'
+        const description = value === 'continuous' ? 'Continuous scrolling' : 'Pagination'
+        const ModeIcon = value === 'continuous' ? List : FileText
+        const button = (
+          <button
+            key={value}
+            type="button"
+            aria-label={responsiveIcons ? description : undefined}
+            aria-pressed={mode === value}
+            className={`DataList__ModeBtn${mode === value ? ' DataList__ModeBtn--On' : ''}${responsiveIcons ? ' DataList__ModeBtn--icon' : ''}`}
+            onClick={() => onModeChange(value)}
+          >
+            {responsiveIcons && <ModeIcon size={16} aria-hidden="true" />}
+            <span className="DataList__ModeLabel">{label}</span>
+          </button>
+        )
+        return responsiveIcons ? (
+          <Tooltip key={value} content={description}>
+            {button}
+          </Tooltip>
+        ) : (
+          button
+        )
+      })}
     </div>
   )
 }
