@@ -1,6 +1,15 @@
 'use client'
 
-import { useId, useRef, useState } from 'react'
+import { useId, useLayoutEffect, useRef, useState } from 'react'
+import {
+  autoUpdate,
+  flip,
+  offset,
+  shift,
+  size,
+  useFloating,
+  useMergeRefs
+} from '@floating-ui/react'
 import { CalendarDays, ChevronDown } from 'lucide-react'
 import { DateRangeFilter } from '../filters/DateRangeFilter'
 import type { DateRangeFilterValue } from '../filters/types'
@@ -57,11 +66,32 @@ export default function ChartDateRange({
   const panelRef = useRef<HTMLDivElement>(null)
   const triggerRef = useRef<HTMLButtonElement>(null)
   const [open, setOpen] = useState(false)
-  const [position, setPosition] = useState({ top: 12, left: 12 })
+  const { refs, elements, floatingStyles, update } = useFloating({
+    open,
+    placement: 'bottom-end',
+    strategy: 'fixed',
+    middleware: [
+      offset(8),
+      flip({ padding: 12 }),
+      shift({ padding: 12 }),
+      size({
+        padding: 12,
+        apply({ availableHeight, elements }) {
+          elements.floating.style.maxHeight = `${Math.max(0, availableHeight)}px`
+        }
+      })
+    ]
+  })
+  const referenceRef = useMergeRefs([triggerRef, refs.setReference])
+  const floatingRef = useMergeRefs([panelRef, refs.setFloating])
+  useLayoutEffect(() => {
+    if (!open || !elements.reference || !elements.floating) return
+    return autoUpdate(elements.reference, elements.floating, update)
+  }, [open, elements.reference, elements.floating, update])
   return (
     <>
       <button
-        ref={triggerRef}
+        ref={referenceRef}
         type={'button'}
         className={'ChartDateRange__Trigger'}
         popoverTarget={id}
@@ -69,32 +99,28 @@ export default function ChartDateRange({
         aria-haspopup="dialog"
         aria-controls={id}
         aria-label={`Chart date range: ${chartDateLabel(value)}`}
-        onClick={() => {
-          const rect = triggerRef.current!.getBoundingClientRect()
-          const width = Math.min(352, window.innerWidth - 24)
-          setPosition({
-            left: Math.max(12, Math.min(rect.right - width, window.innerWidth - width - 12)),
-            top: Math.max(12, Math.min(rect.bottom + 8, window.innerHeight - 420))
-          })
-        }}
+        title={chartDateLabel(value)}
+        data-custom={value.mode === 'days' || undefined}
       >
         <CalendarDays size={14} aria-hidden={true} />
-        {chartDateLabel(value)}
+        <span className="ChartDateRange__Label">{chartDateLabel(value)}</span>
         <ChevronDown size={12} aria-hidden={true} />
       </button>
       <div
         id={id}
-        ref={panelRef}
+        ref={floatingRef}
         popover={'auto'}
         role={'dialog'}
         aria-label={'Chart date range'}
         className={'ChartDateRange__Panel'}
-        style={position}
+        style={floatingStyles}
         onToggle={event => {
           const isOpen = event.newState === 'open'
           setOpen(isOpen)
           if (isOpen) {
-            panelRef.current?.querySelector<HTMLButtonElement>('button:not(:disabled)')?.focus()
+            panelRef.current
+              ?.querySelector<HTMLButtonElement>('button:not(:disabled)')
+              ?.focus({ preventScroll: true })
           }
         }}
       >
