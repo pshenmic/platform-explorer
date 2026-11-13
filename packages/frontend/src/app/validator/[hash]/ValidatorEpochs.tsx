@@ -43,9 +43,9 @@ function axisDash(dash: number) {
   return dash.toExponential(0)
 }
 
-function axisGutter(labels: string[]) {
+function axisGutter(labels: string[], compact = false) {
   const widest = labels.reduce((max, label) => Math.max(max, label.length), 1)
-  return Math.ceil(widest * 6.7) + 20
+  return Math.ceil(widest * 6.7) + (compact ? 6 : 20)
 }
 
 function dateRangeTicks(start: string, end: string, left: number, right: number) {
@@ -89,6 +89,7 @@ export default function ValidatorEpochs({
   const [pinI, setPinI] = useState<number | null>(null)
   const [hoverI, setHoverI] = useState<number | null>(null)
   const [focusedEpoch, setFocusedEpoch] = useState<number | null>(null)
+  const touchStart = useRef<{ x: number; y: number; dragged: boolean } | null>(null)
   const hoverCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null)
   const keepHover = () => {
     if (hoverCloseTimer.current) clearTimeout(hoverCloseTimer.current)
@@ -273,10 +274,11 @@ export default function ValidatorEpochs({
     statsQuery.isSuccess &&
     slots.every(slot => (slot.estimatedReward ?? slot.payout) === 0)
   const h = plotH
+  const compactAxis = width > 0 && width < 480
   const chart = useMemo(() => {
     if (width <= 0 || !queryRange) return null
     if (loading || failed || !epochWindow || slots.length === 0) {
-      const left = axisGutter(['0 DASH', '0.5', '1'])
+      const left = axisGutter([compactAxis ? 'DASH' : '0 DASH', '0.5', '1'], compactAxis)
       return {
         nodes: [],
         xTicks: dateRangeTicks(queryRange.start, queryRange.end, left, width - M.right),
@@ -293,7 +295,10 @@ export default function ValidatorEpochs({
     const y = d3.scaleLinear([0, maxY > 0 ? maxY : 1], [h - M.bottom, M.top]).nice()
     const yTickCount = Math.max(2, Math.min(4, Math.floor((h - M.top - M.bottom) / 40)))
     const yTickValues: number[] = y.ticks(yTickCount)
-    const left = axisGutter(yTickValues.map(value => (value === 0 ? '0 DASH' : axisDash(value))))
+    const left = axisGutter(
+      yTickValues.map(value => (value === 0 ? (compactAxis ? 'DASH' : '0 DASH') : axisDash(value))),
+      compactAxis
+    )
     const x = d3.scaleLinear([-0.5, slots.length - 0.5], [left, width - M.right])
     const nodes = slots.map((slot, index) => {
       const slotX = x(index - 0.5)
@@ -353,7 +358,7 @@ export default function ValidatorEpochs({
       ? slots.reduce((sum, slot) => sum + (slot.payout ?? 0), 0)
       : null
     return { nodes, xTicks, yTicks, totalPayouts, left }
-  }, [loading, failed, width, h, slots, epochWindow, queryRange])
+  }, [loading, failed, width, h, slots, epochWindow, queryRange, compactAxis])
 
   const activeI = pinI ?? hoverI
   const shown = !empty && activeI != null ? chart?.nodes[activeI] : null
@@ -408,6 +413,23 @@ export default function ValidatorEpochs({
       }
     }
     if (hoverI !== best) setHoverI(best)
+  }
+
+  const touchEpoch = (event: React.PointerEvent<SVGSVGElement>) => {
+    if (empty || !chart?.nodes.length) return null
+    const rect = event.currentTarget.getBoundingClientRect()
+    const pointerX = event.clientX - rect.left
+    const pointerY = event.clientY - rect.top
+    if (
+      pointerX < chart.left ||
+      pointerX > width - M.right ||
+      pointerY < M.top ||
+      pointerY > h - M.bottom
+    )
+      return null
+    return chart.nodes.reduce((nearest, node) =>
+      Math.abs(node.cx - pointerX) < Math.abs(nearest.cx - pointerX) ? node : nearest
+    ).i
   }
 
   const payoutDetails = (
@@ -570,6 +592,36 @@ export default function ValidatorEpochs({
             }
             onMouseMove={onMove}
             onMouseLeave={leaveHover}
+            onPointerDown={event => {
+              if (event.pointerType !== 'touch' || touchEpoch(event) == null) return
+              touchStart.current = { x: event.clientX, y: event.clientY, dragged: false }
+              event.currentTarget.setPointerCapture(event.pointerId)
+            }}
+            onPointerMove={event => {
+              const start = touchStart.current
+              if (event.pointerType !== 'touch' || !start) return
+              const distanceX = Math.abs(event.clientX - start.x)
+              const distanceY = Math.abs(event.clientY - start.y)
+              if (distanceX < 8 || distanceX <= distanceY) return
+              const nearest = touchEpoch(event)
+              if (nearest == null) return
+              start.dragged = true
+              setHoverI(null)
+              setPinI(nearest)
+            }}
+            onPointerUp={event => {
+              const start = touchStart.current
+              touchStart.current = null
+              if (!start || event.pointerType !== 'touch') return
+              const nearest = touchEpoch(event)
+              if (nearest == null || (!start.dragged && Math.abs(event.clientY - start.y) > 8))
+                return
+              setHoverI(null)
+              setPinI(previous => (start.dragged ? nearest : previous === nearest ? null : nearest))
+            }}
+            onPointerCancel={() => {
+              touchStart.current = null
+            }}
           >
             <defs>
               <pattern
@@ -594,35 +646,37 @@ export default function ValidatorEpochs({
                 {loading && tick.label !== '0' ? (
                   <rect
                     className="ValidatorEpochs__AxisSkeleton"
-                    x={chart.left - 40}
+                    x={compactAxis ? 0 : chart.left - 40}
                     y={tick.v - 6}
-                    width={32}
+                    width={compactAxis ? chart.left - 8 : 32}
                     height={12}
                     rx={4}
                   />
                 ) : tick.label === '0' ? (
                   <text
                     className="IdentityGrowthChart__Tick"
-                    x={chart.left - 8}
+                    x={chart.left - (compactAxis ? 6 : 8)}
                     y={tick.v}
                     dy="0.32em"
                     textAnchor="end"
                   >
-                    0 DASH
+                    {compactAxis ? 'DASH' : '0 DASH'}
                   </text>
                 ) : (
                   <>
-                    <rect
-                      className="ValidatorEpochs__AxisBadge"
-                      x={chart.left - 8 - Math.ceil(tick.label.length * 6.7) - 12}
-                      y={tick.v - 9}
-                      width={Math.ceil(tick.label.length * 6.7) + 12}
-                      height={18}
-                      rx={9}
-                    />
+                    {!compactAxis && (
+                      <rect
+                        className="ValidatorEpochs__AxisBadge"
+                        x={chart.left - 8 - Math.ceil(tick.label.length * 6.7) - 12}
+                        y={tick.v - 9}
+                        width={Math.ceil(tick.label.length * 6.7) + 12}
+                        height={18}
+                        rx={9}
+                      />
+                    )}
                     <text
                       className="ValidatorEpochs__AxisValue"
-                      x={chart.left - 14}
+                      x={chart.left - (compactAxis ? 6 : 14)}
                       y={tick.v}
                       dy={'0.32em'}
                       textAnchor="end"
@@ -716,7 +770,12 @@ export default function ValidatorEpochs({
                     setHoverI(node.i)
                   }}
                   onBlur={() => setHoverI(null)}
-                  onClick={() => {
+                  onClick={event => {
+                    if (
+                      event.nativeEvent instanceof PointerEvent &&
+                      event.nativeEvent.pointerType === 'touch'
+                    )
+                      return
                     setHoverI(null)
                     setPinI(previous => (previous === node.i ? null : node.i))
                   }}

@@ -97,6 +97,10 @@
   width: 100%;
 }
 
+.ValidatorEpochs .IdentityGrowthChart__Svg {
+  touch-action: pan-y pinch-zoom;
+}
+
 @container (max-width: 30rem) {
   .ValidatorEpochs__Plot {
     height: 10.25rem;
