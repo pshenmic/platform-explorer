@@ -14,9 +14,9 @@ export default function ValidatorService({
   error: boolean
 }) {
   const services = [
-    { label: 'Core', endpoint: endpoints?.coreP2PPortStatus },
-    { label: 'Platform', endpoint: endpoints?.platformP2PPortStatus },
-    { label: 'gRPC', endpoint: endpoints?.platformGrpcPortStatus }
+    { label: 'Core', shortLabel: 'C', endpoint: endpoints?.coreP2PPortStatus },
+    { label: 'Platform', shortLabel: 'P', endpoint: endpoints?.platformP2PPortStatus },
+    { label: 'gRPC', shortLabel: 'gRPC', endpoint: endpoints?.platformGrpcPortStatus }
   ]
 
   return (
@@ -37,7 +37,7 @@ export default function ValidatorService({
             className="ValidatorPage__ServiceEndpoints"
             aria-label="TCP checks from the explorer server"
           >
-            {services.map(({ label, endpoint }) => {
+            {services.map(({ label, shortLabel, endpoint }) => {
               const status = loading || error ? 'UNKNOWN' : endpoint?.status || 'UNKNOWN'
               const result =
                 status === 'OK' ? 'Reachable' : status === 'UNKNOWN' ? 'Unknown' : 'Unreachable'
@@ -76,7 +76,11 @@ export default function ValidatorService({
                         </a>
                       ) : (
                         <span>
-                          {label}:{endpoint?.port || '—'}
+                          <span className="ValidatorPage__ServiceName">{label}</span>
+                          <span className="ValidatorPage__ServiceNameCompact" aria-hidden="true">
+                            {shortLabel}
+                          </span>
+                          :{endpoint?.port || '—'}
                         </span>
                       )}
                     </span>

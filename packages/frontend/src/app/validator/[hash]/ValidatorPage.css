@@ -1158,6 +1158,10 @@
   font-size: var(--pe-text-sm);
 }
 
+.ValidatorPage__ServiceNameCompact {
+  display: none;
+}
+
 .ValidatorPage__ServiceEndpoints {
   display: flex;
   flex-wrap: nowrap;

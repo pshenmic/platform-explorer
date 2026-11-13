@@ -1,5 +1,6 @@
 'use client'
 import { Fragment, useEffect } from 'react'
+import { ChevronDown } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
 import * as Api from '../../../util/Api'
 import { getL1ExplorerLink } from '../../../util/l1Explorer'
@@ -33,6 +34,7 @@ import { getValidatorStatus } from '../../../components/validators/validatorStat
 import ValidatorStatus from '../../../components/validators/ValidatorStatusIndicator'
 
 import './ValidatorPage.css'
+import './ValidatorMobile.css'
 
 interface ValidatorProps {
   hash: string
@@ -591,6 +593,13 @@ function Validator({ hash }: ValidatorProps) {
   const stateRows = stateKeys.flatMap(key => keyRows.filter(row => row.key === key))
   const detailRows = detailKeys.flatMap(key => keyRows.filter(row => row.key === key))
   const activityRows = activityKeys.flatMap(key => keyRows.filter(row => row.key === key))
+  const mobileSections = [
+    {
+      title: 'Addresses & keys',
+      keys: ['identity', 'collateral', 'owner', 'voting', 'payout', 'votingIdentity', 'operator']
+    },
+    { title: 'Node details', keys: ['proTxHash', 'registration', 'node', 'service'] }
+  ]
 
   return (
     <PageDataContainer
@@ -675,6 +684,13 @@ function Validator({ hash }: ValidatorProps) {
                     {host && <CopyButton className="Identifier__CopyButton" text={host} />}
                   </div>
                 )}
+                <div className="ValidatorPage__MobileStateRows">
+                  {keyRows
+                    .filter(row => row.key === 'quorum' || row.key === 'pose')
+                    .map(row => (
+                      <Fragment key={row.key}>{row.line}</Fragment>
+                    ))}
+                </div>
               </aside>
             </div>
           </InfoContainer>
@@ -699,17 +715,6 @@ function Validator({ hash }: ValidatorProps) {
         </div>
 
         <div className="ValidatorPage__Column ValidatorPage__Column--Metrics">
-          <InfoContainer className={'ValidatorPage__Epochs'}>
-            <ValidatorEpochs
-              hash={hash}
-              pendingReward={validatorQuery.isError ? null : validator.data?.pendingEpochReward}
-              payouts={{
-                total: validator.data?.totalReward,
-                loading: validator.loading,
-                error: Boolean(validator.error)
-              }}
-            />
-          </InfoContainer>
           <ValidatorEarnings
             pendingReward={validatorQuery.isError ? null : validator.data?.pendingEpochReward}
             loading={validator.loading}
@@ -722,7 +727,37 @@ function Validator({ hash }: ValidatorProps) {
             collateralAmount={validator.error ? null : collateralAmount}
             activity={activityRows.map(row => <div key={row.key}>{row.line}</div>)}
           />
+          <InfoContainer className={'ValidatorPage__Epochs'}>
+            <ValidatorEpochs
+              hash={hash}
+              pendingReward={validatorQuery.isError ? null : validator.data?.pendingEpochReward}
+              payouts={{
+                total: validator.data?.totalReward,
+                loading: validator.loading,
+                error: Boolean(validator.error)
+              }}
+            />
+          </InfoContainer>
         </div>
+
+        {mobileSections.map(section => (
+          <details
+            key={`${hash}-${section.title}`}
+            className="InfoContainer ValidatorPage__Ledger ValidatorPage__MobileDisclosure"
+          >
+            <summary>
+              {section.title}
+              <ChevronDown size={18} aria-hidden="true" />
+            </summary>
+            <div className="ValidatorPage__DisclosureRows">
+              {section.keys.flatMap(key =>
+                keyRows
+                  .filter(row => row.key === key)
+                  .map(row => <Fragment key={row.key}>{row.line}</Fragment>)
+              )}
+            </div>
+          </details>
+        ))}
 
         <InfoContainer styles={['tabs']} className={'ValidatorPage__Lists'}>
           <ValidatorActivityLists
