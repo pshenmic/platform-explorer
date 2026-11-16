@@ -1,25 +1,32 @@
 'use client'
 
-import { createContext, useContext, useState, useRef } from 'react'
+import { createContext, useContext, useState, useRef, useMemo } from 'react'
 import type { MutableRefObject, ReactNode } from 'react'
+import type { DashPlatformSDK } from 'dash-platform-sdk/types'
+import { useActiveNetwork } from './NetworkProvider'
 
 // Minimal shape of the Dash Platform browser extension wallet response.
 // Typed only for the fields this provider actually reads.
 export interface WalletIdentity {
   identifier: string
-  proTxHash?: string
+  proTxHash?: string | null
 }
 
 export interface WalletInfo {
   identities?: WalletIdentity[]
-  currentIdentity: string
-  proTxHash?: string
+  currentIdentity: string | null
+  proTxHash?: string | null
+}
+
+export interface SignedStateTransitionData {
+  signedHash: string
+  signedBase64: string
 }
 
 interface DashPlatformExtensionSigner {
   connect: () => Promise<WalletInfo>
   // Extension signs and broadcasts atomically; receives the state transition as base64.
-  signAndBroadcast: (base64: string) => Promise<unknown>
+  signAndBroadcast: (base64: string) => Promise<SignedStateTransitionData>
 }
 
 interface DashPlatformExtension {
@@ -33,7 +40,8 @@ declare global {
 }
 
 export interface WalletContextValue {
-  connectWallet: () => Promise<void> | void
+  connectWallet: () => Promise<WalletInfo | null>
+  getSDK: () => Promise<DashPlatformSDK>
   connected: MutableRefObject<boolean>
   walletInfo: WalletInfo | null
   currentIdentity: string | null
@@ -42,7 +50,10 @@ export interface WalletContextValue {
 }
 
 const WalletContext = createContext<WalletContextValue>({
-  connectWallet: () => undefined,
+  connectWallet: async () => null,
+  getSDK: async () => {
+    throw new Error('WalletProvider is not available')
+  },
   connected: { current: false },
   walletInfo: null,
   currentIdentity: null,
@@ -55,6 +66,19 @@ interface WalletProviderProps {
 }
 
 export const WalletProvider = ({ children }: WalletProviderProps) => {
+  const network = useActiveNetwork()
+  const getSDK = useMemo(() => {
+    let sdkPromise: Promise<DashPlatformSDK> | undefined
+    return () => {
+      sdkPromise ??= import('dash-platform-sdk/types')
+        .then(({ DashPlatformSDK }) => new DashPlatformSDK({ network: network.name }))
+        .catch(error => {
+          sdkPromise = undefined
+          throw error
+        })
+      return sdkPromise
+    }
+  }, [network.name])
   const connected = useRef(false)
   const [error, setError] = useState<string | null>(null)
   const [walletInfo, setWalletInfo] = useState<WalletInfo | null>(null)
@@ -64,7 +88,7 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
   const connectWallet = () => {
     if (!window.dashPlatformExtension) {
       setError('Dash Platform Extension is not installed')
-      return
+      return Promise.resolve(null)
     }
 
     const { dashPlatformExtension } = window
@@ -78,22 +102,24 @@ export const WalletProvider = ({ children }: WalletProviderProps) => {
         )
         if (!current) {
           setError('Wallet connection returned no current identity')
-          return
+          return null
         }
         connected.current = true
         setWalletInfo({ ...wallet, proTxHash: current.proTxHash })
         setError(null)
         setCurrentIdentity(wallet.currentIdentity)
+        return { ...wallet, proTxHash: current.proTxHash }
       })
       .catch((e: unknown) => {
-        setError(e?.toString() || 'Failed to connect wallet')
+        setError(e instanceof Error ? e.message : String(e))
+        return null
       })
       .finally(() => setIsConnecting(false))
   }
 
   return (
     <WalletContext.Provider
-      value={{ connectWallet, connected, walletInfo, currentIdentity, error, isConnecting }}
+      value={{ connectWallet, getSDK, connected, walletInfo, currentIdentity, error, isConnecting }}
     >
       {children}
     </WalletContext.Provider>

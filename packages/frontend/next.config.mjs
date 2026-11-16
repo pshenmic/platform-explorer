@@ -4,7 +4,8 @@ const nextConfig = {
   // does not resolve the Node/NAPI entry (native.js). Replaces old webpack alias.
   turbopack: {
     resolveAlias: {
-      'pshenmic-dpp': 'pshenmic-dpp/wasm'
+      'pshenmic-dpp': 'pshenmic-dpp/wasm',
+      worker_threads: { browser: './src/util/browserWorkerThreads.ts' }
     }
   },
   experimental: {

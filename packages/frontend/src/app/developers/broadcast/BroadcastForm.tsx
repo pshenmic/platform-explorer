@@ -326,22 +326,23 @@ function BroadcastForm() {
 
     try {
       const { tx } = await parseStateTransition(input.trim())
-      const signedTx = (await activeSigner.signAndBroadcast(tx)) as {
-        hex: () => string
-        hash: (b: boolean) => string
+      const signedTx = await activeSigner.signAndBroadcast(tx)
+      try {
+        const signedBytes = atob(signedTx.signedBase64)
+        setInput(
+          Array.from(signedBytes, byte => byte.charCodeAt(0).toString(16).padStart(2, '0')).join('')
+        )
+        setSize(signedBytes.length)
+      } catch {
+        setInput(signedTx.signedBase64)
+        setSize(null)
       }
-      setInput(signedTx.hex())
-      setHash(signedTx.hash(false))
+      setHash(signedTx.signedHash)
       setVerify({ result: 'ok' })
       setState(STATE.SUCCESS)
     } catch (e) {
       console.error(e)
-      const wasRejected = /reject/i.test((e as Error)?.message ?? '')
-      setErrorText(
-        wasRejected
-          ? 'Extension cached an earlier rejection. Disable/re-enable the Dash Platform Extension in chrome://extensions/ to reset its state, then try again.'
-          : (e as Error)?.message || 'Failed to sign & broadcast via extension'
-      )
+      setErrorText(e instanceof Error ? e.message : String(e))
       setState(STATE.ERROR)
     }
   }

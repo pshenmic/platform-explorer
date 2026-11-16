@@ -16,7 +16,7 @@
     "@vercel/speed-insights": "^2.0.0",
     "class-variance-authority": "^0.7.1",
     "d3": "^7.9.0",
-    "dash-platform-sdk": "1.4.0",
+    "dash-platform-sdk": "1.6.2",
     "keen-slider": "^6.8.6",
     "lucide-react": "^1.41.0",
     "minidenticons": "^4.2.1",
