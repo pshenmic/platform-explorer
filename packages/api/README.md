@@ -493,7 +493,7 @@ ___
 ### Validators
 Return all validators with pagination info.
 
-* Supported `order_by` values are `id` or `latest_timestamp`; omitted or unsupported values use `id`
+* Supported `order_by` values are `id`, `latest_timestamp` or `proposed_blocks_amount`; omitted or unsupported values use `id`
 * `latest_timestamp` sorts by the last proposed block time, with validators that have no proposed block placed last in both directions
 * Equal sort values are ordered by `id` in the requested `order` direction
 * Valid `order` values are `asc` or `desc`
