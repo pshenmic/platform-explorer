@@ -182,6 +182,10 @@ impl PSQLProcessor {
         .await;
 
         if document_type == "dataContracts"
+            && matches!(
+                &document_transition,
+                DocumentTransition::Create(_) | DocumentTransition::Replace(_)
+            )
             && document_transition.data_contract_id() == self.platform_explorer_identifier
         {
             let data_contract_identifier_str = document_transition
@@ -222,7 +226,11 @@ impl PSQLProcessor {
                         .unwrap();
                 }
             } else {
-                println!("Failed to set custom data contract name for contract {}, owner of the tx {} does not match data contract", st_hash, document_identifier.to_string(Base58));
+                println!(
+                    "Failed to set custom data contract name: contract {} not found, naming document {}",
+                    data_contract_identifier_str,
+                    document_identifier.to_string(Base58)
+                );
             }
         }
     }
