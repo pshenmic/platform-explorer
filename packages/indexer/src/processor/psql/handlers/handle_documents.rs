@@ -182,10 +182,6 @@ impl PSQLProcessor {
         .await;
 
         if document_type == "dataContracts"
-            && matches!(
-                &document_transition,
-                DocumentTransition::Create(_) | DocumentTransition::Replace(_)
-            )
             && document_transition.data_contract_id() == self.platform_explorer_identifier
         {
             let data_contract_identifier_str = document_transition
