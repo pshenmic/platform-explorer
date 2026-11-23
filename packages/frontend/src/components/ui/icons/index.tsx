@@ -198,6 +198,7 @@ const CheckmarkIcon = (props: IconProps) => (
     <circle cx="6" cy="6.5" r="6" fill="#1CC400" />
     <path
       d="M3.33301 6.16667L5.33301 8.16667L8.99967 4.5"
+      fill="none"
       stroke="white"
       strokeWidth="1.33333"
       strokeLinecap="round"
