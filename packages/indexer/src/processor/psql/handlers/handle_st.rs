@@ -6,6 +6,7 @@ use crate::processor::psql::PSQLProcessor;
 use dashcore_rpc::dashcore::consensus::Decodable;
 use dashcore_rpc::RpcApi;
 use deadpool_postgres::Transaction;
+use dpp::balances::credits::CREDITS_PER_DUFF;
 use dpp::dashcore::transaction::special_transaction::asset_lock::AssetLockPayload;
 use dpp::identity::state_transition::AssetLockProved;
 use dpp::prelude::AssetLockProof;
@@ -328,14 +329,14 @@ impl PSQLProcessor {
                 );
             }
             StateTransition::AddressFundingFromAssetLock(st) => {
-                let asset_lock_amount =
-                    self.get_asset_lock_amount(AssetLockProved::asset_lock_proof(&st));
+                let asset_lock_credits =
+                    self.get_asset_lock_credits(AssetLockProved::asset_lock_proof(&st));
 
                 let address_transitions =
                     PlatformAddressTransition::from_address_funding_from_asset_lock(
                         st.clone(),
                         st_hash.clone(),
-                        asset_lock_amount,
+                        asset_lock_credits,
                     );
                 self.handle_platform_address_transitions(
                     address_transitions.clone(),
@@ -442,13 +443,13 @@ impl PSQLProcessor {
 
                 println!("Processed ShieldFromAssetLock at block hash {}", block_hash);
 
-                let asset_lock_amount =
-                    self.get_asset_lock_amount(AssetLockProved::asset_lock_proof(&st));
+                let asset_lock_credits =
+                    self.get_asset_lock_credits(AssetLockProved::asset_lock_proof(&st));
 
                 let address_transitions = PlatformAddressTransition::from_shield_from_asset_lock(
                     st.clone(),
                     st_hash.clone(),
-                    asset_lock_amount,
+                    asset_lock_credits,
                     gas_used,
                 );
                 self.handle_platform_address_transitions(
@@ -657,9 +658,9 @@ impl PSQLProcessor {
         }
     }
 
-    // Amount in duffs that an asset lock proof gives to the state transition carrying it
-    pub(super) fn get_asset_lock_amount(&self, asset_lock_proof: &AssetLockProof) -> u64 {
-        match asset_lock_proof {
+    // Credits that an asset lock proof gives to the state transition carrying it
+    pub(super) fn get_asset_lock_credits(&self, asset_lock_proof: &AssetLockProof) -> u64 {
+        let duffs = match asset_lock_proof {
             AssetLockProof::Instant(i) => {
                 let asset_lock_payload = i
                     .transaction
@@ -688,7 +689,9 @@ impl PSQLProcessor {
 
                 credit_output_value(&asset_lock_payload, c.out_point.vout)
             }
-        }
+        };
+
+        duffs * CREDITS_PER_DUFF
     }
 }
 

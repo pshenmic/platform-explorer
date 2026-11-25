@@ -23,9 +23,6 @@ use dpp::state_transition::identity_update_transition::IdentityUpdateTransition;
 use dpp::state_transition::shield_from_identity_transition::ShieldFromIdentityTransition;
 use dpp::state_transition::StateTransitionIdentityIdFromInputs;
 
-// an asset lock credit output is denominated in duffs
-const CREDITS_PER_DUFF: u64 = 1000;
-
 impl PSQLProcessor {
     pub async fn handle_identity_create(
         &self,
@@ -33,9 +30,9 @@ impl PSQLProcessor {
         st_hash: String,
         sql_transaction: &Transaction<'_>,
     ) -> () {
-        let asset_lock = state_transition.asset_lock_proof().clone();
+        let asset_lock = state_transition.asset_lock_proof();
 
-        if let AssetLockProof::Chain(chain_lock) = &asset_lock {
+        if let AssetLockProof::Chain(chain_lock) = asset_lock {
             let tx_hash = chain_lock.out_point.txid.to_string();
 
             let transaction_info = self
@@ -50,7 +47,7 @@ impl PSQLProcessor {
             }
         }
 
-        let credits = self.get_asset_lock_amount(&asset_lock) * CREDITS_PER_DUFF;
+        let credits = self.get_asset_lock_credits(asset_lock);
 
         let identity = Identity::from((state_transition, credits));
 
@@ -90,12 +87,12 @@ impl PSQLProcessor {
         st_hash: String,
         sql_transaction: &Transaction<'_>,
     ) -> () {
-        let asset_lock_amount = self.get_asset_lock_amount(state_transition.asset_lock_proof());
+        let asset_lock_credits = self.get_asset_lock_credits(state_transition.asset_lock_proof());
 
         let transfer = Transfer {
             sender: None,
             recipient: Some(state_transition.identity_id().clone()),
-            amount: asset_lock_amount * CREDITS_PER_DUFF,
+            amount: asset_lock_credits,
         };
 
         self.dao
