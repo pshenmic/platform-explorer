@@ -56,6 +56,15 @@ const Localization = require('./models/Localization')
 const { Transaction } = require('dash-core-sdk/src/types/Transaction')
 const { Script } = require('dash-core-sdk/src/types/Script')
 
+// The newest platform version the bundled DPP knows. A data contract can only be read with
+// a version that has the features its schema uses, older ones reject it
+const LATEST_PLATFORM_VERSION = PlatformVersionWASM[
+  Object.keys(PlatformVersionWASM)
+    .filter(name => /^PLATFORM_V\d+$/.test(name))
+    .sort((a, b) => Number(a.slice('PLATFORM_V'.length)) - Number(b.slice('PLATFORM_V'.length)))
+    .pop()
+]
+
 const getKnex = () => {
   return require('knex')({
     client: 'pg',
@@ -374,7 +383,7 @@ const decodeStateTransition = async (base64) => {
     case StateTransitionEnum.DATA_CONTRACT_CREATE: {
       const dataContractCreateTransition = DataContractCreateTransitionWASM.fromStateTransition(stateTransition)
 
-      const dataContract = dataContractCreateTransition.getDataContract(PlatformVersionWASM.PLATFORM_V9)
+      const dataContract = dataContractCreateTransition.getDataContract(LATEST_PLATFORM_VERSION)
 
       const dataContractConfig = dataContract.getConfig()
 

@@ -6,6 +6,7 @@ const cache = require('../../src/cache')
 const createIdentityMock = require('./mocks/create_identity.json')
 const dataContractCreateMock = require('./mocks/data_contract_create.json')
 const dataContractCreateWithTokensMock = require('./mocks/data_contract_create_with_tokens.json')
+const dataContractCreateCountableIndicesMock = require('./mocks/data_contract_create_countable_indices.json')
 const documentTransitionMock = require('./mocks/document_transition.json')
 const tokenTransferTransitionMock = require('./mocks/token_transfer_transition.json')
 const tokenConfigUpdateTransitionMock = require('./mocks/token_config_update_transition.json')
@@ -301,6 +302,23 @@ describe('Utils', () => {
         signature: '1f266a8a0153abceec829764c66b8f1b6fdec9e2c1e468b813a46d16bd18b26c2901a8be6c930b0cb0db0962b038ae419370a2ee2776145f238c5fb4239e0060fe',
         signaturePublicKeyId: 1,
         raw: '000001f318e74b0e6b8c3be2f3871aa8503dbb872d223975e64e0b6a5017e46eea1c2b0100000000010100000101b9059c00837dbe1cf91cceef2f5bff89be0a31ab2ca91fe202d4a5a52ed5d7f8000000000000000000010000000102656e00010741312d444953540841312d444953545308000101010101fd000009184e72a00000000101010101010001000101010101000100006400fb2710000001010101010001b9059c00837dbe1cf91cceef2f5bff89be0a31ab2ca91fe202d4a5a52ed5d7f8000101010101000001010101010001010101010000000101010101000101010101000101010101000101010101000101010101000101010101000101010101000100010741312d4449535400100001411f266a8a0153abceec829764c66b8f1b6fdec9e2c1e468b813a46d16bd18b26c2901a8be6c930b0cb0db0962b038ae419370a2ee2776145f238c5fb4239e0060fe'
+      })
+    })
+
+    it('should decode DataContractCreate with a schema newer than platform v9', async () => {
+      // countable and summable indices: of the platform versions the DPP has, only v14 reads this contract
+      const decoded = await utils.decodeStateTransition(dataContractCreateCountableIndicesMock.data)
+
+      assert.equal(decoded.typeString, 'DATA_CONTRACT_CREATE')
+      assert.equal(decoded.dataContractId, 'AJKBQp3aUGzeX3mau5UPa2CVrGbu8xjkAYywyU9xEcSD')
+      assert.equal(decoded.ownerId, 'GcahmcngzKMPNgHm16afiBK8BUBx58zAtUtLJb82ERas')
+      assert.deepEqual(Object.keys(decoded.schema).sort(), ['bulk', 'note', 'post', 'profile'])
+      assert.equal(decoded.schema.note.documentsCountable, true)
+      assert.deepEqual(decoded.schema.bulk.indices[0], {
+        countable: 'countable',
+        name: 'byBucketN',
+        properties: [{ bucket: 'asc' }, { n: 'asc' }],
+        summable: 'n'
       })
     })
 
