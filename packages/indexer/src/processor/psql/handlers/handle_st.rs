@@ -657,17 +657,19 @@ impl PSQLProcessor {
         }
     }
 
-    fn get_asset_lock_amount(&self, asset_lock_proof: &AssetLockProof) -> u64 {
+    // Amount in duffs that an asset lock proof gives to the state transition carrying it
+    pub(super) fn get_asset_lock_amount(&self, asset_lock_proof: &AssetLockProof) -> u64 {
         match asset_lock_proof {
             AssetLockProof::Instant(i) => {
-                i.transaction
+                let asset_lock_payload = i
+                    .transaction
                     .special_transaction_payload
                     .clone()
                     .unwrap()
                     .to_asset_lock_payload()
-                    .expect("Cannot get asset lock payload for instant lock proof")
-                    .credit_outputs[i.output_index as usize]
-                    .value
+                    .expect("Cannot get asset lock payload for instant lock proof");
+
+                credit_output_value(&asset_lock_payload, i.output_index)
             }
             AssetLockProof::Chain(c) => {
                 let tx = self
@@ -684,8 +686,49 @@ impl PSQLProcessor {
                     AssetLockPayload::consensus_decode(&mut payload.as_slice())
                         .expect("Cannot parse payload");
 
-                asset_lock_payload.credit_outputs[c.out_point.vout as usize].value
+                credit_output_value(&asset_lock_payload, c.out_point.vout)
             }
         }
+    }
+}
+
+// The output index of an asset lock proof counts the credit outputs in the asset lock
+// payload. The ordinary outputs of the same Core transaction (the burn and the change) are
+// a different list: one asset lock can fund several identities from a single burn output.
+fn credit_output_value(asset_lock_payload: &AssetLockPayload, output_index: u32) -> u64 {
+    asset_lock_payload
+        .credit_outputs
+        .get(output_index as usize)
+        .expect("Asset lock proof points at a credit output that does not exist")
+        .value
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use dpp::dashcore::{ScriptBuf, TxOut};
+
+    // an asset lock that funds five identities: the Core transaction itself has two ordinary
+    // outputs (22 DASH burned, 10.9895 DASH change), the payload has five credit outputs
+    #[test]
+    fn reads_the_credit_output_the_proof_points_at() {
+        let credit_outputs = [800_000_000u64, 400_000_000, 400_000_000, 300_000_000, 300_000_000]
+            .into_iter()
+            .map(|value| TxOut {
+                value,
+                script_pubkey: ScriptBuf::new(),
+            })
+            .collect();
+
+        let asset_lock_payload = AssetLockPayload {
+            version: 1,
+            credit_outputs,
+        };
+
+        assert_eq!(credit_output_value(&asset_lock_payload, 0), 800_000_000);
+        assert_eq!(credit_output_value(&asset_lock_payload, 1), 400_000_000);
+        // past the two ordinary outputs of the transaction
+        assert_eq!(credit_output_value(&asset_lock_payload, 2), 400_000_000);
+        assert_eq!(credit_output_value(&asset_lock_payload, 4), 300_000_000);
     }
 }

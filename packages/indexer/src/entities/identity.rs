@@ -4,9 +4,7 @@ use base64::engine::general_purpose;
 use base64::Engine;
 use dashcore_rpc::json::DMNState;
 use data_contracts::SystemDataContract;
-use dpp::dashcore::Transaction;
 use dpp::identifier::Identifier;
-use dpp::identity::state_transition::AssetLockProved;
 use dpp::platform_value::string_encoding::Encoding::{Base58, Base64, Hex};
 use dpp::prelude::Revision;
 use dpp::state_transition::identity_create_transition::accessors::IdentityCreateTransitionAccessorsV0;
@@ -70,20 +68,10 @@ impl Identity {
     }
 }
 
-impl From<(IdentityCreateTransition, Transaction)> for Identity {
-    fn from((state_transition, transaction): (IdentityCreateTransition, Transaction)) -> Self {
-        let asset_lock = state_transition.asset_lock_proof().clone();
-        let asset_lock_output_index = asset_lock.output_index();
-
-        let outpoint = transaction
-            .output
-            .iter()
-            .nth(asset_lock_output_index as usize)
-            .expect("Could not find outpoint by index. Try to set asset lock output index")
-            .clone();
-
-        let credits = outpoint.value * 1000;
-
+// The second value is the initial balance in credits, taken from the credit output of
+// the asset lock that funded the identity
+impl From<(IdentityCreateTransition, u64)> for Identity {
+    fn from((state_transition, credits): (IdentityCreateTransition, u64)) -> Self {
         Identity {
             identifier: state_transition.identity_id(),
             owner: state_transition.owner_id(),

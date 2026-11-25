@@ -1,5 +1,4 @@
 use dpp::identifier::Identifier;
-use dpp::identity::state_transition::AssetLockProved;
 use dpp::state_transition::identity_create_from_addresses_transition::accessors::IdentityCreateFromAddressesTransitionAccessorsV0;
 use dpp::state_transition::identity_create_from_addresses_transition::IdentityCreateFromAddressesTransition;
 use dpp::state_transition::identity_credit_transfer_to_addresses_transition::accessors::IdentityCreditTransferToAddressesTransitionAccessorsV0;
@@ -10,8 +9,6 @@ use dpp::state_transition::identity_credit_withdrawal_transition::accessors::Ide
 use dpp::state_transition::identity_credit_withdrawal_transition::IdentityCreditWithdrawalTransition;
 use dpp::state_transition::identity_topup_from_addresses_transition::accessors::IdentityTopUpFromAddressesTransitionAccessorsV0;
 use dpp::state_transition::identity_topup_from_addresses_transition::IdentityTopUpFromAddressesTransition;
-use dpp::state_transition::identity_topup_transition::accessors::IdentityTopUpTransitionAccessorsV0;
-use dpp::state_transition::identity_topup_transition::IdentityTopUpTransition;
 use dpp::state_transition::shield_from_identity_transition::accessors::ShieldFromIdentityTransitionAccessorsV0;
 use dpp::state_transition::shield_from_identity_transition::ShieldFromIdentityTransition;
 use dpp::state_transition::{StateTransitionIdentityIdFromInputs, StateTransitionWitnessSigned};
@@ -21,32 +18,6 @@ pub struct Transfer {
     pub sender: Option<Identifier>,
     pub recipient: Option<Identifier>,
     pub amount: u64,
-}
-
-impl From<IdentityTopUpTransition> for Transfer {
-    fn from(state_transition: IdentityTopUpTransition) -> Self {
-        let identifier = state_transition.identity_id().clone();
-        let asset_lock = state_transition.asset_lock_proof().clone();
-        let vout_index = asset_lock.output_index();
-
-        let tx = asset_lock.transaction().cloned();
-
-        // todo why assetlock transaction could not have tx?
-        let amount = match tx {
-            None => 0,
-            Some(tx) => {
-                let tx_out = tx.output.get(vout_index as usize).cloned().unwrap();
-
-                tx_out.value * 1000
-            }
-        };
-
-        return Transfer {
-            sender: None,
-            recipient: Some(identifier),
-            amount,
-        };
-    }
 }
 
 impl From<IdentityTopUpFromAddressesTransition> for Transfer {
