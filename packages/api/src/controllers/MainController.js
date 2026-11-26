@@ -42,10 +42,11 @@ class MainController {
 
     const epoch = epochInfo ? Epoch.fromObject(epochInfo) : null
 
-    const tdHeight = tdStatus?.highestBlock?.height
-    const indexerHeight = currentBlock.header.height
+    const tdHeight = tdStatus?.highestBlock?.height ?? null
+    const indexerHeight = currentBlock?.header?.height ?? null
 
-    const indexerSynced = (tdHeight - indexerHeight) <= 1
+    const backendAvailable = tdHeight != null && indexerHeight != null
+    const indexerSynced = backendAvailable && (tdHeight - indexerHeight) <= 1
 
     if (!indexerSynced) {
       response.status(503)
@@ -66,7 +67,7 @@ class MainController {
         block: {
           height: currentBlock?.header?.height ?? null,
           hash: currentBlock?.header?.hash ?? null,
-          timestamp: currentBlock?.header?.timestamp.toISOString() ?? null
+          timestamp: currentBlock?.header?.timestamp?.toISOString() ?? null
         }
       },
       tenderdash: {
@@ -78,8 +79,8 @@ class MainController {
         }
       },
       indexer: {
-        status: indexerSynced ? 'synced' : 'syncing',
-        syncProgress: indexerHeight / tdHeight * 100
+        status: backendAvailable ? (indexerSynced ? 'synced' : 'syncing') : 'unknown',
+        syncProgress: backendAvailable && tdHeight > 0 ? indexerHeight / tdHeight * 100 : null
       },
       versions: {
         software: {
@@ -89,12 +90,12 @@ class MainController {
         },
         protocol: {
           tenderdash: {
-            p2p: status?.version?.protocol?.tenderdash.p2p ?? null,
-            block: status?.version?.protocol?.tenderdash.block ?? null
+            p2p: status?.version?.protocol?.tenderdash?.p2p ?? null,
+            block: status?.version?.protocol?.tenderdash?.block ?? null
           },
           drive: {
-            latest: status?.version?.protocol?.drive.latest ?? null,
-            current: status?.version?.protocol?.drive.current ?? null
+            latest: status?.version?.protocol?.drive?.latest ?? null,
+            current: status?.version?.protocol?.drive?.current ?? null
           }
         }
       }
