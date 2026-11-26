@@ -1,5 +1,4 @@
 use dpp::address_funds::PlatformAddress;
-use dpp::balances::credits::CREDITS_PER_DUFF;
 use dpp::state_transition::address_credit_withdrawal_transition::accessors::AddressCreditWithdrawalTransitionAccessorsV0;
 use dpp::state_transition::address_credit_withdrawal_transition::AddressCreditWithdrawalTransition;
 use dpp::state_transition::address_funding_from_asset_lock_transition::accessors::AddressFundingFromAssetLockTransitionAccessorsV0;
@@ -139,15 +138,12 @@ impl PlatformAddressTransition {
     pub fn from_address_funding_from_asset_lock(
         transition: AddressFundingFromAssetLockTransition,
         transition_hash: String,
-        asset_lock_duffs: u64,
+        asset_lock_credits: u64,
     ) -> Vec<PlatformAddressTransition> {
         let transition_type: i32 = transition.state_transition_type() as _;
 
         let inputs = transition.inputs();
         let outputs = transition.outputs();
-
-        // duffs to credits
-        let asset_lock_credits = asset_lock_duffs * CREDITS_PER_DUFF;
 
         let inputs_amount: u64 = inputs.values().map(|(_, credits)| credits.clone()).sum();
 
@@ -261,7 +257,7 @@ impl PlatformAddressTransition {
     pub fn from_shield_from_asset_lock(
         transition: ShieldFromAssetLockTransition,
         transition_hash: String,
-        asset_lock_duffs: u64,
+        asset_lock_credits: u64,
         gas_used: u64,
     ) -> Vec<PlatformAddressTransition> {
         let transition_type: i32 = transition.state_transition_type() as _;
@@ -270,9 +266,6 @@ impl PlatformAddressTransition {
             // whatever the asset lock did not put into the shielded pool, minus the fee,
             // lands on the surplus address. Without one it is burned into the fee pools
             Some(addr) => {
-                // duffs to credits
-                let asset_lock_credits = asset_lock_duffs * CREDITS_PER_DUFF;
-
                 let amount = asset_lock_credits
                     .saturating_sub(transition.value_balance())
                     .saturating_sub(gas_used);
