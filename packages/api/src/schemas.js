@@ -91,12 +91,13 @@ const schemaTypes = [
                 'CONTRACT_FEE_CLAIM',
                 'TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE',
                 'TOKEN_UNSHIELD_WITH_SHIELDED_FEE',
-                'TOKEN_PURCHASE_FROM_SHIELDED_POOL'
+                'TOKEN_PURCHASE_FROM_SHIELDED_POOL',
+                'PRIVATE_DOCUMENT_CREATE_FROM_SHIELDED_POOL'
               ]
             },
             {
               type: 'number',
-              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28]
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
             }
           ]
         }
@@ -132,12 +133,13 @@ const schemaTypes = [
                 'TOKEN_CLAIM_TO_POOL',
                 'TOKEN_DIRECT_PURCHASE_TO_POOL',
                 'TOKEN_UNSHIELD',
-                'TOKEN_SHIELDED_TRANSFER'
+                'TOKEN_SHIELDED_TRANSFER',
+                'DOCUMENT_ERASE'
               ]
             },
             {
               type: 'number',
-              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+              enum: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25]
             }
           ]
         }

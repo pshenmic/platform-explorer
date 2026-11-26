@@ -26,6 +26,7 @@ pub enum BatchType {
     TokenDirectPurchaseToPoolTransition,
     TokenUnshieldTransition,
     TokenShieldedTransferTransition,
+    DocumentEraseTransition,
 }
 
 impl fmt::Display for BatchType {
@@ -58,6 +59,7 @@ impl fmt::Display for BatchType {
             BatchType::TokenDirectPurchaseToPoolTransition => "TOKEN_DIRECT_PURCHASE_TO_POOL",
             BatchType::TokenUnshieldTransition => "TOKEN_UNSHIELD",
             BatchType::TokenShieldedTransferTransition => "TOKEN_SHIELDED_TRANSFER",
+            BatchType::DocumentEraseTransition => "DOCUMENT_ERASE",
         };
 
         write!(f, "{batch_type_string}")

@@ -26,6 +26,7 @@ const BatchEnum = {
   TOKEN_DIRECT_PURCHASE_TO_POOL: 22,
   TOKEN_UNSHIELD: 23,
   TOKEN_SHIELDED_TRANSFER: 24,
+  DOCUMENT_ERASE: 25,
   0: 'DOCUMENT_CREATE',
   1: 'DOCUMENT_REPLACE',
   2: 'DOCUMENT_DELETE',
@@ -50,7 +51,8 @@ const BatchEnum = {
   21: 'TOKEN_CLAIM_TO_POOL',
   22: 'TOKEN_DIRECT_PURCHASE_TO_POOL',
   23: 'TOKEN_UNSHIELD',
-  24: 'TOKEN_SHIELDED_TRANSFER'
+  24: 'TOKEN_SHIELDED_TRANSFER',
+  25: 'DOCUMENT_ERASE'
 }
 
 // pshenmic-dpp remap documents
@@ -61,6 +63,7 @@ BatchEnum.transfer = BatchEnum[3]
 BatchEnum.updatePrice = BatchEnum[4]
 BatchEnum.purchase = BatchEnum[5]
 BatchEnum.IndexOnlyDelete = BatchEnum[17]
+BatchEnum.DocumentErase = BatchEnum[25]
 // pshenmic-dpp remap tokens
 BatchEnum.Burn = BatchEnum[6]
 BatchEnum.Mint = BatchEnum[7]
@@ -81,9 +84,11 @@ BatchEnum.DirectPurchaseToPool = BatchEnum[22]
 BatchEnum.Unshield = BatchEnum[23]
 BatchEnum.ShieldedTransfer = BatchEnum[24]
 
-// documents keep the dpp action number, index only delete is 7 there, which is TOKEN_MINT here
+// documents keep the dpp action number, index only delete and erase are stored in batch-only slots
 BatchEnum.fromDocumentAction = (actionTypeNumber) => actionTypeNumber === DocumentActionEnum.IndexOnlyDelete
   ? BatchEnum.IndexOnlyDelete
-  : BatchEnum[actionTypeNumber]
+  : actionTypeNumber === DocumentActionEnum.Erase
+    ? BatchEnum.DocumentErase
+    : BatchEnum[actionTypeNumber]
 
 module.exports = BatchEnum

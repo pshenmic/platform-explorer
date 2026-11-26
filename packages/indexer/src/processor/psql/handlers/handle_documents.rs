@@ -169,6 +169,7 @@ impl PSQLProcessor {
                         .unwrap();
                 }
                 DocumentTransition::Delete(_)
+                | DocumentTransition::Erase(_)
                 | DocumentTransition::UpdatePrice(_)
                 | DocumentTransition::IndexOnlyDelete(_) => {}
             }
