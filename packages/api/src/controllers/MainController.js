@@ -55,7 +55,7 @@ class MainController {
     response.send({
       epoch,
       transactionsCount: stats?.transactionsCount,
-      totalCredits: String(totalCredits),
+      totalCredits: totalCredits != null ? String(totalCredits) : null,
       totalCollectedFeesDay,
       transfersCount: stats?.transfersCount,
       dataContractsCount: stats?.dataContractsCount,
