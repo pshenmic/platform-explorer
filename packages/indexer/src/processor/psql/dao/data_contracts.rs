@@ -30,8 +30,12 @@ impl PostgresDAO {
         let description = data_contract.description;
         let keywords = data_contract.keywords;
 
+        // A custom name belongs to the data contract as a whole, not to a single version.
+        // Keep it when a new version is indexed after the naming document was processed.
         let query = "INSERT INTO data_contracts(identifier, name, owner, schema, version, \
-        state_transition_hash, is_system, format_version, description, keywords) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10);";
+        state_transition_hash, is_system, format_version, description, keywords) VALUES \
+        ($1, COALESCE($2, (SELECT name FROM data_contracts WHERE identifier = $1 AND name IS NOT NULL ORDER BY id DESC LIMIT 1)), \
+        $3, $4, $5, $6, $7, $8, $9, $10);";
 
         let stmt = sql_transaction.prepare_cached(query).await.unwrap();
 
