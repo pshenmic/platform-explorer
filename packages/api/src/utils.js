@@ -45,6 +45,7 @@ const {
   TokenShieldedTransferWithShieldedFeeTransitionWASM,
   TokenUnshieldWithShieldedFeeTransitionWASM,
   TokenPurchaseFromShieldedPoolTransitionWASM,
+  PrivateDocumentCreateFromShieldedPoolTransitionWASM,
   IdentifierWASM
 } = require('pshenmic-dpp')
 const BatchEnum = require('./enums/BatchEnum')
@@ -192,13 +193,74 @@ const getActionTakersValue = (actionTakers) => {
   return typeof value === 'number' ? value : value?.base58()
 }
 
+const changeControlRulesToObject = (rules) => rules
+  ? {
+      authorizedToMakeChange: {
+        takerType: rules.authorizedToMakeChange.getTakerType(),
+        taker: getActionTakersValue(rules.authorizedToMakeChange.getValue()) ?? null
+      },
+      adminActionTakers: {
+        takerType: rules.adminActionTakers.getTakerType(),
+        taker: getActionTakersValue(rules.adminActionTakers.getValue()) ?? null
+      },
+      changingAuthorizedActionTakersToNoOneAllowed: rules.changingAuthorizedActionTakersToNoOneAllowed,
+      changingAdminActionTakersToNoOneAllowed: rules.changingAdminActionTakersToNoOneAllowed,
+      selfChangingAdminActionTakersAllowed: rules.selfChangingAdminActionTakersAllowed
+    }
+  : null
+
+const serializedActionsToArray = (actions) => actions.map((action) => ({
+  nullifier: Buffer.from(action.nullifier).toString('hex'),
+  rk: Buffer.from(action.rk).toString('hex'),
+  cmx: Buffer.from(action.cmx).toString('hex'),
+  encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+  cvNet: Buffer.from(action.cvNet).toString('hex'),
+  spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+}))
+
+const shieldedPaymentToObject = (payment) => payment
+  ? {
+      amount: payment.amount.toString(),
+      actions: serializedActionsToArray(payment.actions),
+      anchor: Buffer.from(payment.anchor).toString('hex'),
+      proof: Buffer.from(payment.proof).toString('hex'),
+      bindingsSignature: Buffer.from(payment.bindingsSignature).toString('hex')
+    }
+  : null
+
+const tokenPaymentInfoToObject = (tokenPaymentInfo) => tokenPaymentInfo
+  ? {
+      paymentTokenContractId: tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
+      tokenContractPosition: tokenPaymentInfo.tokenContractPosition,
+      minimumTokenCost: tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
+      maximumTokenCost: tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
+      gasFeesPaidBy: tokenPaymentInfo.gasFeesPaidBy,
+      shieldedPayment: shieldedPaymentToObject(tokenPaymentInfo.shieldedPayment)
+    }
+  : null
+
+const actionFeeAgreementToObject = (agreement) => agreement
+  ? {
+      owner: agreement.owner.toString(),
+      moderators: agreement.moderators.toString(),
+      pricing: agreement.pricing,
+      feeMultiplier: agreement.feeMultiplier
+        ? {
+            knownPermille: agreement.feeMultiplier.knownPermille.toString(),
+            increaseTolerancePercent: agreement.feeMultiplier.increaseTolerancePercent
+          }
+        : null
+    }
+  : null
+
 const tokensConfigToArray = (config, dataContractId) => {
   const tokensKeys = Object.keys(config)
 
   return tokensKeys.map((position) => {
     const token = config[position]
+    const tokenPosition = token.position ?? Number(position)
 
-    const tokenId = TokenConfigurationWASM.calculateTokenId(dataContractId, Number(position))
+    const tokenId = TokenConfigurationWASM.calculateTokenId(dataContractId, tokenPosition)
 
     const localizations = Object.keys(token.tokenConfiguration.conventions.localizations)
       .reduce((acc, localizationCode) => {
@@ -208,7 +270,7 @@ const tokensConfigToArray = (config, dataContractId) => {
       }, {})
 
     return {
-      position: Number(position),
+      position: tokenPosition,
       tokenId: tokenId.base58(),
       conventions: {
         decimals: token.tokenConfiguration.conventions.decimals,
@@ -357,7 +419,11 @@ const tokensConfigToArray = (config, dataContractId) => {
         taker: getActionTakersValue(token.tokenConfiguration.mainControlGroupCanBeModified.getValue()) ?? null
       },
       mainControlGroup: token.tokenConfiguration.mainControlGroup ?? null,
-      description: token.tokenConfiguration.description ?? null
+      description: token.tokenConfiguration.description ?? null,
+      hasShieldedPool: token.tokenConfiguration.hasShieldedPool,
+      isTransferable: token.tokenConfiguration.isTransferable,
+      minimumPoolNotesForOutgoing: token.tokenConfiguration.minimumPoolNotesForOutgoing?.toString() ?? null,
+      minimumPoolNotesForOutgoingChangeRules: changeControlRulesToObject(token.tokenConfiguration.minimumPoolNotesForOutgoingChangeRules)
     }
   }, {})
 }
@@ -386,7 +452,8 @@ const decodeStateTransition = async (base64) => {
         documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault,
         documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault,
         requiresIdentityDecryptionBoundedKey: dataContractConfig.requiresIdentityDecryptionBoundedKey ?? null,
-        requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
+        requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null,
+        sizedIntegerTypes: dataContractConfig.sizedIntegerTypes ?? null
       }
 
       decoded.version = dataContract.version
@@ -400,12 +467,10 @@ const decodeStateTransition = async (base64) => {
       decoded.signaturePublicKeyId = stateTransition.signaturePublicKeyId
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
 
-      const groupsKeys = Object.keys(dataContract.groups)
-
-      decoded.groups = groupsKeys.map((key) => ({
-        position: Number(key),
-        members: dataContract.groups[key].members,
-        requiredPower: dataContract.groups[key].requiredPower
+      decoded.groups = dataContract.groups.map(({ position, group }) => ({
+        position,
+        members: group.members,
+        requiredPower: group.requiredPower
       }))
 
       break
@@ -625,6 +690,22 @@ const decodeStateTransition = async (base64) => {
                     break
                   }
                   case 'MintingAllowChoosingDestinationAdminGroup': {
+                    const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
+
+                    out.itemValue = {
+                      takerType: tokenTransition.updateTokenConfigurationItem.getItem().getTakerType(),
+                      value: typeof value === 'number' ? value : value?.base58() ?? null
+                    }
+                    break
+                  }
+                  case 'MinimumPoolNotesForOutgoing': {
+                    out.itemValue = {
+                      minimumPoolNotes: tokenTransition.updateTokenConfigurationItem.getItem()?.toString() ?? null
+                    }
+                    break
+                  }
+                  case 'MinimumPoolNotesForOutgoingControlGroup':
+                  case 'MinimumPoolNotesForOutgoingAdminGroup': {
                     const value = tokenTransition.updateTokenConfigurationItem.getItem().getValue()
 
                     out.itemValue = {
@@ -950,15 +1031,8 @@ const decodeStateTransition = async (base64) => {
                     }
                   : null
 
-                out.tokenPaymentInfo = createTransition.base.tokenPaymentInfo
-                  ? {
-                      paymentTokenContractId: createTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                      tokenContractPosition: createTransition.base.tokenPaymentInfo.tokenContractPosition,
-                      minimumTokenCost: createTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                      maximumTokenCost: createTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                      gasFeesPaidBy: createTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                    }
-                  : null
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(createTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(createTransition.base.actionFeeAgreement)
 
                 break
               }
@@ -967,30 +1041,16 @@ const decodeStateTransition = async (base64) => {
 
                 out.data = replaceTransition.data
 
-                out.tokenPaymentInfo = replaceTransition.base.tokenPaymentInfo
-                  ? {
-                      paymentTokenContractId: replaceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                      tokenContractPosition: replaceTransition.base.tokenPaymentInfo.tokenContractPosition,
-                      minimumTokenCost: replaceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                      maximumTokenCost: replaceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                      gasFeesPaidBy: replaceTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                    }
-                  : null
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(replaceTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(replaceTransition.base.actionFeeAgreement)
 
                 break
               }
               case DocumentActionEnum.Delete: {
                 const deleteTransition = transition.deleteTransition
 
-                out.tokenPaymentInfo = deleteTransition.base.tokenPaymentInfo
-                  ? {
-                      paymentTokenContractId: deleteTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                      tokenContractPosition: deleteTransition.base.tokenPaymentInfo.tokenContractPosition,
-                      minimumTokenCost: deleteTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                      maximumTokenCost: deleteTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                      gasFeesPaidBy: deleteTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                    }
-                  : null
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(deleteTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(deleteTransition.base.actionFeeAgreement)
 
                 break
               }
@@ -999,15 +1059,8 @@ const decodeStateTransition = async (base64) => {
 
                 out.price = Number(updatePriceTransition.price)
 
-                out.tokenPaymentInfo = updatePriceTransition.base.tokenPaymentInfo
-                  ? {
-                      paymentTokenContractId: updatePriceTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                      tokenContractPosition: updatePriceTransition.base.tokenPaymentInfo.tokenContractPosition,
-                      minimumTokenCost: updatePriceTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                      maximumTokenCost: updatePriceTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                      gasFeesPaidBy: updatePriceTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                    }
-                  : null
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(updatePriceTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(updatePriceTransition.base.actionFeeAgreement)
 
                 break
               }
@@ -1016,15 +1069,8 @@ const decodeStateTransition = async (base64) => {
 
                 out.price = Number(purchaseTransition.price)
 
-                out.tokenPaymentInfo = purchaseTransition.base.tokenPaymentInfo
-                  ? {
-                      paymentTokenContractId: purchaseTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                      tokenContractPosition: purchaseTransition.base.tokenPaymentInfo.tokenContractPosition,
-                      minimumTokenCost: purchaseTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                      maximumTokenCost: purchaseTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                      gasFeesPaidBy: purchaseTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                    }
-                  : null
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(purchaseTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(purchaseTransition.base.actionFeeAgreement)
 
                 break
               }
@@ -1034,15 +1080,8 @@ const decodeStateTransition = async (base64) => {
                 out.receiverId = transferTransition.receiverId
                 out.recipientId = transferTransition.recipientId.base58()
 
-                out.tokenPaymentInfo = transferTransition.base.tokenPaymentInfo
-                  ? {
-                      paymentTokenContractId: transferTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                      tokenContractPosition: transferTransition.base.tokenPaymentInfo.tokenContractPosition,
-                      minimumTokenCost: transferTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                      maximumTokenCost: transferTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                      gasFeesPaidBy: transferTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                    }
-                  : null
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(transferTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(transferTransition.base.actionFeeAgreement)
 
                 break
               }
@@ -1051,15 +1090,18 @@ const decodeStateTransition = async (base64) => {
 
                 out.data = indexOnlyDeleteTransition.data
 
-                out.tokenPaymentInfo = indexOnlyDeleteTransition.base.tokenPaymentInfo
-                  ? {
-                      paymentTokenContractId: indexOnlyDeleteTransition.base.tokenPaymentInfo.paymentTokenContractId?.base58() ?? null,
-                      tokenContractPosition: indexOnlyDeleteTransition.base.tokenPaymentInfo.tokenContractPosition,
-                      minimumTokenCost: indexOnlyDeleteTransition.base.tokenPaymentInfo.minimumTokenCost?.toString() ?? null,
-                      maximumTokenCost: indexOnlyDeleteTransition.base.tokenPaymentInfo.maximumTokenCost?.toString() ?? null,
-                      gasFeesPaidBy: indexOnlyDeleteTransition.base.tokenPaymentInfo.gasFeesPaidBy
-                    }
-                  : null
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(indexOnlyDeleteTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(indexOnlyDeleteTransition.base.actionFeeAgreement)
+
+                break
+              }
+              case DocumentActionEnum.Erase: {
+                // an erase purges the retained history of an already deleted document, it
+                // carries no data and no revision
+                const eraseTransition = transition.eraseTransition
+
+                out.tokenPaymentInfo = tokenPaymentInfoToObject(eraseTransition.base.tokenPaymentInfo)
+                out.actionFeeAgreement = actionFeeAgreementToObject(eraseTransition.base.actionFeeAgreement)
 
                 break
               }
@@ -1172,7 +1214,8 @@ const decodeStateTransition = async (base64) => {
         documentsMutableContractDefault: dataContractConfig.documentsMutableContractDefault,
         documentsCanBeDeletedContractDefault: dataContractConfig.documentsCanBeDeletedContractDefault,
         requiresIdentityDecryptionBoundedKey: dataContractConfig.requiresIdentityDecryptionBoundedKey ?? null,
-        requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null
+        requiresIdentityEncryptionBoundedKey: dataContractConfig.requiresIdentityEncryptionBoundedKey ?? null,
+        sizedIntegerTypes: dataContractConfig.sizedIntegerTypes ?? null
       }
 
       decoded.identityContractNonce = dataContractUpdateTransition.identityContractNonce.toString()
@@ -1187,17 +1230,11 @@ const decodeStateTransition = async (base64) => {
       decoded.dataContractOwner = dataContractUpdateTransition.getDataContract().ownerId.base58()
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
 
-      const groupsKeys = Object.keys(dataContractUpdateTransition.getDataContract().groups)
-
-      decoded.groups = groupsKeys.reduce((acc, key) => {
-        return {
-          ...acc,
-          key: {
-            members: dataContractUpdateTransition.getDataContract().groups[key].members,
-            requiredPower: dataContractUpdateTransition.getDataContract().groups[key].requiredPower
-          }
-        }
-      }, {})
+      decoded.groups = dataContractUpdateTransition.getDataContract().groups.map(({ position, group }) => ({
+        position,
+        members: group.members,
+        requiredPower: group.requiredPower
+      }))
 
       break
     }
@@ -1274,17 +1311,34 @@ const decodeStateTransition = async (base64) => {
     }
     case StateTransitionEnum.MASTERNODE_VOTE: {
       const masternodeVoteTransition = MasternodeVoteTransitionWASM.fromStateTransition(stateTransition)
+      const vote = masternodeVoteTransition.vote
 
-      const towardsIdentity = masternodeVoteTransition.vote.resourceVoteChoice.getValue()?.base58()
+      // yes/no votes (protocol version 15) have no resource choice, their getter throws
+      let yesNoChoice = null
 
-      decoded.indexValues = masternodeVoteTransition.vote.votePoll.indexValues
-      decoded.contractId = masternodeVoteTransition.vote.votePoll.contractId.base58()
+      try {
+        yesNoChoice = vote.yesNoChoice
+      } catch (e) {
+        yesNoChoice = null
+      }
+
+      if (yesNoChoice) {
+        decoded.voteKind = 'yesNo'
+        decoded.pollId = vote.pollId.base58()
+        decoded.choice = yesNoChoice
+      } else {
+        const towardsIdentity = vote.resourceVoteChoice.getValue()?.base58()
+
+        decoded.indexValues = vote.votePoll.indexValues
+        decoded.contractId = vote.votePoll.contractId.base58()
+        decoded.documentTypeName = vote.votePoll.documentTypeName
+        decoded.indexName = vote.votePoll.indexName
+        decoded.choice = `${vote.resourceVoteChoice.getType()}${towardsIdentity ? `(${towardsIdentity})` : ''}`
+      }
+
       decoded.modifiedDataIds = masternodeVoteTransition.modifiedDataIds.map(identifier => identifier.base58())
       decoded.ownerId = stateTransition.getOwnerId().base58()
       decoded.signature = Buffer.from(stateTransition.signature ?? []).toString('hex') ?? null
-      decoded.documentTypeName = masternodeVoteTransition.vote.votePoll.documentTypeName
-      decoded.indexName = masternodeVoteTransition.vote.votePoll.indexName
-      decoded.choice = `${masternodeVoteTransition.vote.resourceVoteChoice.getType()}${towardsIdentity ? `(${towardsIdentity})` : ''}`
       decoded.userFeeIncrease = stateTransition.userFeeIncrease
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
       decoded.proTxHash = masternodeVoteTransition.proTxHash.hex()
@@ -1975,6 +2029,28 @@ const decodeStateTransition = async (base64) => {
       decoded.feeProof = Buffer.from(tokenPurchaseTransition.feeProof).toString('hex')
       decoded.feeBindingSignature = Buffer.from(tokenPurchaseTransition.feeBindingSignature).toString('hex')
       decoded.creditAmount = tokenPurchaseTransition.creditAmount.toString()
+      decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
+
+      break
+    }
+    case StateTransitionEnum.PRIVATE_DOCUMENT_CREATE_FROM_SHIELDED_POOL: {
+      const privateDocumentTransition = PrivateDocumentCreateFromShieldedPoolTransitionWASM.fromStateTransition(stateTransition)
+
+      decoded.dataContractId = privateDocumentTransition.dataContractId.base58()
+      decoded.documentTypeName = privateDocumentTransition.documentTypeName
+      decoded.entryCount = privateDocumentTransition.entries.length
+      decoded.valueBalance = privateDocumentTransition.valueBalance.toString()
+      decoded.actions = privateDocumentTransition.actions.map((action) => ({
+        nullifier: Buffer.from(action.nullifier).toString('hex'),
+        rk: Buffer.from(action.rk).toString('hex'),
+        cmx: Buffer.from(action.cmx).toString('hex'),
+        encryptedNote: Buffer.from(action.encryptedNote).toString('hex'),
+        cvNet: Buffer.from(action.cvNet).toString('hex'),
+        spendAuthSig: Buffer.from(action.spendAuthSig).toString('hex')
+      }))
+      decoded.anchor = Buffer.from(privateDocumentTransition.anchor).toString('hex')
+      decoded.proof = Buffer.from(privateDocumentTransition.proof).toString('hex')
+      decoded.bindingSignature = Buffer.from(privateDocumentTransition.bindingsSignature).toString('hex')
       decoded.raw = Buffer.from(stateTransition.bytes()).toString('hex')
 
       break

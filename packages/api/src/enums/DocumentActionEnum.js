@@ -7,6 +7,7 @@ const DocumentActionEnum = {
   5: 'Update price',
   6: 'Ignore while bumping revision',
   7: 'Index only delete',
+  8: 'Erase',
   Create: 0,
   Replace: 1,
   Delete: 2,
@@ -14,7 +15,8 @@ const DocumentActionEnum = {
   Purchase: 4,
   UpdatePrice: 5,
   IgnoreWhileBumpingRevision: 6,
-  IndexOnlyDelete: 7
+  IndexOnlyDelete: 7,
+  Erase: 8
 }
 
 module.exports = DocumentActionEnum

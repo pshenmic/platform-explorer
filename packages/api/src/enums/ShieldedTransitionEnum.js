@@ -22,7 +22,8 @@ const SHIELD_OUT_TYPES = [
   // the token transitions below only move credits out of the pool, to pay the fee or the price
   StateTransitionEnum.TOKEN_SHIELDED_TRANSFER_WITH_SHIELDED_FEE,
   StateTransitionEnum.TOKEN_UNSHIELD_WITH_SHIELDED_FEE,
-  StateTransitionEnum.TOKEN_PURCHASE_FROM_SHIELDED_POOL
+  StateTransitionEnum.TOKEN_PURCHASE_FROM_SHIELDED_POOL,
+  StateTransitionEnum.PRIVATE_DOCUMENT_CREATE_FROM_SHIELDED_POOL
 ]
 
 // transitions that stay inside the shielded pool
