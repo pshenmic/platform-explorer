@@ -140,6 +140,11 @@ module.exports = class PlatformAddressesDAO {
     const platformAddresses = rows.map(PlatformAddress.fromRow)
     const bech32mAddresses = platformAddresses.map(address => address.bech32mAddress)
 
+    // DAPI refuses to prove an empty list of addresses
+    if (bech32mAddresses.length === 0) {
+      return new PaginatedResultSet([], page, limit, 0)
+    }
+
     const addressesInfo = await this.sdk.platformAddresses.getAddressesInfos(bech32mAddresses)
     const addressesInfoJSON = Object.fromEntries(
       addressesInfo.map(info => (
