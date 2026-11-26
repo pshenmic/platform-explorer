@@ -1,6 +1,8 @@
 use dpp::state_transition::identity_create_from_shielded_pool_transition::IdentityCreateFromShieldedPoolTransition;
 use dpp::state_transition::identity_top_up_from_shielded_pool_transition::accessors::IdentityTopUpFromShieldedPoolTransitionAccessorsV0;
 use dpp::state_transition::identity_top_up_from_shielded_pool_transition::IdentityTopUpFromShieldedPoolTransition;
+use dpp::state_transition::private_document_create_from_shielded_pool_transition::accessors::PrivateDocumentCreateFromShieldedPoolTransitionAccessorsV0;
+use dpp::state_transition::private_document_create_from_shielded_pool_transition::PrivateDocumentCreateFromShieldedPoolTransition;
 use dpp::state_transition::shield_from_asset_lock_transition::accessors::ShieldFromAssetLockTransitionAccessorsV0;
 use dpp::state_transition::shield_from_asset_lock_transition::ShieldFromAssetLockTransition;
 use dpp::state_transition::shield_from_identity_transition::accessors::ShieldFromIdentityTransitionAccessorsV0;
@@ -194,6 +196,21 @@ impl ShieldedTransition {
         let transition_type: i32 = transition.state_transition_type() as _;
 
         let amount = transition.credit_amount();
+
+        ShieldedTransition {
+            transition_type,
+            transition_hash,
+            amount,
+        }
+    }
+
+    pub fn from_private_document_create_from_shielded_pool_transition(
+        transition: PrivateDocumentCreateFromShieldedPoolTransition,
+        transition_hash: String,
+    ) -> ShieldedTransition {
+        let transition_type: i32 = transition.state_transition_type() as _;
+
+        let amount = transition.value_balance();
 
         ShieldedTransition {
             transition_type,

@@ -31,7 +31,13 @@ impl PSQLProcessor {
             )
             .unwrap();
 
-        let masternode_vote = MasternodeVote::from((state_transition, pro_tx_info));
+        let masternode_vote = match MasternodeVote::try_from((state_transition, pro_tx_info)) {
+            Ok(masternode_vote) => masternode_vote,
+            Err(()) => {
+                println!("Skipped yes/no masternode vote {}", st_hash);
+                return Ok(());
+            }
+        };
 
         self.dao
             .create_masternode_vote(masternode_vote, st_hash.clone(), sql_transaction)

@@ -16,6 +16,7 @@ use dpp::state_transition::batch_transition::batched_transition::BatchedTransiti
 use dpp::state_transition::batch_transition::BatchTransition;
 use dpp::state_transition::contract_fee_claim_transition::accessors::ContractFeeClaimTransitionAccessorsV0;
 use dpp::state_transition::contract_user_moderation_transition::accessors::ContractUserModerationTransitionAccessorsV0;
+use dpp::state_transition::private_document_create_from_shielded_pool_transition::accessors::PrivateDocumentCreateFromShieldedPoolTransitionAccessorsV0;
 use dpp::state_transition::token_purchase_from_shielded_pool_transition::accessors::TokenPurchaseFromShieldedPoolTransitionAccessorsV0;
 use dpp::state_transition::token_shielded_transfer_with_shielded_fee_transition::accessors::TokenShieldedTransferWithShieldedFeeTransitionAccessorsV0;
 use dpp::state_transition::token_unshield_with_shielded_fee_transition::accessors::TokenUnshieldWithShieldedFeeTransitionAccessorsV0;
@@ -50,6 +51,7 @@ impl PSQLProcessor {
                     DocumentTransition::IndexOnlyDelete(_) => {
                         Some(BatchType::DocumentIndexOnlyDeleteTransition)
                     }
+                    DocumentTransition::Erase(_) => Some(BatchType::DocumentEraseTransition),
                 },
                 BatchTransition::V1(v1) => match v1.transitions.first().unwrap() {
                     BatchedTransition::Document(document_transition) => match document_transition {
@@ -70,6 +72,7 @@ impl PSQLProcessor {
                         DocumentTransition::IndexOnlyDelete(_) => {
                             Some(BatchType::DocumentIndexOnlyDeleteTransition)
                         }
+                        DocumentTransition::Erase(_) => Some(BatchType::DocumentEraseTransition),
                     },
                     BatchedTransition::Token(token_transition) => match token_transition {
                         TokenTransition::Burn(_) => Some(BatchType::TokenBurnTransition),
@@ -651,6 +654,28 @@ impl PSQLProcessor {
 
                 println!(
                     "Processed TokenPurchaseFromShieldedPool at block hash {}",
+                    block_hash
+                );
+            }
+            StateTransition::PrivateDocumentCreateFromShieldedPool(st) => {
+                self.handle_data_contract_transition(
+                    Some(st_hash.clone()),
+                    st.data_contract_id(),
+                    sql_transaction,
+                )
+                .await;
+
+                let shielded_transition =
+                    ShieldedTransition::from_private_document_create_from_shielded_pool_transition(
+                        st.clone(),
+                        st_hash.clone(),
+                    );
+                self.handle_shielded_transition(shielded_transition, sql_transaction)
+                    .await
+                    .unwrap();
+
+                println!(
+                    "Processed PrivateDocumentCreateFromShieldedPool at block hash {}",
                     block_hash
                 );
             }

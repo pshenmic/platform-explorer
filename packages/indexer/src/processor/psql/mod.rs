@@ -229,6 +229,9 @@ impl PSQLProcessor {
             SystemDataContract::DocumentHistory => {}
             SystemDataContract::AppConnect => {}
             SystemDataContract::ModerationCharters => {}
+            SystemDataContract::DecisionProposals => {}
+            // Token market is registered from protocol version 16 on
+            SystemDataContract::TokenMarket => {}
         }
     }
 }

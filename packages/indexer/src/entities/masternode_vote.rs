@@ -30,8 +30,12 @@ struct VoteInfo {
     pub index_values: Vec<Value>,
 }
 
-impl From<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
-    fn from((transition, pro_tx_info): (MasternodeVoteTransition, ProTxInfo)) -> Self {
+impl TryFrom<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
+    type Error = ();
+
+    fn try_from(
+        (transition, pro_tx_info): (MasternodeVoteTransition, ProTxInfo),
+    ) -> Result<Self, Self::Error> {
         let pro_tx_hash = transition.pro_tx_hash().to_string(Hex);
         let voter_identity = transition.voter_identity_id();
 
@@ -52,8 +56,11 @@ impl From<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
                         index_name: vote_poll.index_name,
                         index_values: vote_poll.index_values,
                     },
+                    VotePoll::YesNoVotePoll(_) => return Err(()),
                 },
             },
+            // Yes/no votes answer decision proposal polls, which the explorer does not index yet
+            Vote::YesNoVote(_) => return Err(()),
         };
 
         let towards_identity_identifier: Option<Identifier> = match vote_info.choice {
@@ -62,7 +69,7 @@ impl From<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
             ResourceVoteChoice::Lock => None,
         };
 
-        MasternodeVote {
+        Ok(MasternodeVote {
             power,
             pro_tx_hash,
             voter_identity,
@@ -72,6 +79,6 @@ impl From<(MasternodeVoteTransition, ProTxInfo)> for MasternodeVote {
             document_type_name: vote_info.document_type_name,
             index_name: vote_info.index_name,
             index_values: vote_info.index_values,
-        }
+        })
     }
 }

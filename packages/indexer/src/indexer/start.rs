@@ -5,6 +5,12 @@ use tokio::time;
 impl Indexer {
     pub async fn start(&self) {
         println!("Transactions for skip: [{}]", self.txs_to_skip.join(", "));
+
+        // a database indexed before the update is missing the system data contracts added since
+        if self.last_block_height.get() > 0 {
+            self.processor.ensure_system_data_contracts().await;
+        }
+
         println!("Indexer loop started");
 
         let mut interval = time::interval(Duration::from_millis(3000));
