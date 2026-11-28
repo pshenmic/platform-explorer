@@ -128,6 +128,7 @@ function DataContractsLayout() {
   const [loadingMore, setLoadingMore] = useState(false)
   const [systemItems, setSystemItems] = useState<DataContract[]>([])
   const fetchGen = useRef(0)
+  const [retryKey, setRetryKey] = useState(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const router = useRouter()
@@ -151,6 +152,7 @@ function DataContractsLayout() {
       setContracts(prev => ({ ...prev, loading: true, error: false }))
       setLoadingMore(false)
     } else {
+      setContracts(prev => ({ ...prev, error: false }))
       setLoadingMore(true)
     }
 
@@ -218,10 +220,12 @@ function DataContractsLayout() {
         if (replace) {
           setTotal(0)
           fetchHandlerError(setContracts, err)
+        } else {
+          setContracts(prev => ({ ...prev, loading: false, error: true }))
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode])
+  }, [currentPage, pageSize, filters, scrollMode, retryKey])
 
   useEffect(() => {
     setPageSize(
@@ -308,15 +312,15 @@ function DataContractsLayout() {
     },
     onLoadMore,
     loadingMore,
-    hasMore: pageItems.length < total
+    hasMore: !contracts.error && pageItems.length < total
   }
 
   return (
     <div className={'ListPage DataContractsPage'}>
       <div className={'InfoBlock'}>
-        {contracts.error ? (
+        {contracts.error && pageItems.length === 0 ? (
           <div className={'ListPage__Error'}>
-            <ErrorMessageBlock />
+            <ErrorMessageBlock onRetry={() => setRetryKey(key => key + 1)} />
           </div>
         ) : null}
         <DataContractsList
@@ -328,6 +332,15 @@ function DataContractsLayout() {
           title={'Data contracts'}
           pinFirst={true}
         />
+        {contracts.error && pageItems.length > 0 ? (
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock
+              inline
+              text={"Couldn't load more —"}
+              onRetry={() => setRetryKey(key => key + 1)}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   )

@@ -17,3 +17,18 @@
   color: #ddd;
   flex-shrink: 0;
 }
+
+.ErrorMessageBlock--Inline {
+  padding: var(--pe-space-2);
+  font-size: 0.875rem;
+  opacity: 1;
+}
+
+.ErrorMessageBlock__Retry {
+  color: inherit;
+  font: inherit;
+  background: none;
+  border: 0;
+  text-decoration: underline;
+  cursor: pointer;
+}

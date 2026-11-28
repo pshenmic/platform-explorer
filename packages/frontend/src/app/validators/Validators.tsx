@@ -8,6 +8,7 @@ import {
   writeListScrollMode,
   type ListScrollMode
 } from '../../components/ui/lists/DataList/listScrollMode'
+import { ErrorMessageBlock } from '../../components/Errors'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
 import { ResponseErrorNotFound } from '../../util/Errors'
 import { usePathname, useRouter, useSearchParams } from 'next/navigation'
@@ -133,6 +134,7 @@ function Validators() {
   const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
   const [loadingMore, setLoadingMore] = useState(false)
   const fetchGen = useRef(0)
+  const [retryKey, setRetryKey] = useState(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const [sort, setSort] = useState<{ order_by: string; order: 'asc' | 'desc' }>({
@@ -154,6 +156,7 @@ function Validators() {
       setValidators(prev => ({ ...prev, loading: true, error: false }))
       setLoadingMore(false)
     } else {
+      setValidators(prev => ({ ...prev, error: false }))
       setLoadingMore(true)
     }
 
@@ -223,10 +226,12 @@ function Validators() {
         if (replace) {
           setTotal(0)
           fetchHandlerError(setValidators, err)
+        } else {
+          setValidators(prev => ({ ...prev, loading: false, error: true }))
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode, sort.order, sort.order_by])
+  }, [currentPage, pageSize, filters, scrollMode, sort.order, sort.order_by, retryKey])
 
   useEffect(() => {
     setPageSize(
@@ -306,7 +311,7 @@ function Validators() {
     },
     onLoadMore,
     loadingMore,
-    hasMore: items.length < total
+    hasMore: !validators.error && items.length < total
   }
 
   return (
@@ -331,6 +336,15 @@ function Validators() {
           title={'Validators'}
           pinFirst={true}
         />
+        {validators.error && items.length > 0 ? (
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock
+              inline
+              text={"Couldn't load more —"}
+              onRetry={() => setRetryKey(key => key + 1)}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   )

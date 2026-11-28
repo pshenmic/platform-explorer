@@ -1,3 +1,5 @@
+'use client'
+
 import type { CSSProperties, ReactNode } from 'react'
 import './ErrorMessageBlock.css'
 
@@ -6,21 +8,26 @@ interface ErrorMessageBlockProps {
   h?: string | number
   text?: ReactNode
   warningIcon?: boolean
+  onRetry?: () => void
+  inline?: boolean
 }
 
 function ErrorMessageBlock({
   w = '100%',
-  h = '100%',
+  h,
   text,
-  warningIcon = true
+  warningIcon = true,
+  onRetry,
+  inline = false
 }: ErrorMessageBlockProps) {
+  const height = h ?? (inline ? 'auto' : '100%')
   const style: CSSProperties = {
     width: typeof w === 'number' ? `${w}px` : w,
-    height: typeof h === 'number' ? `${h}px` : h
+    height: typeof height === 'number' ? `${height}px` : height
   }
 
   return (
-    <div className={'ErrorMessageBlock'} style={style}>
+    <div className={`ErrorMessageBlock${inline ? ' ErrorMessageBlock--Inline' : ''}`} style={style}>
       <div className={'ErrorMessageBlock__Inner'}>
         {warningIcon && (
           <svg
@@ -47,6 +54,11 @@ function ErrorMessageBlock({
           </svg>
         )}
         {text || 'Error loading data'}
+        {onRetry && (
+          <button type={'button'} className={'ErrorMessageBlock__Retry'} onClick={onRetry}>
+            Retry
+          </button>
+        )}
       </div>
     </div>
   )
