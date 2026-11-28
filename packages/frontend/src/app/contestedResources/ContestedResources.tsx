@@ -118,6 +118,7 @@ function ContestedResources() {
   const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
   const [loadingMore, setLoadingMore] = useState(false)
   const fetchGen = useRef(0)
+  const [retryKey, setRetryKey] = useState(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const router = useRouter()
@@ -135,6 +136,7 @@ function ContestedResources() {
       setResources(prev => ({ ...prev, loading: true, error: false }))
       setLoadingMore(false)
     } else {
+      setResources(prev => ({ ...prev, error: false }))
       setLoadingMore(true)
     }
 
@@ -222,10 +224,12 @@ function ContestedResources() {
         if (replace) {
           setTotal(0)
           fetchHandlerError(setResources, err)
+        } else {
+          setResources(prev => ({ ...prev, loading: false, error: true }))
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode])
+  }, [currentPage, pageSize, filters, scrollMode, retryKey])
 
   useEffect(() => {
     setPageSize(
@@ -305,15 +309,15 @@ function ContestedResources() {
     },
     onLoadMore,
     loadingMore,
-    hasMore: items.length < total
+    hasMore: !resources.error && items.length < total
   }
 
   return (
     <div className={'ListPage ContestedResources ContestedResourcesPage'}>
       <div className={'InfoBlock'}>
-        {resources.error ? (
+        {resources.error && items.length === 0 ? (
           <div className={'ListPage__Error'}>
-            <ErrorMessageBlock />
+            <ErrorMessageBlock onRetry={() => setRetryKey(key => key + 1)} />
           </div>
         ) : null}
         <ContestedResourcesList
@@ -325,6 +329,15 @@ function ContestedResources() {
           title={'Contested resources'}
           pinFirst={true}
         />
+        {resources.error && items.length > 0 ? (
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock
+              inline
+              text={"Couldn't load more —"}
+              onRetry={() => setRetryKey(key => key + 1)}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   )

@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic'
 import { useQuery, useQueries } from '@tanstack/react-query'
 import * as Api from '../../util/Api'
 import HomeHero from './HomeHero'
+import { ErrorMessageBlock } from '../../components/Errors'
 import useNearViewport from '../../hooks/useNearViewport'
 import { HeroMeta } from '../../components/home/HeroMeta'
 import { fetchHandlerSuccess, fetchHandlerError } from '../../util'
@@ -350,6 +351,14 @@ function Home({ brand }: { brand?: ReactNode }) {
             />
           </div>
           <div className={'HomeOverview__Tx'}>
+            {txQuery.isError && (
+              <ErrorMessageBlock
+                inline
+                onRetry={() => {
+                  void txQuery.refetch()
+                }}
+              />
+            )}
             <CompactTxList
               transactions={txQuery.data?.resultSet}
               limit={5}
@@ -359,6 +368,14 @@ function Home({ brand }: { brand?: ReactNode }) {
             />
           </div>
           <div className={'HomeOverview__Blocks'}>
+            {blocksQuery.isError && (
+              <ErrorMessageBlock
+                inline
+                onRetry={() => {
+                  void blocksQuery.refetch()
+                }}
+              />
+            )}
             <CompactBlocksList
               blocks={blocksQuery.data?.resultSet}
               limit={5}

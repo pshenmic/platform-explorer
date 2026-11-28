@@ -99,6 +99,7 @@ function MasternodeVotes() {
   const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
   const [loadingMore, setLoadingMore] = useState(false)
   const fetchGen = useRef(0)
+  const [retryKey, setRetryKey] = useState(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const router = useRouter()
@@ -116,6 +117,7 @@ function MasternodeVotes() {
       setVotes(prev => ({ ...prev, loading: true, error: false }))
       setLoadingMore(false)
     } else {
+      setVotes(prev => ({ ...prev, error: false }))
       setLoadingMore(true)
     }
 
@@ -150,10 +152,12 @@ function MasternodeVotes() {
         if (replace) {
           setTotal(0)
           fetchHandlerError(setVotes, err)
+        } else {
+          setVotes(prev => ({ ...prev, loading: false, error: true }))
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode])
+  }, [currentPage, pageSize, filters, scrollMode, retryKey])
 
   useEffect(() => {
     setPageSize(
@@ -233,15 +237,15 @@ function MasternodeVotes() {
     },
     onLoadMore,
     loadingMore,
-    hasMore: items.length < total
+    hasMore: !votes.error && items.length < total
   }
 
   return (
     <div className={'ListPage MasternodeVotes'}>
       <div className={'InfoBlock'}>
-        {votes.error ? (
+        {votes.error && items.length === 0 ? (
           <div className={'ListPage__Error'}>
-            <ErrorMessageBlock />
+            <ErrorMessageBlock onRetry={() => setRetryKey(key => key + 1)} />
           </div>
         ) : null}
         <VotesList
@@ -253,6 +257,15 @@ function MasternodeVotes() {
           title={'Masternode votes'}
           pinFirst={true}
         />
+        {votes.error && items.length > 0 ? (
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock
+              inline
+              text={"Couldn't load more —"}
+              onRetry={() => setRetryKey(key => key + 1)}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   )

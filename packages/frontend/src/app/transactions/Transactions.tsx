@@ -72,6 +72,7 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
   const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
   const [loadingMore, setLoadingMore] = useState(false)
   const fetchGen = useRef(0)
+  const [retryKey, setRetryKey] = useState(0)
   const [filters, setFilters] = useState<QueryFilters>(() =>
     toTransactionsApiFilters({ type: urlTypes })
   )
@@ -107,6 +108,7 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
       setTransactions(prev => ({ ...prev, loading: true, error: false }))
       setLoadingMore(false)
     } else {
+      setTransactions(prev => ({ ...prev, error: false }))
       setLoadingMore(true)
     }
 
@@ -156,10 +158,12 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
         if (replace) {
           setTotal(0)
           fetchHandlerError(setTransactions, err)
+        } else {
+          setTransactions(prev => ({ ...prev, loading: false, error: true }))
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode])
+  }, [currentPage, pageSize, filters, scrollMode, retryKey])
 
   useEffect(() => {
     setPageSize(
@@ -255,15 +259,15 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
     },
     onLoadMore,
     loadingMore,
-    hasMore: items.length < total
+    hasMore: !transactions.error && items.length < total
   }
 
   return (
     <div className={'ListPage Transactions'}>
       <div className={'InfoBlock'}>
-        {transactions.error ? (
+        {transactions.error && items.length === 0 ? (
           <div className={'ListPage__Error'}>
-            <ErrorMessageBlock />
+            <ErrorMessageBlock onRetry={() => setRetryKey(key => key + 1)} />
           </div>
         ) : null}
         <TransactionsList
@@ -275,6 +279,15 @@ function Transactions({ defaultPage = 1, defaultPageSize }: TransactionsProps) {
           title={'Transactions'}
           pinFirst={true}
         />
+        {transactions.error && items.length > 0 ? (
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock
+              inline
+              text={"Couldn't load more —"}
+              onRetry={() => setRetryKey(key => key + 1)}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   )

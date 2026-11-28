@@ -196,6 +196,7 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
   const [scrollMode, setScrollMode] = useState<ListScrollMode>('continuous')
   const [loadingMore, setLoadingMore] = useState(false)
   const fetchGen = useRef(0)
+  const [retryKey, setRetryKey] = useState(0)
   const [filters, setFilters] = useState<QueryFilters>({})
   const [columnFilters, setColumnFilters] = useState<Record<string, unknown>>({})
   const router = useRouter()
@@ -213,6 +214,7 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
       setBlocks(prev => ({ ...prev, loading: true, error: false }))
       setLoadingMore(false)
     } else {
+      setBlocks(prev => ({ ...prev, error: false }))
       setLoadingMore(true)
     }
 
@@ -256,10 +258,12 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
         if (replace) {
           setTotal(0)
           fetchHandlerError(setBlocks, err)
+        } else {
+          setBlocks(prev => ({ ...prev, loading: false, error: true }))
         }
         setLoadingMore(false)
       })
-  }, [currentPage, pageSize, filters, scrollMode])
+  }, [currentPage, pageSize, filters, scrollMode, retryKey])
 
   useEffect(() => {
     setPageSize(
@@ -347,15 +351,15 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
     },
     onLoadMore,
     loadingMore,
-    hasMore: items.length < total
+    hasMore: !blocks.error && items.length < total
   }
 
   return (
     <div className={'ListPage Blocks'}>
       <div className={'InfoBlock'}>
-        {blocks.error ? (
+        {blocks.error && items.length === 0 ? (
           <div className={'ListPage__Error'}>
-            <ErrorMessageBlock />
+            <ErrorMessageBlock onRetry={() => setRetryKey(key => key + 1)} />
           </div>
         ) : null}
         <BlocksList
@@ -365,6 +369,15 @@ function Blocks({ defaultPage = 1, defaultPageSize }: BlocksProps) {
           onFilterChange={onColumnFilterChange}
           paging={paging}
         />
+        {blocks.error && items.length > 0 ? (
+          <div className={'ListPage__Error'}>
+            <ErrorMessageBlock
+              inline
+              text={"Couldn't load more —"}
+              onRetry={() => setRetryKey(key => key + 1)}
+            />
+          </div>
+        ) : null}
       </div>
     </div>
   )
