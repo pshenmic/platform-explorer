@@ -857,7 +857,7 @@ const getRate = (): Promise<Rate> => {
 // Response shape is not yet documented in this PR — type it precisely in a
 // follow-up after a valid query returns a populated payload.
 const search = (query: string): Promise<unknown> => {
-  return call<unknown>(`search?query=${query}`, 'GET')
+  return call<unknown>(`search?query=${encodeURIComponent(query)}`, 'GET')
 }
 
 // Response shape is not yet documented in this PR — type it precisely in a

@@ -1,12 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import type { LoadableState } from '../../types/common'
 import * as Api from '../../util/Api'
 import { useDebounce } from '../../hooks'
 import { useRouter } from 'next/navigation'
 import type { SearchResultsData } from './SearchResultsList'
 import type { SearchCategory } from './constants'
+import { getFirstResultUrl } from './getFirstResultUrl'
 import './GlobalSearchInput.css'
 
 function filterResultByCategories(
@@ -43,6 +44,7 @@ function GlobalSearchInput({
   onFocusChange
 }: GlobalSearchInputProps) {
   const [searchQuery, setSearchQuery] = useState('')
+  const [resultsQuery, setResultsQuery] = useState('')
   const [searchResults, setSearchResults] = useState<LoadableState<SearchResultsData>>({
     data: {},
     loading: false,
@@ -50,8 +52,10 @@ function GlobalSearchInput({
   })
   const debouncedQuery = useDebounce(searchQuery, 200)
   const router = useRouter()
+  const searchGen = useRef(0)
 
   const search = (query: string) => {
+    const gen = ++searchGen.current
     if (query?.length === 0) {
       setSearchResults({ data: {}, loading: false, error: false })
       return
@@ -61,6 +65,8 @@ function GlobalSearchInput({
 
     Api.search(query)
       .then(res => {
+        if (gen !== searchGen.current) return
+        setResultsQuery(query)
         const data = res as SearchResultsData
         if (categoryFilters?.length > 0) {
           const filteredRes = filterResultByCategories(data, categoryFilters)
@@ -70,9 +76,10 @@ function GlobalSearchInput({
 
         setSearchResults({ data, loading: false, error: false })
       })
-      .catch(err =>
-        setSearchResults({ data: err as SearchResultsData, loading: false, error: true })
-      )
+      .catch(() => {
+        if (gen !== searchGen.current) return
+        setSearchResults({ data: {}, loading: false, error: true })
+      })
   }
 
   useEffect(() => {
@@ -85,66 +92,26 @@ function GlobalSearchInput({
     if (forceValue !== undefined) setSearchQuery(forceValue)
   }, [forceValue])
 
-  const getFirstResultUrl = (): string | null => {
-    const data = searchResults.data
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.nativeEvent.isComposing) return
+    if (event.key.length === 1 || event.key === 'Enter') onFocusChange?.(true)
+    if (event.key !== 'Enter') return
 
-    if (!data || Object.keys(data).length === 0) return null
-
-    const firstCategory = (Object.keys(data) as SearchCategory[]).find(
-      category => (data[category]?.length ?? 0) > 0
-    )
-
-    if (firstCategory && (data[firstCategory]?.length ?? 0) > 0) {
-      const firstItem = data[firstCategory]![0] as Record<string, unknown>
-
-      switch (firstCategory) {
-        case 'identities':
-          return `/identity/${(firstItem as { identifier?: string }).identifier}`
-        case 'blocks': {
-          const header = (firstItem as { header?: { hash?: string } }).header
-          return `/block/${header?.hash}`
-        }
-        case 'transactions':
-          return `/transaction/${(firstItem as { hash?: string }).hash}`
-        case 'dataContracts':
-          return `/dataContract/${(firstItem as { identifier?: string }).identifier}`
-        case 'documents':
-          return `/document/${(firstItem as { identifier?: string }).identifier}`
-        case 'validators':
-          return `/validator/${(firstItem as { proTxHash?: string }).proTxHash}`
-        case 'tokens':
-          return `/token/${(firstItem as { identifier?: string }).identifier}`
-        case 'platformAddresses':
-          return `/platformAddress/${(firstItem as { bech32mAddress?: string }).bech32mAddress}`
-        default:
-          return null
-      }
+    if (navigateToFirstResult) {
+      event.preventDefault()
+      const query = searchQuery.trim()
+      if (!query) return
+      const url =
+        !searchResults.loading && !searchResults.error && resultsQuery === searchQuery
+          ? getFirstResultUrl(searchResults.data)
+          : null
+      router.push(url || `/search?query=${encodeURIComponent(query)}`)
+      onFocusChange?.(false)
+      return
     }
 
-    return null
-  }
-
-  const handleKeyPress = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (typeof onFocusChange === 'function') onFocusChange(true)
-
-    if (event.key === 'Enter') {
-      if (!searchResults.data || Object.keys(searchResults.data).length === 0) {
-        return search(searchQuery)
-      }
-
-      if (typeof onEnter === 'function') {
-        return onEnter(searchResults.data)
-      }
-
-      if (navigateToFirstResult) {
-        const url = getFirstResultUrl()
-
-        if (url) {
-          router.push(url)
-          if (typeof onFocusChange === 'function') onFocusChange(false)
-        }
-      }
-    }
+    if (!getFirstResultUrl(searchResults.data)) return search(searchQuery)
+    if (typeof onEnter === 'function') return onEnter(searchResults.data || {})
   }
 
   const handleSearchInput = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -159,7 +126,7 @@ function GlobalSearchInput({
         type={'search'}
         placeholder={placeholder || 'Search...'}
         onChange={handleSearchInput}
-        onKeyPress={handleKeyPress}
+        onKeyDown={handleKeyDown}
         className={'GlobalSearchInput__Field'}
       />
       <button
