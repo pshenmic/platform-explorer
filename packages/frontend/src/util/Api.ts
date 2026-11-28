@@ -47,11 +47,29 @@ const fetchWrapper = (url: string, options: RequestInit): Promise<Response> => {
 
 const call = async <T>(path: string, method: HttpMethod, body?: unknown): Promise<T> => {
   try {
-    const response = await fetchWrapper(`${BASE_URL}/${path}`, {
-      method,
-      headers: body ? { 'content-type': 'application/json' } : undefined,
-      body: body ? JSON.stringify(body) : undefined
-    })
+    const retryable = method === 'GET' && path.split('?')[0].replace(/^\//, '') !== 'status'
+    const delays = [500, 1500]
+    let response: Response
+    for (let attempt = 0; ; attempt++) {
+      try {
+        response = await fetchWrapper(`${BASE_URL}/${path}`, {
+          method,
+          headers: body ? { 'content-type': 'application/json' } : undefined,
+          body: body ? JSON.stringify(body) : undefined
+        })
+      } catch (error) {
+        if (!retryable || attempt >= delays.length || error instanceof ResponseErrorTimeout) {
+          throw error
+        }
+        await new Promise(resolve => setTimeout(resolve, delays[attempt] + Math.random() * 100))
+        continue
+      }
+      if (!retryable || attempt >= delays.length || ![502, 503, 504].includes(response.status)) {
+        break
+      }
+      await response.body?.cancel()
+      await new Promise(resolve => setTimeout(resolve, delays[attempt] + Math.random() * 100))
+    }
 
     if (response.status === 200) {
       return response.json() as Promise<T>
